@@ -1,0 +1,9 @@
+/.idea
+/.vscode
+/log
+/bin
+/test/config.yaml
+/test/config.toml
+/config.yaml
+/config.toml
+/XDB
