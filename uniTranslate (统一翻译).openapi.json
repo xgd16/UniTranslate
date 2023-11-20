@@ -1,0 +1,806 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "uniTranslate (统一翻译)",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/api/addConfig": {
+      "post": {
+        "summary": "添加配置",
+        "x-apifox-folder": "",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "6tRiPmeoqYz3yOm15xN259zsTZpn6s6t6EMNtRD1nHrwfmm4ffCcY8slalqyPMwy",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "title": "平台名称",
+                    "description": "自定义名称"
+                  },
+                  "status": {
+                    "type": "integer",
+                    "title": "状态",
+                    "description": "1 开启 0 关闭 (预留暂只存储无效果)"
+                  },
+                  "translationLevel": {
+                    "type": "integer",
+                    "description": "翻译等级"
+                  },
+                  "cfg": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "appId": {
+                        "type": "string"
+                      },
+                      "curlTimeOut": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "url",
+                      "appId",
+                      "curlTimeOut"
+                    ],
+                    "x-apifox-orders": [
+                      "key",
+                      "url",
+                      "appId",
+                      "curlTimeOut"
+                    ],
+                    "description": "具体配置 （此处只演示百度）",
+                    "x-apifox-ignore-properties": []
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "类型 Baidu YouDao Google Deepl"
+                  }
+                },
+                "required": [
+                  "platform",
+                  "status",
+                  "translationLevel",
+                  "cfg",
+                  "type"
+                ],
+                "x-apifox-orders": [
+                  "platform",
+                  "status",
+                  "translationLevel",
+                  "cfg",
+                  "type"
+                ],
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "platform": "百度xxx",
+                "status": 1,
+                "translationLevel": 3,
+                "cfg": {
+                  "key": "xxxx",
+                  "url": "https://fanyi-api.baidu.com/api/trans/vip/translate",
+                  "appId": "xxx",
+                  "curlTimeOut": 2000
+                },
+                "type": "Baidu"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ],
+                  "x-apifox-orders": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 1000,
+                      "data": [],
+                      "msg": "SUCCESS!!!",
+                      "time": 1690515926058
+                    }
+                  },
+                  "2": {
+                    "summary": "异常示例",
+                    "value": {
+                      "code": 1001,
+                      "data": [],
+                      "msg": "已存在此配置",
+                      "time": 1690515926058
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3623241/apis/api-126444396-run",
+        "security": []
+      }
+    },
+    "/api/translate": {
+      "post": {
+        "summary": "翻译",
+        "x-apifox-folder": "",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "# 打勾的为已支持\n| Language                 | Chinese            | Code    | OK   |\n|--------------------------|--------------------|---------|-----|\n| Arabic                   | 阿拉伯语            | ar      | ✓   |\n| German                   | 德语                | de      | ✓   |\n| English                  | 英语                | en      | ✓   |\n| Spanish                  | 西班牙语            | es      | ✓   |\n| French                   | 法语                | fr      | ✓   |\n| Hindi                    | 印地语              | hi      |     |\n| Indonesian               | 印度尼西亚语        | id      | ✓   |\n| Italian                  | 意大利语            | it      | ✓   |\n| Japanese                 | 日语                | ja      | ✓   |\n| Korean                   | 韩语                | ko      | ✓   |\n| Dutch                    | 荷兰语              | nl      | ✓   |\n| Portuguese               | 葡萄牙语            | pt      | ✓   |\n| Russian                  | 俄语                | ru      | ✓   |\n| Thai                     | 泰语                | th      | ✓   |\n| Vietnamese               | 越南语              | vi      | ✓   |\n| Chinese (Simplified)    | 简体中文            | zh-CHS  | ✓   |\n| Chinese (Traditional)   | 繁体中文            | zh-CHT  | ✓   |\n| Afrikaans                | 南非荷兰语          | af      |     |\n| Amharic                  | 阿姆哈拉语          | am      |     |\n| Azerbaijani              | 阿塞拜疆语          | az      |     |\n| Belarusian               | 白俄罗斯语          | be      |     |\n| Bulgarian                | 保加利亚语          | bg      |     |\n| Bengali                  | 孟加拉语            | bn      |     |\n| Bosnian (Latin)          | 波斯尼亚语 (拉丁)  | bs      |     |\n| Catalan                  | 加泰隆语            | ca      |     |\n| Cebuano                  | 宿务语              | ceb     |     |\n| Corsican                 | 科西嘉语            | co      |     |\n| Czech                    | 捷克语              | cs      |     |\n| Welsh                    | 威尔士语            | cy      |     |\n| Danish                   | 丹麦语              | da      |     |\n| Greek                    | 希腊语              | el      |     |\n| Esperanto                | 世界语              | eo      |     |\n| Estonian                 | 爱沙尼亚语          | et      |     |\n| Basque                   | 巴斯克语            | eu      |     |\n| Persian                  | 波斯语              | fa      |     |\n| Finnish                  | 芬兰语              | fi      |     |\n| Fijian                   | 斐济语              | fj      |     |\n| Frisian                  | 弗里西语            | fy      |     |\n| Irish                    | 爱尔兰语            | ga      |     |\n| Scots                    | 苏格兰盖尔语        | gd      |     |\n| Galician                 | 加利西亚语          | gl      |     |\n| Gujarati                 | 古吉拉特语          | gu      |     |\n| Hausa                    | 豪萨语              | ha      |     |\n| Hawaiian                 | 夏威夷语            | haw     |     |\n| Hebrew                   | 希伯来语            | he      |     |\n| Hindi                    | 印地语              | hi      |     |\n| Croatian                 | 克罗地亚语          | hr      |     |\n| Haitian                  | 海地克里奥尔语      | ht      |     |\n| Hungarian                | 匈牙利语            | hu      |     |\n| Armenian                 | 亚美尼亚语          | hy      |     |\n| Igbo                     | 伊博语              | ig      |     |\n| Icelandic                | 冰岛语              | is      |     |\n| Javanese                 | 爪哇语              | jw      |     |\n| Georgian                 | 格鲁吉亚语          | ka      |     |\n| Kazakh                   | 哈萨克语            | kk      |     |\n| Khmer                    | 高棉语              | km      |     |\n| Kannada                  | 卡纳达语            | kn      |     |\n| Kurdish                  | 库尔德语            | ku      |     |\n| Kyrgyz                   | 柯尔克孜语          | ky      |     |\n| Latin                    | 拉丁语              | la      |     |\n| Luxembourgish            | 卢森堡语            | lb      |     |\n| Lao                      | 老挝语              | lo      |     |\n| Lithuanian               | 立陶宛语            | lt      |     |\n| Latvian                  | 拉脱维亚语          | lv      |     |\n| Malagasy                 | 马尔加什语          | mg      |     |\n| Maori                    | 毛利语              | mi      |     |\n| Macedonian               | 马其顿语            | mk      |     |\n| Malayalam                | 马拉雅拉姆语        | ml      |     |\n| Mongolian                | 蒙古语              | mn      |     |\n| Marathi                  | 马拉地语            | mr      |     |\n| Malay                    | 马来语              | ms      |     |\n| Maltese                  | 马耳他语            | mt      |     |\n| Hmong                    | 白苗语              | mww     |     |\n| Burmese                  | 缅甸语              | my      |     |\n| Nepali                   | 尼泊尔语            | ne      |     |\n| Dutch                    | 荷兰语              | nl      | ✓   |\n| Norwegian                | 挪威语              | no      |     |\n| Chichewa                 | 齐切瓦语            | ny      |     |\n| Querétaro Otomi          | 克雷塔罗奥托米语    | otq     |     |\n| Punjabi                  | 旁遮普语            | pa      |     |\n| Polish                   | 波兰语              | pl      |     |\n| Pashto                   | 普什图语            | ps      |     |\n| Romanian                 | 罗马尼亚语          | ro      |     |\n| Sindhi                   | 信德语              | sd      |     |\n| Sinhala (Sinhalese)      | 僧伽罗语            | si      |     |\n| Slovak                   | 斯洛伐克语          | sk      |     |\n| Slovenian                | 斯洛文尼亚语        | sl      |     |\n| Samoan                   | 萨摩亚语            | sm      |     |\n| Shona                    | 修纳语              | sn      |     |\n| Somali                   | 索马里语            | so      |     |\n| Albanian                 | 阿尔巴尼亚语        | sq      |     |\n| Serbian (Cyrillic)       | 塞尔维亚语(西里尔文) | sr-Cyrl |     |\n| Serbian (Latin)          | 塞尔维亚语(拉丁文)  | sr-Latn |     |\n| Sesotho                  | 塞索托语            | st      |     |\n| Sundanese                | 巽他语              | su      |     |\n| Swedish                  | 瑞典语              | sv      |     |\n| Kiswahili                | 斯瓦希里语          | sw      |     |\n| Tamil                    | 泰米尔语            | ta      |     |\n| Telugu                   | 泰卢固语            | te      |     |\n| Tajik                    | 塔吉克语            | tg      |     |\n| Filipino                 | 菲律宾语            | tl      |     |\n| Klingon                  | 克林贡语            | tlh     |     |\n| Tongan                   | 汤加语              | to      |     |\n| Turkish                  | 土耳其语            | tr      |     |\n| Tahitian                 | 塔希提语            | ty      |     |\n| Ukrainian                | 乌克兰语            | uk      |     |\n| Urdu                     | 乌尔都语            | ur      |     |\n| Uzbek                    | 乌兹别克语          | uz      |     |\n| Xhosa                    | 南非科萨语          | xh      |     |\n| Yiddish                  | 意第绪语            | yi      |     |\n| Yoruba                   | 约鲁巴语            | yo      |     |\n| Yucatec                  | 尤卡坦玛雅语        | yua     |     |\n| Cantonese (Traditional)  | 粤语                | yue     |     |\n| Zulu                     | 南非祖鲁语          | zu      |     |\n| 自动识别                | 自动识别            | auto    |     |\n",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "6tRiPmeoqYz3yOm15xN259zsTZpn6s6t6EMNtRD1nHrwfmm4ffCcY8slalqyPMwy",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "title": "原文语言"
+                  },
+                  "to": {
+                    "type": "string",
+                    "title": "译文语言"
+                  },
+                  "text": {
+                    "type": "string",
+                    "title": "原文内容"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to",
+                  "text"
+                ],
+                "x-apifox-orders": [
+                  "from",
+                  "to",
+                  "text"
+                ],
+                "x-apifox-ignore-properties": []
+              },
+              "example": {
+                "from": "auto",
+                "to": "en",
+                "text": "这是一个用来测试翻译的语句"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "from": {
+                          "type": "string",
+                          "title": "原文语言"
+                        },
+                        "originalTextLen": {
+                          "type": "integer",
+                          "title": "原文文字长度"
+                        },
+                        "platform": {
+                          "type": "string",
+                          "title": "翻译平台"
+                        },
+                        "to": {
+                          "type": "string",
+                          "title": "译文语言"
+                        },
+                        "translate": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "title": "翻译结果内容"
+                        },
+                        "translationLen": {
+                          "type": "integer",
+                          "title": "译文文字长度"
+                        }
+                      },
+                      "required": [
+                        "from",
+                        "originalTextLen",
+                        "platform",
+                        "to",
+                        "translate",
+                        "translationLen"
+                      ],
+                      "x-apifox-orders": [
+                        "from",
+                        "originalTextLen",
+                        "platform",
+                        "to",
+                        "translate",
+                        "translationLen"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ],
+                  "x-apifox-orders": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 1000,
+                      "data": {
+                        "from": "zh-CHS",
+                        "originalTextLen": 10,
+                        "platform": "Baidu",
+                        "to": "en",
+                        "translate": [
+                          "The test news is good, it's amazing"
+                        ],
+                        "translationLen": 35
+                      },
+                      "msg": "SUCCESS !!!",
+                      "time": 1690515061999
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3623241/apis/api-126444397-run",
+        "security": []
+      }
+    },
+    "/ip": {
+      "get": {
+        "summary": "获取IP",
+        "x-apifox-folder": "",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "ip": {
+                          "type": "string",
+                          "title": "IP"
+                        }
+                      },
+                      "required": [
+                        "ip"
+                      ],
+                      "x-apifox-orders": [
+                        "ip"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ],
+                  "x-apifox-orders": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 1000,
+                      "data": {
+                        "ip": "127.0.0.1"
+                      },
+                      "msg": "SUCCESS !!!",
+                      "time": 1690515970918
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3623241/apis/api-126444398-run",
+        "security": []
+      }
+    },
+    "/api/getCountRecord": {
+      "get": {
+        "summary": "获取计数记录",
+        "x-apifox-folder": "",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "charCount": {
+                            "type": "integer",
+                            "title": "文字计数",
+                            "description": "翻译原文文本文字总计数"
+                          },
+                          "createTime": {
+                            "type": "string",
+                            "title": "创建时间"
+                          },
+                          "errorCount": {
+                            "type": "integer",
+                            "title": "错误次数"
+                          },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string",
+                            "title": "服务名称"
+                          },
+                          "serialNumber": {
+                            "type": "string",
+                            "title": "序列"
+                          },
+                          "successCount": {
+                            "type": "integer",
+                            "title": "成功次数"
+                          },
+                          "updateTime": {
+                            "type": "string",
+                            "title": "修改时间"
+                          }
+                        },
+                        "required": [
+                          "charCount",
+                          "createTime",
+                          "errorCount",
+                          "id",
+                          "name",
+                          "serialNumber",
+                          "successCount",
+                          "updateTime"
+                        ],
+                        "x-apifox-orders": [
+                          "charCount",
+                          "createTime",
+                          "errorCount",
+                          "id",
+                          "name",
+                          "serialNumber",
+                          "successCount",
+                          "updateTime"
+                        ],
+                        "x-apifox-ignore-properties": []
+                      }
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ],
+                  "x-apifox-orders": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 1000,
+                      "data": [
+                        {
+                          "charCount": 0,
+                          "createTime": "2023-07-28 17:02:45",
+                          "errorCount": 0,
+                          "id": 11,
+                          "name": "百度 (LIZHUO)",
+                          "serialNumber": "a29f711af2052a63986c7eaa72b01738",
+                          "successCount": 0,
+                          "updateTime": "2023-07-28 17:02:45"
+                        },
+                        {
+                          "charCount": 0,
+                          "createTime": "2023-07-28 17:02:30",
+                          "errorCount": 0,
+                          "id": 10,
+                          "name": "百度 (LIBIN)",
+                          "serialNumber": "ab244cd318b52fac6fac7b09bf776b2e",
+                          "successCount": 0,
+                          "updateTime": "2023-07-28 17:02:30"
+                        },
+                        {
+                          "charCount": 0,
+                          "createTime": "2023-07-28 17:01:58",
+                          "errorCount": 0,
+                          "id": 9,
+                          "name": "百度 (ZHANGQI)",
+                          "serialNumber": "961c56ee9fc675be57e34dba89aba03d",
+                          "successCount": 0,
+                          "updateTime": "2023-07-28 17:01:58"
+                        },
+                        {
+                          "charCount": 0,
+                          "createTime": "2023-07-28 17:01:44",
+                          "errorCount": 0,
+                          "id": 8,
+                          "name": "百度 (LIUZHAO)",
+                          "serialNumber": "a8cb9ac0b5e68a4468901b7cd0e63d4f",
+                          "successCount": 0,
+                          "updateTime": "2023-07-28 17:01:44"
+                        },
+                        {
+                          "charCount": 0,
+                          "createTime": "2023-07-28 16:59:15",
+                          "errorCount": 0,
+                          "id": 7,
+                          "name": "Deepl 线路1",
+                          "serialNumber": "3a3131c6ac1a69b14a26590941b599d7",
+                          "successCount": 0,
+                          "updateTime": "2023-07-28 16:59:15"
+                        },
+                        {
+                          "charCount": 0,
+                          "createTime": "2023-07-28 16:59:10",
+                          "errorCount": 0,
+                          "id": 6,
+                          "name": "Google 路线 1",
+                          "serialNumber": "3a4c37f79f6a66939d682a8c5d92d20a",
+                          "successCount": 0,
+                          "updateTime": "2023-07-28 16:59:10"
+                        },
+                        {
+                          "charCount": 0,
+                          "createTime": "2023-07-28 16:59:03",
+                          "errorCount": 0,
+                          "id": 5,
+                          "name": "有道 线路2",
+                          "serialNumber": "00b75bee7635da51eb58afcdc9175f44",
+                          "successCount": 0,
+                          "updateTime": "2023-07-28 16:59:03"
+                        },
+                        {
+                          "charCount": 0,
+                          "createTime": "2023-07-28 16:58:56",
+                          "errorCount": 0,
+                          "id": 4,
+                          "name": "百度 (WUDAN)",
+                          "serialNumber": "fd35608feb8d3b00ba668a12e971891f",
+                          "successCount": 0,
+                          "updateTime": "2023-07-28 16:58:56"
+                        },
+                        {
+                          "charCount": 14,
+                          "createTime": "2023-07-28 16:58:50",
+                          "errorCount": 0,
+                          "id": 3,
+                          "name": "百度 线路2",
+                          "serialNumber": "d0395eb5e4f233e80d508c3a625ac876",
+                          "successCount": 4,
+                          "updateTime": "2023-07-28 17:08:49"
+                        }
+                      ],
+                      "msg": "SUCCESS !!!",
+                      "time": 1690536240171
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3623241/apis/api-126444399-run",
+        "security": []
+      }
+    },
+    "/api/getRequestRecord": {
+      "get": {
+        "summary": "获取请求记录",
+        "x-apifox-folder": "",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "当前页",
+            "required": true,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "一页多少条",
+            "required": true,
+            "example": "10",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "list": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "body": {
+                                "type": "string"
+                              },
+                              "clientIp": {
+                                "type": "string"
+                              },
+                              "createTime": {
+                                "type": "string"
+                              },
+                              "errMsg": {
+                                "type": "null"
+                              },
+                              "id": {
+                                "type": "integer"
+                              },
+                              "status": {
+                                "type": "integer"
+                              },
+                              "updateTime": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "body",
+                              "clientIp",
+                              "createTime",
+                              "errMsg",
+                              "id",
+                              "status",
+                              "updateTime"
+                            ],
+                            "x-apifox-orders": [
+                              "body",
+                              "clientIp",
+                              "createTime",
+                              "errMsg",
+                              "id",
+                              "status",
+                              "updateTime"
+                            ],
+                            "x-apifox-ignore-properties": []
+                          }
+                        }
+                      },
+                      "required": [
+                        "count",
+                        "list"
+                      ],
+                      "x-apifox-orders": [
+                        "count",
+                        "list"
+                      ],
+                      "x-apifox-ignore-properties": []
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ],
+                  "x-apifox-orders": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 1000,
+                      "data": {
+                        "count": 28,
+                        "list": [
+                          {
+                            "body": "{\n    \"from\": \"auto\",\n    \"to\": \"en\",\n    \"text\": \"测试\"\n}",
+                            "clientIp": "1.1.1.1",
+                            "createTime": "2023-07-28 17:05:23",
+                            "errMsg": null,
+                            "id": 9,
+                            "status": 1,
+                            "updateTime": "2023-07-28 17:05:23"
+                          }
+                        ]
+                      },
+                      "msg": "SUCCESS !!!",
+                      "time": 1690537869463
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://apifox.com/web/project/3623241/apis/api-126444400-run",
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {}
+  },
+  "servers": []
+}
