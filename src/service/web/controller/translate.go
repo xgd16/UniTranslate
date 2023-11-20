@@ -27,7 +27,12 @@ func Translate(r *ghttp.Request) {
 	to := toT.String()
 	text := textT.String()
 	// 内容转换为md5
-	md5 := gmd5.MustEncrypt(fmt.Sprintf("from:%s-to:%s-text:%s-platform:%s", from, to, text, platform))
+	var md5 string
+	if global.SystemConfig.Get("server.cachePlatform").Bool() {
+		md5 = gmd5.MustEncrypt(fmt.Sprintf("from:%s-to:%s-text:%s-platform:%s", from, to, text, platform))
+	} else {
+		md5 = gmd5.MustEncrypt(fmt.Sprintf("from:%s-to:%s-text:%s", from, to, text))
+	}
 	// 写入到缓存
 	var (
 		data *gvar.Var
