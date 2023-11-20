@@ -539,90 +539,10 @@
                           "createTime": "2023-07-28 17:02:45",
                           "errorCount": 0,
                           "id": 11,
-                          "name": "百度 (LIZHUO)",
+                          "name": "百度xxx",
                           "serialNumber": "a29f711af2052a63986c7eaa72b01738",
                           "successCount": 0,
                           "updateTime": "2023-07-28 17:02:45"
-                        },
-                        {
-                          "charCount": 0,
-                          "createTime": "2023-07-28 17:02:30",
-                          "errorCount": 0,
-                          "id": 10,
-                          "name": "百度 (LIBIN)",
-                          "serialNumber": "ab244cd318b52fac6fac7b09bf776b2e",
-                          "successCount": 0,
-                          "updateTime": "2023-07-28 17:02:30"
-                        },
-                        {
-                          "charCount": 0,
-                          "createTime": "2023-07-28 17:01:58",
-                          "errorCount": 0,
-                          "id": 9,
-                          "name": "百度 (ZHANGQI)",
-                          "serialNumber": "961c56ee9fc675be57e34dba89aba03d",
-                          "successCount": 0,
-                          "updateTime": "2023-07-28 17:01:58"
-                        },
-                        {
-                          "charCount": 0,
-                          "createTime": "2023-07-28 17:01:44",
-                          "errorCount": 0,
-                          "id": 8,
-                          "name": "百度 (LIUZHAO)",
-                          "serialNumber": "a8cb9ac0b5e68a4468901b7cd0e63d4f",
-                          "successCount": 0,
-                          "updateTime": "2023-07-28 17:01:44"
-                        },
-                        {
-                          "charCount": 0,
-                          "createTime": "2023-07-28 16:59:15",
-                          "errorCount": 0,
-                          "id": 7,
-                          "name": "Deepl 线路1",
-                          "serialNumber": "3a3131c6ac1a69b14a26590941b599d7",
-                          "successCount": 0,
-                          "updateTime": "2023-07-28 16:59:15"
-                        },
-                        {
-                          "charCount": 0,
-                          "createTime": "2023-07-28 16:59:10",
-                          "errorCount": 0,
-                          "id": 6,
-                          "name": "Google 路线 1",
-                          "serialNumber": "3a4c37f79f6a66939d682a8c5d92d20a",
-                          "successCount": 0,
-                          "updateTime": "2023-07-28 16:59:10"
-                        },
-                        {
-                          "charCount": 0,
-                          "createTime": "2023-07-28 16:59:03",
-                          "errorCount": 0,
-                          "id": 5,
-                          "name": "有道 线路2",
-                          "serialNumber": "00b75bee7635da51eb58afcdc9175f44",
-                          "successCount": 0,
-                          "updateTime": "2023-07-28 16:59:03"
-                        },
-                        {
-                          "charCount": 0,
-                          "createTime": "2023-07-28 16:58:56",
-                          "errorCount": 0,
-                          "id": 4,
-                          "name": "百度 (WUDAN)",
-                          "serialNumber": "fd35608feb8d3b00ba668a12e971891f",
-                          "successCount": 0,
-                          "updateTime": "2023-07-28 16:58:56"
-                        },
-                        {
-                          "charCount": 14,
-                          "createTime": "2023-07-28 16:58:50",
-                          "errorCount": 0,
-                          "id": 3,
-                          "name": "百度 线路2",
-                          "serialNumber": "d0395eb5e4f233e80d508c3a625ac876",
-                          "successCount": 4,
-                          "updateTime": "2023-07-28 17:08:49"
                         }
                       ],
                       "msg": "SUCCESS !!!",
