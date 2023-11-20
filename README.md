@@ -1,5 +1,7 @@
 # uniTranslate
 
+[中文](./README.md) | [English](./README_EN.md)
+
 # 项目简介 📒
 该项目是一个支持多平台翻译和将翻译结果写入 Redis 缓存的工具。
 
