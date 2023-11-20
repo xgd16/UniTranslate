@@ -12,6 +12,8 @@ import (
 // SystemConfig 系统配置信息
 var SystemConfig *gjson.Json
 
+var CacheMode string = "mem"
+
 // InitSystemConfig 初始化系统配置信息
 func InitSystemConfig() {
 	cfg, err := g.Cfg().Data(gctx.New())
@@ -19,14 +21,14 @@ func InitSystemConfig() {
 		panic("初始化系统配置错误: " + err.Error())
 	}
 	SystemConfig = gjson.New(cfg, true)
+	// 初始化配置的缓存模式
+	CacheMode = SystemConfig.Get("server.cacheMode").String()
 }
 
+// XDB 文件式存储
 var XDB = xstorage.CreateXDB()
 
-var GfCache = func() *gcache.Cache {
-	c := gcache.New()
-	c.SetAdapter(gcache.NewAdapterRedis(g.Redis()))
-	return c
-}()
+// GfCache 全局缓存
+var GfCache *gcache.Cache
 
 var StatisticalProcess types.StatisticsInterface = new(types.MySqlStatistics)
