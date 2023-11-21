@@ -13,7 +13,7 @@ This project is a tool that supports translation across multiple platforms and w
 - Ability to write translated content into `Redis` cache to reduce repeated calls to translation APIs for duplicated content
 
 ## Future Support (priority in order) ✈️
-- [ ] Persist translated content into `MySQL`
+- [x] Persist translated content into `MySQL`
 - [ ] Web control panel
 
 ## Base Types 🪨
