@@ -12,6 +12,7 @@ type TranslateData struct {
 }
 
 type StatisticsInterface interface {
+	Init() error
 	// CountRecord 计数统计
 	CountRecord(data *CountRecordData) error
 	// RequestRecord 请求记录

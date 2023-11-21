@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 	"github.com/gogf/gf/v2/frame/g"
@@ -35,6 +36,10 @@ func baseInit() {
 	}
 	// 初始化缓存
 	global.GfCache = initCache()
+	// 初始化数据库
+	if err := initDataBase(); err != nil {
+		panic(fmt.Errorf("初始化数据库失败 %s", err))
+	}
 	// 配置 GrayLog 基础配置 host 和 port
 	if global.SystemConfig.Get("grayLog.open").Bool() {
 		xgraylog.SetGrayLogConfig(
@@ -47,6 +52,13 @@ func baseInit() {
 	}
 }
 
+// 初始化 数据库信息
+func initDataBase() (err error) {
+	err = global.StatisticalProcess.Init()
+	return
+}
+
+// 初始化 缓存
 func initCache() *gcache.Cache {
 	c := gcache.New()
 	switch global.CacheMode {
