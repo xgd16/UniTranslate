@@ -54,7 +54,7 @@ func baseInit() {
 
 // 初始化 数据库信息
 func initDataBase() (err error) {
-	err = global.StatisticalProcess.Init()
+	err = global.StatisticalProcess.Init(global.GfCache, global.CacheMode, global.CachePlatform)
 	return
 }
 

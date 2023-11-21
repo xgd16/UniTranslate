@@ -1,5 +1,7 @@
 package types
 
+import "github.com/gogf/gf/v2/os/gcache"
+
 type TranslateData struct {
 	Md5              string   `json:"-"`
 	TranslateTextArr []string `json:"translate" orm:"translate"`
@@ -14,7 +16,7 @@ type TranslateData struct {
 
 type StatisticsInterface interface {
 	// Init 初始化数据库
-	Init() error
+	Init(cache *gcache.Cache, cacheMode string, cachePlatform bool) error
 	// CountRecord 计数统计
 	CountRecord(data *CountRecordData) error
 	// RequestRecord 请求记录
@@ -24,7 +26,7 @@ type StatisticsInterface interface {
 	// SaveCache 存储翻译结果到缓存
 	SaveCache(data *SaveData) error
 	// GetterCache 获取翻译结果
-	GetterCache(fn func(data []*TranslateData)) error
+	GetterCache(fn func(data []*TranslateData) (err error)) error
 }
 
 type CountRecordData struct {

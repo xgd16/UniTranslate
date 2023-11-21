@@ -12,7 +12,8 @@ import (
 // SystemConfig 系统配置信息
 var SystemConfig *gjson.Json
 
-var CacheMode string = "mem"
+var CacheMode = "mem"
+var CachePlatform = false
 
 // InitSystemConfig 初始化系统配置信息
 func InitSystemConfig() {
@@ -23,6 +24,7 @@ func InitSystemConfig() {
 	SystemConfig = gjson.New(cfg, true)
 	// 初始化配置的缓存模式
 	CacheMode = SystemConfig.Get("server.cacheMode").String()
+	CachePlatform = SystemConfig.Get("server.cachePlatform").Bool()
 }
 
 // XDB 文件式存储

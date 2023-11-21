@@ -1,17 +1,21 @@
 package types
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/gogf/gf/v2/container/gvar"
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gcache"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/util/gconv"
+	"math"
 )
 
 type MySqlStatistics struct{}
 
-func (m *MySqlStatistics) Init() (err error) {
+func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatform bool) (err error) {
 	ctx := gctx.New()
 	// 初始化基础结构数据
 	type MySqlInit struct {
@@ -76,6 +80,49 @@ func (m *MySqlStatistics) Init() (err error) {
 			}
 		}
 	}
+	// 存储到缓存
+	err = saveToCache(ctx, cache, m, cacheMode, cachePlatform)
+	return
+}
+
+// 存储到缓存
+func saveToCache(ctx context.Context, cache *gcache.Cache, m *MySqlStatistics, cacheMode string, cachePlatform bool) (err error) {
+	const keyName = "Translate-"
+	if cacheMode == "redis" {
+		conn, connErr := g.Redis().Conn(ctx)
+		if connErr != nil {
+			return connErr
+		}
+		defer func() {
+			if err = conn.Close(ctx); err != nil {
+				return
+			}
+		}()
+		keys, keysErr := conn.Do(ctx, "KEYS", fmt.Sprintf("%s*", keyName))
+		if keysErr != nil {
+			return keysErr
+		}
+		for _, item := range keys.Strings() {
+			if _, delErr := conn.Do(ctx, "DEL", item); delErr != nil {
+				return delErr
+			}
+		}
+	}
+	// 内存缓存是否 包含 平台
+	err = m.GetterCache(func(data []*TranslateData) (err error) {
+		for _, item := range data {
+			var md5 string
+			if cachePlatform {
+				md5 = gmd5.MustEncrypt(fmt.Sprintf("to:%s-text:%s-platform:%s", item.To, item.OriginalText, item.Platform))
+			} else {
+				md5 = gmd5.MustEncrypt(fmt.Sprintf("to:%s-text:%s", item.To, item.OriginalText))
+			}
+			if err = cache.Set(ctx, fmt.Sprintf("%s%s", keyName, md5), item, 0); err != nil {
+				return
+			}
+		}
+		return
+	})
 	return
 }
 
@@ -132,7 +179,21 @@ func (m *MySqlStatistics) SaveCache(data *SaveData) error {
 	return nil
 }
 
-func (m *MySqlStatistics) GetterCache(fn func(data []*TranslateData)) error {
-	//TODO implement me
-	panic("implement me")
+func (m *MySqlStatistics) GetterCache(fn func(data []*TranslateData) (err error)) error {
+	pageSize := 1
+	model := g.Model("translate_cache")
+	dbSize, err := model.Clone().Count()
+	if err != nil {
+		return err
+	}
+	for i := 0; i < int(math.Ceil(float64(dbSize)/float64(pageSize))); i++ {
+		newData := make([]*TranslateData, 0)
+		if err = model.Clone().Page(i+1, pageSize).Scan(&newData); err != nil {
+			return err
+		}
+		if err = fn(newData); err != nil {
+			return err
+		}
+	}
+	return nil
 }
