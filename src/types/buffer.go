@@ -41,6 +41,8 @@ func (t *BufferType) Handler(from, to, text, platform string, fn func(*Translate
 	}
 	bufferArr.Init(t, platform)
 	t.m.Unlock()
+	// 创建上下文
+	ctx := gctx.New()
 	// 循环处理数据
 	for i := 0; i < t.num; i++ {
 		t.m.Lock()
@@ -52,7 +54,7 @@ func (t *BufferType) Handler(from, to, text, platform string, fn func(*Translate
 		// 调用处理
 		t, err := fn(p, from, to, text)
 		if err != nil {
-			g.Log().Error(gctx.New(), "调用翻译失败", err)
+			g.Log().Error(ctx, "调用翻译失败", err)
 			continue
 		}
 		t.Md5 = p.md5
