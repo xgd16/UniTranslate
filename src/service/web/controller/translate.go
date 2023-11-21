@@ -71,9 +71,16 @@ func AddConfig(r *ghttp.Request) {
 }
 
 func t(from, to, text, platform string) (value any, err error) {
-	value, err = global.Buffer.Handler(from, to, text, platform, handler.Translate)
+	var data *types.TranslateData
+	data, err = global.Buffer.Handler(from, to, text, platform, handler.Translate)
+	value = data
+	// 触发写入
+	queueHandler.SaveQueue.Push(&types.SaveData{
+		Data: data,
+	})
+	// 写入到缓存
 	queueHandler.CountRecordQueue.Push(&types.CountRecordData{
-		Data: value.(*types.TranslateData),
+		Data: data,
 		Ok:   err == nil,
 	})
 	return

@@ -43,7 +43,7 @@ func (m *MySqlStatistics) Init() (err error) {
 		},
 		{
 			TableName: "translate_cache",
-			Table:     "CREATE TABLE translate_cache ( id bigint UNSIGNED AUTO_INCREMENT, translate json NOT NULL COMMENT '翻译后结果', text text NOT NULL, fromLang varchar(16) NULL COMMENT '翻译前语言', toLang varchar(16) NULL COMMENT '翻译后语言', platform varchar(16) NOT NULL COMMENT '翻译平台 Baidu YouDao Google Deepl', textLen int NULL DEFAULT 0 COMMENT '原文文字长度', translationLen int NULL DEFAULT 0 COMMENT '翻译后文字长度', createTime datetime NOT NULL, updateTime datetime NULL, PRIMARY KEY (id) );",
+			Table:     "CREATE TABLE translate_cache ( id bigint UNSIGNED AUTO_INCREMENT, translate json NOT NULL COMMENT '翻译后结果', text text NOT NULL, fromLang varchar(16) NULL COMMENT '翻译前语言', toLang varchar(16) NULL COMMENT '翻译后语言', textMd5 char(32) NOT NULL COMMENT '翻译前语言md5值', platform varchar(16) NOT NULL COMMENT '翻译平台 Baidu YouDao Google Deepl', textLen int NULL DEFAULT 0 COMMENT '原文文字长度', translationLen int NULL DEFAULT 0 COMMENT '翻译后文字长度', createTime datetime NOT NULL, updateTime datetime NULL, PRIMARY KEY (id) );",
 			Index: []string{
 				"CREATE INDEX translate_cache_createTime_index ON translate_cache (createTime);",
 				"CREATE INDEX translate_cache_fromLang_index ON translate_cache (fromLang);",
@@ -51,6 +51,7 @@ func (m *MySqlStatistics) Init() (err error) {
 				"CREATE INDEX translate_cache_textLen_index ON translate_cache (textLen);",
 				"CREATE INDEX translate_cache_toLang_index ON translate_cache (toLang);",
 				"CREATE INDEX translate_cache_translationLen_index ON translate_cache (translationLen);",
+				"CREATE INDEX translate_cache_textMd5_index ON translate_cache (textMd5);",
 			},
 		},
 	}
@@ -112,4 +113,26 @@ func (m *MySqlStatistics) CreateEvent(data *TranslatePlatform) error {
 		"serialNumber": data.md5,
 	}).Insert()
 	return err
+}
+
+func (m *MySqlStatistics) SaveCache(data *SaveData) error {
+	count, err := g.Model("translate_cache").Count(g.Map{
+		"textMd5":  data.Data.OriginalTextMd5,
+		"platform": data.Data.Platform,
+	})
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return nil
+	}
+	if _, err = g.Model("translate_cache").Insert(data.Data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MySqlStatistics) GetterCache(fn func(data []*TranslateData)) error {
+	//TODO implement me
+	panic("implement me")
 }

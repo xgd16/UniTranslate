@@ -10,6 +10,7 @@ import (
 var register = map[string]func(){
 	"CountRecord":   handler.CountRecordQueueHandler,
 	"RequestRecord": handler.RequestRecordQueueHandler,
+	"Save":          handler.SaveQueueHandler,
 }
 
 func Service() {

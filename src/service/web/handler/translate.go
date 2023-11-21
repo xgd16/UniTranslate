@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/xgd16/gf-x-tool/xtranslate"
@@ -50,6 +51,7 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 	// 返回数据
 	data = &types.TranslateData{
 		OriginalText:     text,
+		OriginalTextMd5:  gmd5.MustEncrypt(text),
 		TranslateTextArr: translateTextArr,
 		From:             from,
 		To:               OriginalTo,
