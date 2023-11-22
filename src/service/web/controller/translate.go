@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/xgd16/gf-x-tool/x"
@@ -56,6 +57,22 @@ func Translate(r *ghttp.Request) {
 	})
 	x.FastResp(r, err, false).Resp("翻译失败请重试")
 	x.FastResp(r).SetData(data.Map()).Resp()
+}
+
+func GetConfigList(r *ghttp.Request) {
+	dataMap := global.XDB.GetGJson().Get("translate").MapStrVar()
+	respData := make([]map[string]any, 0)
+	for k, v := range dataMap {
+		item := v.MapStrAny()
+		respData = append(respData, g.Map{
+			"id":       k,
+			"level":    item["level"],
+			"platform": item["platform"],
+			"status":   item["status"],
+			"type":     item["type"],
+		})
+	}
+	x.FastResp(r).SetData(respData).Resp()
 }
 
 func AddConfig(r *ghttp.Request) {

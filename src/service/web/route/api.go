@@ -9,8 +9,8 @@ import (
 // Api 路由注册
 func Api(r *ghttp.RouterGroup) {
 	rA := r.Clone().Middleware(middleware.AuthVerifyMiddleware)
-	// 请注意注册的微服务接口必须统一标准为 POST 方式
 	rA.POST("/addConfig", controller.AddConfig)
+	rA.GET("/getConfigList", controller.GetConfigList)
 	rA.POST("/translate", controller.Translate)
 	r.GET("/getCountRecord", controller.GetCountRecord)
 	r.GET("/getRequestRecord", controller.GetRequestRecord)
