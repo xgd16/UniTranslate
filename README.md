@@ -17,7 +17,7 @@
 
 ## 未来支持 (优先级按照顺序) ✈️
 - [x] 持久化已翻译到 `MySQL`
-- [ ] web 控制页面
+- [x] web 控制页面
 
 ## 基础类型 🪨
 `YouDao` `Baidu` `Google` `Deepl`

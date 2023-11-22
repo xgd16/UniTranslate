@@ -17,7 +17,7 @@ This project is a tool that supports translation across multiple platforms and w
 
 ## Future Support (priority in order) ✈️
 - [x] Persist translated content into `MySQL`
-- [ ] Web control panel
+- [x] Web control panel
 
 ## Base Types 🪨
 `YouDao` `Baidu` `Google` `Deepl`
