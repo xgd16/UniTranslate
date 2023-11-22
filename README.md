@@ -5,6 +5,9 @@
 # 项目简介 📒
 该项目是一个支持多平台翻译和将翻译结果写入 Redis 缓存的工具。
 
+## WEB管理
+[UniTranslate-web-console](https://github.com/xgd16/UniTranslate-web-console)
+
 ## 功能特点 ✨
 - 支持百度、有道、谷歌和 Deepl 平台的翻译接入
 - 支持设置翻译 API 的等级优先调用配置的低等级 API

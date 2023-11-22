@@ -5,6 +5,9 @@
 # Project Overview 📒
 This project is a tool that supports translation across multiple platforms and writes the translation results into Redis cache.
 
+## WEB management
+[UniTranslate-web-console](https://github.com/xgd16/UniTranslate-web-console)
+
 ## Key Features ✨
 - Supports integration with translation platforms like Baidu, Youdao, Google, and Deepl
 - Supports setting the priority level for calling translation APIs, allowing lower-level APIs to be configured for priority usage
