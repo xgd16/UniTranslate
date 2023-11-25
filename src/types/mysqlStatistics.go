@@ -147,11 +147,15 @@ func (m *MySqlStatistics) CountRecord(data *CountRecordData) error {
 }
 
 func (m *MySqlStatistics) RequestRecord(data *RequestRecordData) error {
+	var errMsg string
+	if data.ErrMsg != nil {
+		errMsg = data.ErrMsg.Error()
+	}
 	_, err := g.Model("request_record").Data(g.Map{
 		"clientIp": data.ClientIp,
 		"body":     data.Body,
 		"status":   gconv.Int(data.Ok),
-		"errMsg":   data.ErrMsg.Error(),
+		"errMsg":   errMsg,
 	}).Insert()
 	return err
 }
