@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"uniTranslate/src/global"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -17,7 +16,7 @@ import (
 
 type MySqlStatistics struct{}
 
-func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatform bool) (err error) {
+func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatform, cacheRefreshOnStartup bool) (err error) {
 	ctx := gctx.New()
 	// 初始化基础结构数据
 	type MySqlInit struct {
@@ -83,7 +82,7 @@ func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatf
 		}
 	}
 	// 存储到缓存
-	if global.CacheRefreshOnStartup {
+	if cacheRefreshOnStartup {
 		err = saveToCache(ctx, cache, m, cacheMode, cachePlatform)
 	}
 	return

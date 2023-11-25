@@ -16,7 +16,7 @@ type TranslateData struct {
 
 type StatisticsInterface interface {
 	// Init 初始化数据库
-	Init(cache *gcache.Cache, cacheMode string, cachePlatform bool) error
+	Init(cache *gcache.Cache, cacheMode string, cachePlatform, cacheRefreshOnStartup bool) error
 	// CountRecord 计数统计
 	CountRecord(data *CountRecordData) error
 	// RequestRecord 请求记录

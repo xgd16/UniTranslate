@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"uniTranslate/src/global"
+	"uniTranslate/src/service"
+
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 	"github.com/gogf/gf/v2/frame/g"
@@ -11,8 +14,6 @@ import (
 	"github.com/xgd16/gf-x-tool/xhttp"
 	"github.com/xgd16/gf-x-tool/xlib"
 	"github.com/xgd16/gf-x-tool/xtranslate"
-	"uniTranslate/src/global"
-	"uniTranslate/src/service"
 )
 
 func main() {
@@ -54,7 +55,7 @@ func baseInit() {
 
 // 初始化 数据库信息
 func initDataBase() (err error) {
-	err = global.StatisticalProcess.Init(global.GfCache, global.CacheMode, global.CachePlatform)
+	err = global.StatisticalProcess.Init(global.GfCache, global.CacheMode, global.CachePlatform, global.CacheRefreshOnStartup)
 	return
 }
 
