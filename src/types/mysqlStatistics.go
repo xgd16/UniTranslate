@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
+
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcache"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/util/gconv"
-	"math"
 )
 
 type MySqlStatistics struct{}
@@ -163,6 +164,9 @@ func (m *MySqlStatistics) CreateEvent(data *TranslatePlatform) error {
 }
 
 func (m *MySqlStatistics) SaveCache(data *SaveData) error {
+	if data == nil {
+		return nil
+	}
 	count, err := g.Model("translate_cache").Count(g.Map{
 		"textMd5":  data.Data.OriginalTextMd5,
 		"platform": data.Data.Platform,
