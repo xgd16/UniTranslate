@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"uniTranslate/src/global"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -82,7 +83,9 @@ func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatf
 		}
 	}
 	// 存储到缓存
-	err = saveToCache(ctx, cache, m, cacheMode, cachePlatform)
+	if global.CacheRefreshOnStartup {
+		err = saveToCache(ctx, cache, m, cacheMode, cachePlatform)
+	}
 	return
 }
 
