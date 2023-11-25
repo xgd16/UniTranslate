@@ -151,7 +151,7 @@ func (m *MySqlStatistics) RequestRecord(data *RequestRecordData) error {
 		"clientIp": data.ClientIp,
 		"body":     data.Body,
 		"status":   gconv.Int(data.Ok),
-		"errMsg":   data.ErrMsg,
+		"errMsg":   data.ErrMsg.Error(),
 	}).Insert()
 	return err
 }
@@ -164,7 +164,7 @@ func (m *MySqlStatistics) CreateEvent(data *TranslatePlatform) error {
 }
 
 func (m *MySqlStatistics) SaveCache(data *SaveData) error {
-	if data == nil {
+	if data == nil || data.Data == nil {
 		return nil
 	}
 	count, err := g.Model("translate_cache").Count(g.Map{

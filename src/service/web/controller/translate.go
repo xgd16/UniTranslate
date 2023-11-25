@@ -3,6 +3,11 @@ package controller
 import (
 	"context"
 	"fmt"
+	"uniTranslate/src/global"
+	queueHandler "uniTranslate/src/service/queue/handler"
+	"uniTranslate/src/service/web/handler"
+	"uniTranslate/src/types"
+
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
@@ -11,10 +16,6 @@ import (
 	"github.com/xgd16/gf-x-tool/x"
 	"github.com/xgd16/gf-x-tool/xlib"
 	"github.com/xgd16/gf-x-tool/xtranslate"
-	"uniTranslate/src/global"
-	queueHandler "uniTranslate/src/service/queue/handler"
-	"uniTranslate/src/service/web/handler"
-	"uniTranslate/src/types"
 )
 
 func Translate(r *ghttp.Request) {

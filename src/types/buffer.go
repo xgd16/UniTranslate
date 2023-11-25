@@ -2,11 +2,13 @@ package types
 
 import (
 	"errors"
+	"fmt"
+	"sync"
+
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/xgd16/gf-x-tool/xstorage"
-	"sync"
 )
 
 type BufferType struct {
@@ -54,13 +56,16 @@ func (t *BufferType) Handler(from, to, text, platform string, fn func(*Translate
 		// 调用处理
 		t, err := fn(p, from, to, text)
 		if err != nil {
-			g.Log().Error(ctx, "调用翻译失败", err)
+			e = fmt.Errorf("调用翻译失败 %s", err)
+			g.Log().Error(ctx, e)
 			continue
 		}
 		t.Md5 = p.md5
 		return t, nil
 	}
-	e = errors.New("翻译失败")
+	if e == nil {
+		e = errors.New("翻译失败")
+	}
 	return
 }
 
