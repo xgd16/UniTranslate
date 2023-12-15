@@ -28,6 +28,9 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+    files:
+      - config.bak.yaml
+      - translate.json
 checksum:
   name_template: 'checksums.txt'
 snapshot:
