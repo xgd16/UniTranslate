@@ -1,44 +1,45 @@
-# .goreleaser.yaml
-
-# 配置 GoReleaser 的版本
-version: 1
-# 配置构建时的环境
-env:
-  - CGO_ENABLED=0
-  - GO111MODULE=on
-
-# 配置构建和发布信息
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    - go generate ./...
 builds:
-  - main: ./
+  - env:
+      - CGO_ENABLED=0
     goos:
       - linux
-      - darwin
       - windows
-    goarch:
-      - amd64
-      - arm64
-    # 可以根据需要添加其他构建配置
+      - darwin
 
-# 发布配置
-release:
-  # 发布到 GitHub
-  github:
-    owner: xgd16
-    name_template: "{{ .Name }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}"
-    # 可以在这里添加其他 GitHub 相关的配置，比如 release_notes、changelog、draft 等
-
-# 构建产物的设置
 archives:
-  - name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-    files:
-      - dist/**
-    format: tar.gz
-    replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
+  - format: tar.gz
+    # this name template makes the OS and Arch compatible with the results of uname.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
 
-    # 可以添加其他构建产物的配置
-
-# 指定构建产物的生成目录
-dist: dist
+# The lines beneath this are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
