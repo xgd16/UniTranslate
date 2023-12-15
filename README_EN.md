@@ -21,7 +21,7 @@ This project is a tool that supports multi-platform translation and writes trans
 - [x] ChatGPT AI translate
 
 ## Basic Types 🪨
-`YouDao` `Baidu` `Google` `Deepl`
+`YouDao` `Baidu` `Google` `Deepl` `ChatGPT`
 
 ## Configuration Parsing 🗄️
 

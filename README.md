@@ -21,7 +21,7 @@
 - [x] ChatGPT AI翻译
 
 ## 基础类型 🪨
-`YouDao` `Baidu` `Google` `Deepl`
+`YouDao` `Baidu` `Google` `Deepl` `ChatGPT`
 
 
 
