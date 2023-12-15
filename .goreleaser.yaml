@@ -1,23 +1,45 @@
-project_name: uni-translate
+# .goreleaser.yaml
+
+# 配置 GoReleaser 的版本
+version: 1
+# 配置构建时的环境
+env:
+  - CGO_ENABLED=0
+  - GO111MODULE=on
+
+# 配置构建和发布信息
 builds:
-  - env: [ CGO_ENABLED=0 ]
-    goos: # 编译平台列表
+  - main: ./
+    goos:
       - linux
-      - windows
       - darwin
-checksum:
-  name_template: 'checksums.txt'
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    # 可以根据需要添加其他构建配置
+
+# 发布配置
+release:
+  # 发布到 GitHub
+  github:
+    owner: xgd16
+    name_template: "{{ .Name }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}"
+    # 可以在这里添加其他 GitHub 相关的配置，比如 release_notes、changelog、draft 等
+
+# 构建产物的设置
 archives:
-  - replacements:
-      linux: Linux
-      windows: Windows
-      darwin: MacOs
-      386: i386
-      amd64: x86_64
+  - name_template: "{{ .Name }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - dist/*
     format_overrides:
+      - goos: linux
+        format: tar.gz
+      - goos: darwin
+        format: zip
       - goos: windows
         format: zip
-    files: # 添加到压缩包内的文件列表
-      - README.md
-      - img.png
-      - conf/app.conf
+    # 可以添加其他构建产物的配置
+
+# 指定构建产物的生成目录
+dist: dist
