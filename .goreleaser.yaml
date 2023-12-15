@@ -29,10 +29,15 @@ release:
 
 # 构建产物的设置
 archives:
-  - name_template: "{{ .Name }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}"
+  - name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files:
-      - dist/*
+      - dist/**
     format: tar.gz
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+
     # 可以添加其他构建产物的配置
 
 # 指定构建产物的生成目录
