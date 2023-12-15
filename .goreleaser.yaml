@@ -1,0 +1,23 @@
+project_name: uni-translate
+builds:
+  - env: [ CGO_ENABLED=0 ]
+    goos: # 编译平台列表
+      - linux
+      - windows
+      - darwin
+checksum:
+  name_template: 'checksums.txt'
+archives:
+  - replacements:
+      linux: Linux
+      windows: Windows
+      darwin: MacOs
+      386: i386
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
+    files: # 添加到压缩包内的文件列表
+      - README.md
+      - img.png
+      - conf/app.conf
