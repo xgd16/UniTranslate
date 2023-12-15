@@ -18,6 +18,7 @@ This project is a tool that supports multi-platform translation and writes trans
 ## Future Support (Priority in order, ✔️ indicates implemented) ✈️
 - [x] Persist translated content to `MySQL`
 - [x] Web control page
+- [x] ChatGPT AI translate
 
 ## Basic Types 🪨
 `YouDao` `Baidu` `Google` `Deepl`

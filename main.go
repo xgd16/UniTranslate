@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/gogf/gf/v2/encoding/gjson"
 	"uniTranslate/src/global"
+	"uniTranslate/src/lib"
 	"uniTranslate/src/service"
 
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
@@ -31,6 +33,8 @@ func baseInit() {
 	xhttp.RespErrorMsg = true
 	// 开启翻译支持
 	xtranslate.InitTranslate()
+	// 初始化 chatGPT 需要的数据
+	global.ChatGPTLangConfig = gjson.MustEncodeString(xtranslate.BaseTranslateConf[lib.ChatGptTranslateMode])
 	// 初始化缓冲区
 	if err := global.Buffer.Init(); err != nil {
 		panic(err)

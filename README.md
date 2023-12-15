@@ -18,6 +18,7 @@
 ## 未来支持 (优先级按照顺序,打勾为已实现) ✈️
 - [x] 持久化已翻译到 `MySQL`
 - [x] web 控制页面
+- [x] ChatGPT AI翻译
 
 ## 基础类型 🪨
 `YouDao` `Baidu` `Google` `Deepl`

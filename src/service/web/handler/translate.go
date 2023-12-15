@@ -6,6 +6,7 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/xgd16/gf-x-tool/xtranslate"
+	"uniTranslate/src/lib"
 	"uniTranslate/src/types"
 )
 
@@ -43,6 +44,11 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 			CurlTimeOut: gconv.Int(config.Cfg["curlTimeOut"]),
 			Url:         gconv.String(config.Cfg["url"]),
 			Key:         gconv.String(config.Cfg["key"]),
+		}, OriginalFrom, OriginalTo, text)
+		break
+	case lib.ChatGptTranslateMode:
+		translateTextArr, from, translateErr = lib.ChatGptTranslate(&lib.ChatGptConfigType{
+			Key: gconv.String(config.Cfg["key"]),
 		}, OriginalFrom, OriginalTo, text)
 		break
 	default:

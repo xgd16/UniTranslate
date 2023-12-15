@@ -39,3 +39,5 @@ var CacheRefreshOnStartup = false
 var GfCache *gcache.Cache
 
 var StatisticalProcess types.StatisticsInterface = new(types.MySqlStatistics)
+
+var ChatGPTLangConfig string
