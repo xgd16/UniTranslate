@@ -77,6 +77,8 @@ github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/xgd16/gf-x-tool v0.5.9 h1:/TC7afMpTQpV4/swVzkiCDDkgp6fMgelhg2fVBkJJIo=
 github.com/xgd16/gf-x-tool v0.5.9/go.mod h1:mmfK1rXjhMeiyDIcpEg22e0JY1zGZCmMbXA3lUNvyNA=
+github.com/xgd16/gf-x-tool v0.5.10 h1:kGpEQoW9kgLaQAGquO8OR7QwzVgJuIz3j6PfaAAZRuU=
+github.com/xgd16/gf-x-tool v0.5.10/go.mod h1:mmfK1rXjhMeiyDIcpEg22e0JY1zGZCmMbXA3lUNvyNA=
 go.opentelemetry.io/otel v1.21.0 h1:hzLeKBZEL7Okw2mGzZ0cc4k/A7Fta0uoPgaJCr8fsFc=
 go.opentelemetry.io/otel v1.21.0/go.mod h1:QZzNPQPm1zLX4gZK4cMi+71eaorMSGT3A4znnUvNNEo=
 go.opentelemetry.io/otel/metric v1.21.0 h1:tlYWfeo+Bocx5kLEloTjbcDwBuELRrIFxwdQ36PlJu4=
