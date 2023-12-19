@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"github.com/gogf/gf/v2/text/gstr"
 	"uniTranslate/src/global"
 	"uniTranslate/src/lib"
 	queueHandler "uniTranslate/src/service/queue/handler"
@@ -41,6 +42,9 @@ func Translate(r *ghttp.Request) {
 		data *gvar.Var
 		err  error
 	)
+	// 记录从翻译到获取到结果的时间
+	startTime := gtime.Now().UnixMilli()
+	// 判断是否进行缓存
 	if global.CacheMode == "off" {
 		var dataAny any
 		dataAny, err = t(from, to, text, platform)
@@ -50,15 +54,21 @@ func Translate(r *ghttp.Request) {
 			return t(from, to, text, platform)
 		}, 0)
 	}
+	endTime := gtime.Now().UnixMilli()
+	// 转换为map
+	dataMap := data.MapStrVar()
+	// 记录翻译
 	queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
 		ClientIp: r.GetClientIp(),
-		Body:     r.GetBodyString(),
+		Body:     gstr.TrimAll(r.GetBodyString()),
 		Time:     gtime.Now().UnixMilli(),
 		Ok:       err == nil,
 		ErrMsg:   err,
+		Platform: dataMap["platform"].String(),
+		TakeTime: int(endTime - startTime), // 获取到获取翻译的毫秒数
 	})
 	x.FastResp(r, err, false).Resp("翻译失败请重试")
-	x.FastResp(r).SetData(data.Map()).Resp()
+	x.FastResp(r).SetData(dataMap).Resp()
 }
 
 func GetConfigList(r *ghttp.Request) {

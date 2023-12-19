@@ -39,7 +39,9 @@ type RequestRecordData struct {
 	Body     string `json:"body"`
 	Time     int64  `json:"time"`
 	Ok       bool   `json:"ok"`
+	Platform string `json:"platform"`
 	ErrMsg   error  `json:"errMsg"`
+	TakeTime int    `json:"takeTime"`
 }
 
 type SaveData struct {

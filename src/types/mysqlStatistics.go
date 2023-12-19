@@ -39,11 +39,13 @@ func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatf
 		},
 		{
 			TableName: "request_record",
-			Table:     "CREATE TABLE request_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, clientIp varchar(255) NULL, body text NULL, status tinyint(1) NULL, errMsg text NULL, createTime datetime(6) NULL, updateTime datetime(6) NULL );",
+			Table:     "CREATE TABLE request_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, clientIp varchar(255) NULL, body text NULL, status tinyint(1) NULL, errMsg text NULL, takeTime int NULL COMMENT '用时', platform varchar(20) NULL COMMENT '平台', createTime datetime(6) NULL, updateTime datetime(6) NULL );",
 			Index: []string{
 				"CREATE INDEX request_record_clientIp_index ON request_record (clientIp);",
 				"CREATE INDEX request_record_createTime_index ON request_record (createTime);",
 				"CREATE INDEX request_record_status_index ON request_record (status);",
+				"CREATE INDEX request_record_takeTime_index ON request_record (takeTime);",
+				"CREATE INDEX request_record_platform_index ON request_record (platform);",
 			},
 		},
 		{
@@ -158,6 +160,8 @@ func (m *MySqlStatistics) RequestRecord(data *RequestRecordData) error {
 		"body":     data.Body,
 		"status":   gconv.Int(data.Ok),
 		"errMsg":   errMsg,
+		"takeTime": data.TakeTime,
+		"platform": data.Platform,
 	}).Insert()
 	return err
 }
