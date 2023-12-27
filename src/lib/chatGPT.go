@@ -41,10 +41,6 @@ func ChatGptTranslate(config *ChatGptConfigType, from, to, text string) (result 
 	return
 }
 
-func GptTranslate(key, msg, to string) (resp string, err error) {
-	return
-}
-
 func SendToChatGpt(key, msg string) (resp string, err error) {
 	client := openai.NewClient(key)
 	respData, err := client.CreateChatCompletion(
