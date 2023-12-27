@@ -3,7 +3,9 @@ package controller
 import (
 	"context"
 	"fmt"
+	"github.com/gogf/gf/v2/net/gtrace"
 	"github.com/gogf/gf/v2/text/gstr"
+	"uniTranslate/src/buffer"
 	"uniTranslate/src/global"
 	"uniTranslate/src/lib"
 	queueHandler "uniTranslate/src/service/queue/handler"
@@ -47,11 +49,11 @@ func Translate(r *ghttp.Request) {
 	// 判断是否进行缓存
 	if global.CacheMode == "off" {
 		var dataAny any
-		dataAny, err = t(from, to, text, platform)
+		dataAny, err = t(r, from, to, text, platform)
 		data = gvar.New(dataAny)
 	} else {
 		data, err = global.GfCache.GetOrSetFunc(r.GetCtx(), fmt.Sprintf("Translate-%s", md5), func(ctx context.Context) (value any, err error) {
-			return t(from, to, text, platform)
+			return t(r, from, to, text, platform)
 		}, 0)
 	}
 	endTime := gtime.Now().UnixMilli()
@@ -66,6 +68,7 @@ func Translate(r *ghttp.Request) {
 		ErrMsg:   err,
 		Platform: dataMap["platform"].String(),
 		TakeTime: int(endTime - startTime), // 获取到获取翻译的毫秒数
+		TraceId:  gtrace.GetTraceID(r.Context()),
 	})
 	x.FastResp(r, err, false).Resp("翻译失败请重试")
 	x.FastResp(r).SetData(dataMap).Resp()
@@ -95,13 +98,13 @@ func AddConfig(r *ghttp.Request) {
 	x.FastResp(r, !global.XDB.GetGJson().Get(fmt.Sprintf("xtranslate.%s", t.GetMd5())).IsEmpty(), false).Resp("已存在此配置")
 	x.FastResp(r, global.XDB.Set("translate", t.GetMd5(), t), false).Resp("添加失败")
 	x.FastResp(r, global.StatisticalProcess.CreateEvent(t)).Resp("添加失败")
-	x.FastResp(r, global.Buffer.Init(), false).Resp("写入成功但重新初始化失败")
+	x.FastResp(r, buffer.Buffer.Init(), false).Resp("写入成功但重新初始化失败")
 	x.FastResp(r).Resp()
 }
 
-func t(from, to, text, platform string) (value any, err error) {
+func t(r *ghttp.Request, from, to, text, platform string) (value any, err error) {
 	var data *types.TranslateData
-	data, err = global.Buffer.Handler(from, to, text, platform, handler.Translate)
+	data, err = buffer.Buffer.Handler(r, from, to, text, platform, handler.Translate)
 	value = data
 	// 触发写入
 	queueHandler.SaveQueue.Push(&types.SaveData{

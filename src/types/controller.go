@@ -9,7 +9,7 @@ import (
 
 // TranslatePlatform 翻译平台
 type TranslatePlatform struct {
-	md5      string
+	Md5      string
 	Platform string         `json:"platform"`
 	Status   int            `json:"status"`
 	Level    int            `json:"level"`
@@ -31,9 +31,9 @@ func (t *TranslatePlatform) InitMd5() {
 	for _, v := range kArr.Sort().Slice() {
 		s = append(s, fmt.Sprintf("%s:%s", v, t.Cfg[v]))
 	}
-	t.md5 = gmd5.MustEncrypt(gstr.Join(s, "-"))
+	t.Md5 = gmd5.MustEncrypt(gstr.Join(s, "-"))
 }
 
 func (t *TranslatePlatform) GetMd5() string {
-	return t.md5
+	return t.Md5
 }

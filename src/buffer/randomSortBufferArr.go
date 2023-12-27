@@ -1,12 +1,13 @@
-package types
+package buffer
 
 import (
 	"github.com/gogf/gf/v2/container/garray"
+	"uniTranslate/src/types"
 )
 
 type RandomSortBufferArr struct {
 	buffer *BufferType
-	level  [][]*TranslatePlatform
+	level  [][]*types.TranslatePlatform
 	idx    [][]int
 }
 
@@ -14,7 +15,7 @@ func (r *RandomSortBufferArr) Init(data *BufferType, _ string) BufferArrInterfac
 	r.buffer = data
 	level := r.buffer.GetLevel()
 	// 随机排序当前序列
-	nowLevelArr := make([][]*TranslatePlatform, len(level))
+	nowLevelArr := make([][]*types.TranslatePlatform, len(level))
 	for i, platforms := range level {
 		// 数据不大于1的跳过
 		if len(platforms) <= 1 {
@@ -22,8 +23,8 @@ func (r *RandomSortBufferArr) Init(data *BufferType, _ string) BufferArrInterfac
 			continue
 		}
 		// 打乱组中数据顺序
-		nowLevelArr[i] = func(platforms []*TranslatePlatform) []*TranslatePlatform {
-			var pArr []*TranslatePlatform
+		nowLevelArr[i] = func(platforms []*types.TranslatePlatform) []*types.TranslatePlatform {
+			var pArr []*types.TranslatePlatform
 			l := len(platforms)
 			a := garray.NewIntArray()
 			for n := 0; n < l; n++ {
@@ -40,7 +41,7 @@ func (r *RandomSortBufferArr) Init(data *BufferType, _ string) BufferArrInterfac
 	return r
 }
 
-func (r *RandomSortBufferArr) GetPlatformConfig(i0, i1 int) *TranslatePlatform {
+func (r *RandomSortBufferArr) GetPlatformConfig(i0, i1 int) *types.TranslatePlatform {
 	return r.level[i0][i1]
 }
 

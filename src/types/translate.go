@@ -41,6 +41,7 @@ type RequestRecordData struct {
 	Ok       bool   `json:"ok"`
 	Platform string `json:"platform"`
 	ErrMsg   error  `json:"errMsg"`
+	TraceId  string `json:"traceId" orm:"tId"`
 	TakeTime int    `json:"takeTime"`
 }
 

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gogf/gf/v2/encoding/gjson"
+	"uniTranslate/src/buffer"
 	"uniTranslate/src/global"
 	"uniTranslate/src/lib"
 	"uniTranslate/src/service"
@@ -36,7 +37,7 @@ func baseInit() {
 	// 初始化 chatGPT 需要的数据
 	global.ChatGPTLangConfig = gjson.MustEncodeString(xtranslate.BaseTranslateConf[lib.ChatGptTranslateMode])
 	// 初始化缓冲区
-	if err := global.Buffer.Init(); err != nil {
+	if err := buffer.Buffer.Init(); err != nil {
 		panic(err)
 	}
 	// 初始化缓存

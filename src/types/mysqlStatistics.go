@@ -39,13 +39,14 @@ func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatf
 		},
 		{
 			TableName: "request_record",
-			Table:     "CREATE TABLE request_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, clientIp varchar(255) NULL, body text NULL, status tinyint(1) NULL, errMsg text NULL, takeTime int NULL COMMENT '用时', platform varchar(20) NULL COMMENT '平台', createTime datetime(6) NULL, updateTime datetime(6) NULL );",
+			Table:     "CREATE TABLE request_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, tId varchar(255) NULL COMMENT '请求事件id', clientIp varchar(255) NULL, body text NULL, status tinyint(1) NULL, errMsg text NULL, takeTime int NULL COMMENT '用时', platform varchar(20) NULL COMMENT '平台', createTime datetime(6) NULL, updateTime datetime(6) NULL );",
 			Index: []string{
 				"CREATE INDEX request_record_clientIp_index ON request_record (clientIp);",
 				"CREATE INDEX request_record_createTime_index ON request_record (createTime);",
 				"CREATE INDEX request_record_status_index ON request_record (status);",
 				"CREATE INDEX request_record_takeTime_index ON request_record (takeTime);",
 				"CREATE INDEX request_record_platform_index ON request_record (platform);",
+				"CREATE INDEX request_record_tId_index ON request_record (tId);",
 			},
 		},
 		{
@@ -162,13 +163,14 @@ func (m *MySqlStatistics) RequestRecord(data *RequestRecordData) error {
 		"errMsg":   errMsg,
 		"takeTime": data.TakeTime,
 		"platform": data.Platform,
+		"tId":      data.TraceId,
 	}).Insert()
 	return err
 }
 
 func (m *MySqlStatistics) CreateEvent(data *TranslatePlatform) error {
 	_, err := g.Model("count_record").Data(g.Map{
-		"serialNumber": data.md5,
+		"serialNumber": data.Md5,
 	}).Insert()
 	return err
 }
