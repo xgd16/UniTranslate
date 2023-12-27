@@ -21,6 +21,7 @@
 - [x] 持久化已翻译到 `MySQL`
 - [x] web 控制页面
 - [x] ChatGPT AI翻译
+- [ ] 讯飞翻译
 
 ## 基础类型 🪨
 `YouDao` `Baidu` `Google` `Deepl` `ChatGPT`
