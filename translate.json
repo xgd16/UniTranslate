@@ -84,5 +84,39 @@
     "id": "印度尼西亚语",
     "nl": "荷兰语",
     "th": "泰语"
+  },
+  "XunFei": {
+    "zh-CHS": "cn",
+    "en": "en",
+    "ko": "ko",
+    "ja": "ja",
+    "fr": "fr",
+    "ru": "ru",
+    "es": "es",
+    "pt": "pt",
+    "ar": "ar",
+    "de": "de",
+    "it": "it",
+    "vi": "vi",
+    "id": "id",
+    "nl": "nl",
+    "th": "th"
+  },
+  "XunFeiNiu": {
+    "zh-CHS": "cn",
+    "en": "en",
+    "ko": "ko",
+    "ja": "ja",
+    "fr": "fr",
+    "ru": "ru",
+    "es": "es",
+    "pt": "pt",
+    "ar": "ar",
+    "de": "de",
+    "it": "it",
+    "vi": "vi",
+    "id": "id",
+    "nl": "nl",
+    "th": "th"
   }
 }

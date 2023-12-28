@@ -22,13 +22,23 @@ import (
 	"github.com/xgd16/gf-x-tool/xtranslate"
 )
 
+var translateModeList = []string{
+	xtranslate.Baidu,
+	xtranslate.Deepl,
+	xtranslate.Google,
+	xtranslate.YouDao,
+	lib.ChatGptTranslateMode,
+	lib.XunFeiTranslateMode,
+	lib.XunFeiNiuTranslateMode,
+}
+
 func Translate(r *ghttp.Request) {
 	fromT := r.Get("from")
 	toT := r.Get("to")
 	textT := r.Get("text")
 	platform := r.Get("platform").String()
 	x.FastResp(r, fromT.IsEmpty() || toT.IsEmpty() || textT.IsEmpty(), false).Resp("参数错误")
-	x.FastResp(r, platform != "" && !xlib.InArr(platform, []string{xtranslate.Baidu, xtranslate.Deepl, xtranslate.Google, xtranslate.YouDao, lib.ChatGptTranslateMode}), false).Resp("不支持的平台")
+	x.FastResp(r, platform != "" && !xlib.InArr(platform, translateModeList), false).Resp("不支持的平台")
 	from := fromT.String()
 	to := toT.String()
 	text := textT.String()
@@ -93,8 +103,9 @@ func GetConfigList(r *ghttp.Request) {
 func AddConfig(r *ghttp.Request) {
 	t := new(types.TranslatePlatform)
 	x.FastResp(r, r.GetStruct(t)).Resp()
+	x.FastResp(r, t.Platform == "", false).Resp("名称不能为空")
 	t.InitMd5()
-	x.FastResp(r, t.Type != "" && !xlib.InArr(t.Type, []string{xtranslate.Baidu, xtranslate.Deepl, xtranslate.Google, xtranslate.YouDao, lib.ChatGptTranslateMode}), false).Resp("不支持的平台")
+	x.FastResp(r, t.Type != "" && !xlib.InArr(t.Type, translateModeList), false).Resp("不支持的平台")
 	x.FastResp(r, !global.XDB.GetGJson().Get(fmt.Sprintf("xtranslate.%s", t.GetMd5())).IsEmpty(), false).Resp("已存在此配置")
 	x.FastResp(r, global.XDB.Set("translate", t.GetMd5(), t), false).Resp("添加失败")
 	x.FastResp(r, global.StatisticalProcess.CreateEvent(t)).Resp("添加失败")

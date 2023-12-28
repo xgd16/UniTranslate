@@ -39,7 +39,7 @@ func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatf
 		},
 		{
 			TableName: "request_record",
-			Table:     "CREATE TABLE request_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, tId varchar(255) NULL COMMENT '请求事件id', clientIp varchar(255) NULL, body text NULL, status tinyint(1) NULL, errMsg text NULL, takeTime int NULL COMMENT '用时', platform varchar(20) NULL COMMENT '平台', createTime datetime(6) NULL, updateTime datetime(6) NULL );",
+			Table:     "CREATE TABLE request_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, tId varchar(255) NULL COMMENT '请求事件id', clientIp varchar(255) NULL, body text NULL, status tinyint(1) NULL, errMsg text NULL, takeTime int NULL COMMENT '用时', platform varchar(64) NULL COMMENT '平台', createTime datetime(6) NULL, updateTime datetime(6) NULL );",
 			Index: []string{
 				"CREATE INDEX request_record_clientIp_index ON request_record (clientIp);",
 				"CREATE INDEX request_record_createTime_index ON request_record (createTime);",

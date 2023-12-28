@@ -51,6 +51,20 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 			Key: gconv.String(config.Cfg["key"]),
 		}, OriginalFrom, OriginalTo, text)
 		break
+	case lib.XunFeiTranslateMode:
+		translateTextArr, from, translateErr = lib.XunFeiTranslate(&lib.XunFeiConfigType{
+			AppId:  gconv.String(config.Cfg["appId"]),
+			ApiKey: gconv.String(config.Cfg["apiKey"]),
+			Secret: gconv.String(config.Cfg["secret"]),
+		}, OriginalFrom, OriginalTo, text)
+		break
+	case lib.XunFeiNiuTranslateMode:
+		translateTextArr, from, translateErr = lib.XunFeiNiuTranslate(&lib.XunFeiConfigType{
+			AppId:  gconv.String(config.Cfg["appId"]),
+			ApiKey: gconv.String(config.Cfg["apiKey"]),
+			Secret: gconv.String(config.Cfg["secret"]),
+		}, OriginalFrom, OriginalTo, text)
+		break
 	default:
 		translateErr = errors.New("不支持的翻译")
 	}
