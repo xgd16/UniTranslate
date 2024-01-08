@@ -22,6 +22,8 @@
 - [x] web 控制页面
 - [x] ChatGPT AI翻译
 - [x] 讯飞翻译
+- [ ] 腾讯翻译
+- [ ] 客户端更多翻译功能支持
 
 ## 基础类型 🪨
 `YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu`
