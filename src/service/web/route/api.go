@@ -14,4 +14,5 @@ func Api(r *ghttp.RouterGroup) {
 	rA.POST("/translate", controller.Translate)
 	r.GET("/getCountRecord", controller.GetCountRecord)
 	r.GET("/getRequestRecord", controller.GetRequestRecord)
+	r.GET("/getLangList", controller.GetLangList)
 }

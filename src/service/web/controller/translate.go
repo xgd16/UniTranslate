@@ -128,3 +128,7 @@ func t(r *ghttp.Request, from, to, text, platform string) (value any, err error)
 	})
 	return
 }
+
+func GetLangList(r *ghttp.Request) {
+	x.FastResp(r).SetData(xtranslate.BaseTranslateConf[xtranslate.YouDao]).Resp()
+}
