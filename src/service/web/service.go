@@ -3,6 +3,7 @@ package web
 import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 	"uniTranslate/src/service/web/controller"
@@ -14,6 +15,10 @@ func Service() {
 	// 路由注册
 	server.Group("/api", route.Api)
 	server.BindHandler("/ip", controller.GetIp)
+	// 如果存在操作端的话启动静态地址
+	if gfile.IsDir("./dist") {
+		server.SetServerRoot("./dist")
+	}
 	// 基本配置
 	server.BindMiddlewareDefault(ghttp.MiddlewareCORS)
 	server.BindStatusHandler(404, func(r *ghttp.Request) {
