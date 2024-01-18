@@ -29,7 +29,9 @@
 - [x] web 控制页面
 - [x] ChatGPT AI翻译
 - [x] 讯飞翻译
+- [ ] 更合理安全的身份验证
 - [ ] 腾讯翻译
+- [ ] 支持更多国家语言
 - [ ] 客户端更多翻译功能支持
 
 ## 基础类型 🪨
@@ -37,10 +39,10 @@
 
 ## Docker 启动 🚀
 ```shell
-    # 项目目录下
-    docker build -t uni-translate:latest .
-    # 然后执行 (最好创建一个 network 将 mysql 和 redis 放在同一个下 然后配置里直接用容器名字访问应用即可)
-    docker run -d --name uniTranslate -v {本机目录}/config.yaml:/app/config.yaml -p 9431:{你在config.yaml中配置的port} --network baseRun uni-translate:latest
+# 项目目录下
+docker build -t uni-translate:latest .
+# 然后执行 (最好创建一个 network 将 mysql 和 redis 放在同一个下 然后配置里直接用容器名字访问应用即可)
+docker run -d --name uniTranslate -v {本机目录}/config.yaml:/app/config.yaml -p 9431:{你在config.yaml中配置的port} --network baseRun uni-translate:latest
 ```
 
 
