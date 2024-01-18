@@ -7,6 +7,13 @@
 # 项目简介 📒
 该项目是一个支持多平台翻译和将翻译结果写入 Redis 缓存的工具。
 
+## 依赖
+`MySQL: 8.*` `redis`
+
+可选
+
+`graylog`
+
 ## WEB管理
 [UniTranslate-web-console](https://github.com/xgd16/UniTranslate-web-console)
 
@@ -28,6 +35,13 @@
 ## 基础类型 🪨
 `YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu`
 
+## Docker 启动 🚀
+```shell
+    # 项目目录下
+    docker build -t uni-translate:latest .
+    # 然后执行 (最好创建一个 network 将 mysql 和 redis 放在同一个下 然后配置里直接用容器名字访问应用即可)
+    docker run -d --name uniTranslate -v {本机目录}/config.yaml:/app/config.yaml -p 9431:{你在config.yaml中配置的port} --network baseRun uni-translate:latest
+```
 
 
 ## 配置解析 🗄️

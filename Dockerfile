@@ -26,3 +26,5 @@ COPY --from=builder /app/uniTranslate-linux-amd64 .
 COPY --from=builder /app/translate.json .
 
 CMD ["./uniTranslate-linux-amd64"]
+
+# docker build -t uni-translate:latest .
