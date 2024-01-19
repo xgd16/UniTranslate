@@ -1,4 +1,4 @@
-package lib
+package translate
 
 // ChatGptTranslateMode ChatGPT 支持
 const ChatGptTranslateMode = "ChatGPT"

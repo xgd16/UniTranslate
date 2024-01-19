@@ -1,4 +1,4 @@
-package lib
+package translate
 
 import (
 	"crypto/hmac"

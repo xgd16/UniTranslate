@@ -6,7 +6,7 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/xgd16/gf-x-tool/xtranslate"
-	"uniTranslate/src/lib"
+	"uniTranslate/src/translate"
 	"uniTranslate/src/types"
 )
 
@@ -46,20 +46,20 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 			Key:         gconv.String(config.Cfg["key"]),
 		}, OriginalFrom, OriginalTo, text)
 		break
-	case lib.ChatGptTranslateMode:
-		translateTextArr, from, translateErr = lib.ChatGptTranslate(&lib.ChatGptConfigType{
+	case translate.ChatGptTranslateMode:
+		translateTextArr, from, translateErr = translate.ChatGptTranslate(&translate.ChatGptConfigType{
 			Key: gconv.String(config.Cfg["key"]),
 		}, OriginalFrom, OriginalTo, text)
 		break
-	case lib.XunFeiTranslateMode:
-		translateTextArr, from, translateErr = lib.XunFeiTranslate(&lib.XunFeiConfigType{
+	case translate.XunFeiTranslateMode:
+		translateTextArr, from, translateErr = translate.XunFeiTranslate(&translate.XunFeiConfigType{
 			AppId:  gconv.String(config.Cfg["appId"]),
 			ApiKey: gconv.String(config.Cfg["apiKey"]),
 			Secret: gconv.String(config.Cfg["secret"]),
 		}, OriginalFrom, OriginalTo, text)
 		break
-	case lib.XunFeiNiuTranslateMode:
-		translateTextArr, from, translateErr = lib.XunFeiNiuTranslate(&lib.XunFeiConfigType{
+	case translate.XunFeiNiuTranslateMode:
+		translateTextArr, from, translateErr = translate.XunFeiNiuTranslate(&translate.XunFeiConfigType{
 			AppId:  gconv.String(config.Cfg["appId"]),
 			ApiKey: gconv.String(config.Cfg["apiKey"]),
 			Secret: gconv.String(config.Cfg["secret"]),

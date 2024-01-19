@@ -7,9 +7,9 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"uniTranslate/src/buffer"
 	"uniTranslate/src/global"
-	"uniTranslate/src/lib"
 	queueHandler "uniTranslate/src/service/queue/handler"
 	"uniTranslate/src/service/web/handler"
+	"uniTranslate/src/translate"
 	"uniTranslate/src/types"
 
 	"github.com/gogf/gf/v2/container/gvar"
@@ -27,9 +27,9 @@ var translateModeList = []string{
 	xtranslate.Deepl,
 	xtranslate.Google,
 	xtranslate.YouDao,
-	lib.ChatGptTranslateMode,
-	lib.XunFeiTranslateMode,
-	lib.XunFeiNiuTranslateMode,
+	translate.ChatGptTranslateMode,
+	translate.XunFeiTranslateMode,
+	translate.XunFeiNiuTranslateMode,
 }
 
 func Translate(r *ghttp.Request) {
