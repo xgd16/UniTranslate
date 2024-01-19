@@ -29,7 +29,7 @@
 - [x] web 控制页面
 - [x] ChatGPT AI翻译
 - [x] 讯飞翻译
-- [ ] 更合理安全的身份验证
+- [x] 更合理安全的身份验证
 - [ ] 腾讯翻译
 - [ ] 支持更多国家语言
 - [ ] 客户端更多翻译功能支持
@@ -55,6 +55,53 @@ server:
   cacheMode: redis # redis , mem , off 模式 mem 会将翻译结果存储到程序内存中 模式 off 不写入任何缓存
   cachePlatform: false # 执行缓存key生成是否包含平台 (会影响项目启动时自动初始化存储的key)
   key: "hdasdhasdhsahdkasjfsoufoqjoje" # http api 对接时的密钥
+```
+
+## 接口身份验证 ts 示例
+```typescript
+import { MD5 } from "crypto-js";
+
+/**
+ * 
+ * @param key 平台设置的key
+ * @param params 请求参数
+ * @return 生成的身份验证码
+ */
+function AuthEncrypt(key: string, params: { [key: string]: any }): string {
+  return MD5(key + sortMapToStr(params)).toString();
+}
+
+
+const sortMapToStr = (map: { [key: string]: any }): string => {
+  let mapArr = new Array();
+  for (const key in map) {
+    const item = map[key];
+    if (Array.isArray(item)) {
+      mapArr.push(`${key}:${item.join(",")}`);
+      continue;
+    }
+    if (typeof item === "object") {
+      mapArr.push(`${key}:|${sortMapToStr(item)}|`);
+      continue;
+    }
+    mapArr.push(`${key}:${item}`);
+  }
+
+  return mapArr.sort().join("&");
+};
+
+const params: { [key: string]: any } = {
+    c: {
+        cc: 1,
+        cb: 2,
+        ca: 3,
+        cd: 4,
+    },
+    a: 1,
+    b: [4, 1, 2],
+};
+
+console.log(AuthEncrypt("123456", params));
 ```
 
 
