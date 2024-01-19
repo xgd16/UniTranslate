@@ -64,8 +64,6 @@ Modify the `translate.json` file based on the identifiers supported by the Youda
 
 ## Base Language Identifiers
 
-Here are the results of converting the data you provided into a Markdown table:
-
 | English Name         | Chinese Name  | Code    |
 |---------------------|----------------|---------|
 | Arabic              | 阿拉伯语         | ar      |

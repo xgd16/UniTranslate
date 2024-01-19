@@ -29,4 +29,6 @@ COPY --from=builder /app/translate.json .
 
 CMD ["./uniTranslate-linux-amd64"]
 
-# docker build -t uni-translate:latest .
+# docker build --no-cache -t uni-translate:latest .
+
+# docker run -d --name uniTranslate -v /Users/x/docker/uniTranslate/config.yaml:/app/config.yaml -p 9431:9431 --network baseRun uni-translate:latest
