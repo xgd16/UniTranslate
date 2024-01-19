@@ -9,6 +9,8 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o uniTranslate-linux-amd64 m
 FROM bitnami/git:latest
 FROM node:18.19.0 as console
 
+ARG CACHEBUST=1
+
 WORKDIR /app
 
 RUN git clone https://github.com/xgd16/UniTranslate-web-console.git console

@@ -104,6 +104,20 @@ const params: { [key: string]: any } = {
 console.log(AuthEncrypt("123456", params));
 ```
 
+请求示例
+
+```shell
+curl --location --request POST 'http://127.0.0.1:9431/api/translate' \
+--header 'auth_key: xxxxxxxxx{AuthEncrypt函数结果放在此处}' \
+--header 'User-Agent: Apifox/1.0.0 (https://apifox.com)' \
+--header 'Content-Type: application/json' \
+--data '{
+    "from": "auto",
+    "to": "en",
+    "text": "测试一下",
+    "platform": "YouDao"
+}'
+```
 
 
 ## 翻译的内容不支持??? 🤔
