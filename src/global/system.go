@@ -27,6 +27,7 @@ func InitSystemConfig() {
 	CacheMode = SystemConfig.Get("server.cacheMode").String()
 	CachePlatform = SystemConfig.Get("server.cachePlatform").Bool()
 	CacheRefreshOnStartup = SystemConfig.Get("server.cacheRefreshOnStartup").Bool()
+	ServiceKey = SystemConfig.Get("server.key").String()
 }
 
 // XDB 文件式存储
@@ -34,6 +35,9 @@ var XDB = xstorage.CreateXDB()
 
 // CacheRefreshOnStartup 启动时是否从数据库刷新缓存 (会先清除缓存里所有的 缓存 在从数据库逐条初始化 数据 慎用!!!)
 var CacheRefreshOnStartup = false
+
+// ServiceKey 服务 key
+var ServiceKey string
 
 // GfCache 全局缓存
 var GfCache *gcache.Cache
