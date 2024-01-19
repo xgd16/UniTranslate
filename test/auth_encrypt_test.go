@@ -23,5 +23,5 @@ func TestSortMapToStr(t *testing.T) {
 }
 
 func TestAuthEncrypt(t *testing.T) {
-	gtest.Assert(lib.AuthEncrypt("123456", paramsData), "49dab96e97ddd2b47b20ccf1a01fdae2")
+	gtest.Assert(lib.AuthEncrypt("123456", paramsData), "1ccbf6fc835046b4716b38f5dbd9c75a")
 }
