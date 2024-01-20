@@ -35,7 +35,7 @@
 - [ ] 客户端更多翻译功能支持
 
 ## 基础类型 🪨
-`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu`
+`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu` `Tencent`
 
 ## Docker 启动 🚀
 ```shell

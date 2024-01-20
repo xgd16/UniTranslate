@@ -35,7 +35,7 @@ Optional
 - [ ] More translation functionality support on the client side
 
 ## Basic Types 🪨
-`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu`
+`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu` `Tencent`
 
 ## Docker Startup 🚀
 ```shell
