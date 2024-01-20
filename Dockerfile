@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o uniTranslate-linux-amd64 main.go
+RUN go mod tidy && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o uniTranslate-linux-amd64 main.go
 
 FROM bitnami/git:latest
 FROM node:18.19.0 as console

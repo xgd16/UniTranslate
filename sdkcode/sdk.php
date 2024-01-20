@@ -12,7 +12,6 @@ class AuthEncrypt {
 
     public function encrypt(): string
     {
-        var_dump($this->sortMapToStr($this->params));
         return md5($this->key . $this->sortMapToStr($this->params));
     }
 

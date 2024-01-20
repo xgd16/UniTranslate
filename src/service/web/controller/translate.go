@@ -30,6 +30,7 @@ var translateModeList = []string{
 	translate.ChatGptTranslateMode,
 	translate.XunFeiTranslateMode,
 	translate.XunFeiNiuTranslateMode,
+	translate.TencentTranslateMode,
 }
 
 func Translate(r *ghttp.Request) {

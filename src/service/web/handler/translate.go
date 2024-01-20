@@ -65,6 +65,14 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 			Secret: gconv.String(config.Cfg["secret"]),
 		}, OriginalFrom, OriginalTo, text)
 		break
+	case translate.TencentTranslateMode:
+		translateTextArr, from, translateErr = translate.TencentTranslate(&translate.TencentConfigType{
+			Url:       gconv.String(config.Cfg["url"]),
+			SecretId:  gconv.String(config.Cfg["secretId"]),
+			SecretKey: gconv.String(config.Cfg["secretKey"]),
+			Region:    gconv.String(config.Cfg["region"]),
+		}, OriginalFrom, OriginalTo, text)
+		break
 	default:
 		translateErr = errors.New("不支持的翻译")
 	}

@@ -118,5 +118,22 @@
     "id": "id",
     "nl": "nl",
     "th": "th"
+  },
+  "Tencent": {
+    "zh-CHS": "zh",
+    "zh-CHT": "zh-TW",
+    "en": "en",
+    "ko": "ko",
+    "ja": "ja",
+    "fr": "fr",
+    "ru": "ru",
+    "es": "es",
+    "pt": "pt",
+    "ar": "ar",
+    "de": "de",
+    "it": "it",
+    "vi": "vi",
+    "id": "id",
+    "th": "th"
   }
 }

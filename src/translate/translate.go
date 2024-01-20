@@ -18,3 +18,12 @@ type XunFeiConfigType struct {
 	Secret string `json:"secret"`
 	ApiKey string `json:"apiKey"`
 }
+
+const TencentTranslateMode = "Tencent"
+
+type TencentConfigType struct {
+	Url       string `json:"url"`
+	SecretId  string `json:"secretId"`
+	SecretKey string `json:"secretKey"`
+	Region    string `json:"region"`
+}

@@ -7,6 +7,8 @@ require (
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.6
 	github.com/gogf/gf/v2 v2.5.6
 	github.com/sashabaranov/go-openai v1.17.9
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.845
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.845
 	github.com/xgd16/gf-x-tool v0.5.10
 )
 
