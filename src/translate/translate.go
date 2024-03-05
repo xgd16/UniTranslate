@@ -27,3 +27,12 @@ type TencentConfigType struct {
 	SecretKey string `json:"secretKey"`
 	Region    string `json:"region"`
 }
+
+// HuoShanTranslateMode 火山翻译
+const HuoShanTranslateMode = "HuoShan"
+
+// HuoShanConfigType 火山翻译配置
+type HuoShanConfigType struct {
+	AccessKey string
+	SecretKey string
+}

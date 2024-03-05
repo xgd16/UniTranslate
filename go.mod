@@ -9,6 +9,7 @@ require (
 	github.com/sashabaranov/go-openai v1.17.9
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.845
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.845
+	github.com/volcengine/volc-sdk-golang v1.0.144
 	github.com/xgd16/gf-x-tool v0.5.10
 )
 
@@ -35,10 +36,12 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
+	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gemnasium/logrus-graylog-hook/v3 v3.2.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -48,5 +51,4 @@ require (
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.21.0 // indirect
 	golang.org/x/net v0.18.0 // indirect
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )

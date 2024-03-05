@@ -73,6 +73,12 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 			Region:    gconv.String(config.Cfg["region"]),
 		}, OriginalFrom, OriginalTo, text)
 		break
+	case translate.HuoShanTranslateMode:
+		translateTextArr, from, translateErr = translate.HuoShanTranslate(&translate.HuoShanConfigType{
+			AccessKey: gconv.String(config.Cfg["accessKey"]),
+			SecretKey: gconv.String(config.Cfg["secretKey"]),
+		}, OriginalFrom, OriginalTo, text)
+		break
 	default:
 		translateErr = errors.New("不支持的翻译")
 	}
