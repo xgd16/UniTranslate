@@ -31,11 +31,12 @@
 - [x] 讯飞翻译
 - [x] 更合理安全的身份验证
 - [x] 腾讯翻译
+- [x] 火山翻译
 - [ ] 支持更多国家语言
 - [ ] 客户端更多翻译功能支持
 
 ## 基础类型 🪨
-`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu` `Tencent`
+`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu` `Tencent` `HuoShan`
 
 ## Docker 启动 🚀
 ```shell
