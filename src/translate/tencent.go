@@ -43,8 +43,9 @@ func TencentTranslate(config *TencentConfigType, from, to, text string) (result 
 	request.ProjectId = common.Int64Ptr(0)
 
 	response, err := client.TextTranslate(request)
-	if _, ok := err.(*errors.TencentCloudSDKError); ok {
-		err = baseErr.New(fmt.Sprintf("An API error has returned: %s", err))
+	var tencentCloudSDKError *errors.TencentCloudSDKError
+	if baseErr.As(err, &tencentCloudSDKError) {
+		err = fmt.Errorf("an API error has returned: %s", tencentCloudSDKError.Error())
 		return
 	}
 	if err != nil {

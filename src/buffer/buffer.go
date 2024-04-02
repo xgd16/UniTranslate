@@ -125,7 +125,7 @@ func (t *BufferType) getLevelSort(data map[string]*types.TranslatePlatform) (arr
 func (t *BufferType) CreateIdxArr(arr [][]*types.TranslatePlatform) [][]int {
 	idxArr := make([][]int, 0)
 	for k, v := range arr {
-		for k1, _ := range v {
+		for k1 := range v {
 			idxArr = append(idxArr, []int{k, k1})
 		}
 	}

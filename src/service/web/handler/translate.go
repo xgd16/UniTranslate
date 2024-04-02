@@ -24,7 +24,6 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 			AppId:       gconv.String(config.Cfg["appId"]),
 			Key:         gconv.String(config.Cfg["key"]),
 		}, OriginalFrom, OriginalTo, text)
-		break
 	case xtranslate.YouDao:
 		translateTextArr, from, translateErr = xtranslate.YouDaoTranslate(&xtranslate.YouDaoConfigType{
 			CurlTimeOut: gconv.Int(config.Cfg["curlTimeOut"]),
@@ -32,7 +31,6 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 			AppKey:      gconv.String(config.Cfg["appKey"]),
 			SecKey:      gconv.String(config.Cfg["secKey"]),
 		}, OriginalFrom, OriginalTo, text)
-		break
 	case xtranslate.Google:
 		translateTextArr, from, translateErr = xtranslate.GoogleTranslate(&xtranslate.GoogleConfigType{
 			CurlTimeOut: gconv.Int(config.Cfg["curlTimeOut"]),
@@ -45,26 +43,22 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 			Url:         gconv.String(config.Cfg["url"]),
 			Key:         gconv.String(config.Cfg["key"]),
 		}, OriginalFrom, OriginalTo, text)
-		break
 	case translate.ChatGptTranslateMode:
 		translateTextArr, from, translateErr = translate.ChatGptTranslate(&translate.ChatGptConfigType{
 			Key: gconv.String(config.Cfg["key"]),
 		}, OriginalFrom, OriginalTo, text)
-		break
 	case translate.XunFeiTranslateMode:
 		translateTextArr, from, translateErr = translate.XunFeiTranslate(&translate.XunFeiConfigType{
 			AppId:  gconv.String(config.Cfg["appId"]),
 			ApiKey: gconv.String(config.Cfg["apiKey"]),
 			Secret: gconv.String(config.Cfg["secret"]),
 		}, OriginalFrom, OriginalTo, text)
-		break
 	case translate.XunFeiNiuTranslateMode:
 		translateTextArr, from, translateErr = translate.XunFeiNiuTranslate(&translate.XunFeiConfigType{
 			AppId:  gconv.String(config.Cfg["appId"]),
 			ApiKey: gconv.String(config.Cfg["apiKey"]),
 			Secret: gconv.String(config.Cfg["secret"]),
 		}, OriginalFrom, OriginalTo, text)
-		break
 	case translate.TencentTranslateMode:
 		translateTextArr, from, translateErr = translate.TencentTranslate(&translate.TencentConfigType{
 			Url:       gconv.String(config.Cfg["url"]),
@@ -72,13 +66,11 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 			SecretKey: gconv.String(config.Cfg["secretKey"]),
 			Region:    gconv.String(config.Cfg["region"]),
 		}, OriginalFrom, OriginalTo, text)
-		break
 	case translate.HuoShanTranslateMode:
 		translateTextArr, from, translateErr = translate.HuoShanTranslate(&translate.HuoShanConfigType{
 			AccessKey: gconv.String(config.Cfg["accessKey"]),
 			SecretKey: gconv.String(config.Cfg["secretKey"]),
 		}, OriginalFrom, OriginalTo, text)
-		break
 	default:
 		translateErr = errors.New("不支持的翻译")
 	}

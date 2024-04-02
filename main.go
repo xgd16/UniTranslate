@@ -70,10 +70,8 @@ func initCache() *gcache.Cache {
 	switch global.CacheMode {
 	case "redis":
 		c.SetAdapter(gcache.NewAdapterRedis(g.Redis()))
-		break
 	case "mem":
 		c.SetAdapter(gcache.NewAdapterMemory())
-		break
 	}
 	return c
 }

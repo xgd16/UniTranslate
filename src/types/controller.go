@@ -19,7 +19,7 @@ type TranslatePlatform struct {
 
 func (t *TranslatePlatform) InitMd5() {
 	kArr := garray.NewStrArray()
-	for i, _ := range t.Cfg {
+	for i := range t.Cfg {
 		kArr.PushRight(i)
 	}
 	var s = []string{
