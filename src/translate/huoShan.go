@@ -42,7 +42,7 @@ type Req struct {
 // HuoShanTranslate 火山翻译
 func HuoShanTranslate(config *HuoShanConfigType, from, to, text string) (result []string, fromLang string, err error) {
 	if config.SecretKey == "" || config.AccessKey == "" {
-		err = baseErr.New("腾讯翻译配置异常")
+		err = baseErr.New("火山翻译配置异常")
 		return
 	}
 	if from == "auto" {

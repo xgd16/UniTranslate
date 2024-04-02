@@ -32,7 +32,7 @@
 - [x] 更合理安全的身份验证
 - [x] 腾讯翻译
 - [x] 火山翻译
-- [ ] 支持更多国家语言
+- [x] 支持更多国家语言
 - [ ] 客户端更多翻译功能支持
 
 ## 基础类型 🪨
@@ -56,6 +56,7 @@ server:
   cacheMode: redis # redis , mem , off 模式 mem 会将翻译结果存储到程序内存中 模式 off 不写入任何缓存
   cachePlatform: false # 执行缓存key生成是否包含平台 (会影响项目启动时自动初始化存储的key)
   key: "hdasdhasdhsahdkasjfsoufoqjoje" # http api 对接时的密钥
+  keyMode: 1 # 模式 1 直接传入 key 做验证 模式 2 使用 key 加密加签数据进行验证
 ```
 
 ## 接口身份验证 ts 示例

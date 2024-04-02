@@ -12,7 +12,7 @@ import (
 
 func ChatGptTranslate(config *ChatGptConfigType, from, to, text string) (result []string, fromLang string, err error) {
 	if config.Key == "" {
-		return nil, "", errors.New("google翻译配置异常")
+		return nil, "", errors.New("chatGPT翻译配置异常")
 	}
 	// 语言标记转换
 	from, err = xtranslate.SafeLangType(from, ChatGptTranslateMode)
