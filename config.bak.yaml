@@ -6,6 +6,7 @@ server:
   cachePlatform: false # 执行缓存key生成是否包含平台 (会影响项目启动时自动初始化存储的key)
   cacheRefreshOnStartup: false # 启动时是否从数据库刷新缓存 (会先清除缓存里所有的 缓存 在从数据库逐条初始化 数据 慎用!!!)
   key: "hdasdhasdhsahdkasjfsoufoqjoje" # http api 对接时的密钥
+  keyMode: 1 # 模式 1 直接传入 key 做验证 模式 2 使用 key 加密加签数据进行验证
 
 # 数据库
 database:

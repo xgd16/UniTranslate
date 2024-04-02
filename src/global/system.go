@@ -24,10 +24,11 @@ func InitSystemConfig() {
 	}
 	SystemConfig = gjson.New(cfg, true)
 	// 初始化配置的缓存模式
-	CacheMode = SystemConfig.Get("server.cacheMode").String()
-	CachePlatform = SystemConfig.Get("server.cachePlatform").Bool()
-	CacheRefreshOnStartup = SystemConfig.Get("server.cacheRefreshOnStartup").Bool()
+	CacheMode = SystemConfig.Get("server.cacheMode", "mem").String()
+	CachePlatform = SystemConfig.Get("server.cachePlatform", false).Bool()
+	CacheRefreshOnStartup = SystemConfig.Get("server.cacheRefreshOnStartup", false).Bool()
 	ServiceKey = SystemConfig.Get("server.key").String()
+	KeyMode = SystemConfig.Get("server.keyMode", 1).Int()
 }
 
 // XDB 文件式存储
@@ -38,6 +39,9 @@ var CacheRefreshOnStartup = false
 
 // ServiceKey 服务 key
 var ServiceKey string
+
+// KeyMode 密钥验证模式
+var KeyMode int
 
 // GfCache 全局缓存
 var GfCache *gcache.Cache
