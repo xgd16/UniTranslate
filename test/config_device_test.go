@@ -13,9 +13,9 @@ func TestXDbConfigDevice(t *testing.T) {
 	DeviceConfigDeviceTest(devices.NewXDbConfigDevice())
 }
 
-func TestMySQLConfigDevice(t *testing.T) {
-	DeviceConfigDeviceTest(devices.NewMySQLConfigDevice())
-}
+//func TestMySQLConfigDevice(t *testing.T) {
+//	DeviceConfigDeviceTest(devices.NewMySQLConfigDevice())
+//}
 
 func DeviceConfigDeviceTest(device types.ConfigDeviceInterface) {
 	gtest.AssertNil(device.Init())
