@@ -9,12 +9,13 @@ import (
 
 // TranslatePlatform 翻译平台
 type TranslatePlatform struct {
-	Md5      string
-	Platform string         `json:"platform"`
-	Status   int            `json:"status"`
-	Level    int            `json:"level"`
-	Cfg      map[string]any `json:"cfg"`
-	Type     string         `json:"type"`
+	Id       int            `json:"-" orm:"id"`
+	Md5      string         `json:"md5" orm:"md5"`
+	Platform string         `json:"platform" orm:"translatedPlatform"`
+	Status   int            `json:"status" orm:"status"`
+	Level    int            `json:"level" orm:"translationLevel"`
+	Cfg      map[string]any `json:"cfg" orm:"cfg"`
+	Type     string         `json:"type" orm:"type"`
 }
 
 func (t *TranslatePlatform) InitMd5() {

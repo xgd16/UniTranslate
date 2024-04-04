@@ -16,14 +16,15 @@ import (
 
 type MySqlStatistics struct{}
 
+type MySqlInit struct {
+	TableName string
+	Table     string
+	Index     []string
+}
+
 func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatform, cacheRefreshOnStartup bool) (err error) {
 	ctx := gctx.New()
-	// 初始化基础结构数据
-	type MySqlInit struct {
-		TableName string
-		Table     string
-		Index     []string
-	}
+
 	// 创建表信息
 	initData := []*MySqlInit{
 		{

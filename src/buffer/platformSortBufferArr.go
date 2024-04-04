@@ -65,12 +65,12 @@ func deepCopy2DArray(input [][]*types.TranslatePlatform) [][]*types.TranslatePla
 				// 例如：newElement.Field1 = element.Field1
 				// ...
 				newRow[j] = &types.TranslatePlatform{
-					element.Md5,
-					element.Platform,
-					element.Status,
-					element.Level,
-					element.Cfg,
-					element.Type,
+					Md5:      element.Md5,
+					Platform: element.Platform,
+					Status:   element.Status,
+					Level:    element.Level,
+					Cfg:      element.Cfg,
+					Type:     element.Type,
 				}
 			}
 		}

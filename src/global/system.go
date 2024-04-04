@@ -1,6 +1,7 @@
 package global
 
 import (
+	"errors"
 	"uniTranslate/src/types"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
@@ -29,10 +30,40 @@ func InitSystemConfig() {
 	CacheRefreshOnStartup = SystemConfig.Get("server.cacheRefreshOnStartup", false).Bool()
 	ServiceKey = SystemConfig.Get("server.key").String()
 	KeyMode = SystemConfig.Get("server.keyMode", 1).Int()
+	ConfigDeviceMode = SystemConfig.Get("server.configDeviceMode", "xdb").String()
+	ConfigDeviceMySqlDb = SystemConfig.Get("configDeviceMySqlDb", "default").String()
 }
 
 // XDB 文件式存储
 var XDB = xstorage.CreateXDB()
+
+// ConfigDeviceMode 配置驱动模式
+var ConfigDeviceMode = "xdb"
+
+// ConfigDeviceMySqlDb 配置驱动模式 MySQL 驱动db设置
+var ConfigDeviceMySqlDb = "default"
+
+// ConfigDevice 配置驱动
+var ConfigDevice types.ConfigDeviceInterface
+
+// GetConfigDevice 获取驱动配置
+func GetConfigDevice() (device types.ConfigDeviceInterface, err error) {
+	if ConfigDevice == nil {
+		err = errors.New("配置获取驱动尚未初始化")
+		return
+	}
+	device = ConfigDevice
+	return
+}
+
+// MustGetConfigDevice 忽略错误获取驱动配置
+func MustGetConfigDevice() (device types.ConfigDeviceInterface) {
+	device, err := GetConfigDevice()
+	if err != nil {
+		panic(err)
+	}
+	return
+}
 
 // CacheRefreshOnStartup 启动时是否从数据库刷新缓存 (会先清除缓存里所有的 缓存 在从数据库逐条初始化 数据 慎用!!!)
 var CacheRefreshOnStartup = false

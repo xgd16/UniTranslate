@@ -87,30 +87,46 @@ func Translate(r *ghttp.Request) {
 }
 
 func GetConfigList(r *ghttp.Request) {
-	dataMap := global.XDB.GetGJson().Get("translate").MapStrVar()
+	// 获取配置驱动
+	device, err := global.GetConfigDevice()
+	x.FastResp(r, err).Resp()
+	// 获取配置
+	config, err := device.GetConfig()
+	x.FastResp(r, err).Resp()
+
 	respData := make([]map[string]any, 0)
-	for k, v := range dataMap {
-		item := v.MapStrAny()
+	for k, v := range config {
 		respData = append(respData, g.Map{
 			"id":       k,
-			"level":    item["level"],
-			"platform": item["platform"],
-			"status":   item["status"],
-			"type":     item["type"],
+			"level":    v.Level,
+			"platform": v.Platform,
+			"status":   v.Status,
+			"type":     v.Type,
 		})
 	}
 	x.FastResp(r).SetData(respData).Resp()
 }
 
+// AddConfig 添加配置
 func AddConfig(r *ghttp.Request) {
 	t := new(types.TranslatePlatform)
 	x.FastResp(r, r.GetStruct(t)).Resp()
 	x.FastResp(r, t.Platform == "", false).Resp("名称不能为空")
 	t.InitMd5()
 	x.FastResp(r, t.Type != "" && !xlib.InArr(t.Type, translateModeList), false).Resp("不支持的平台")
-	x.FastResp(r, !global.XDB.GetGJson().Get(fmt.Sprintf("xtranslate.%s", t.GetMd5())).IsEmpty(), false).Resp("已存在此配置")
-	x.FastResp(r, global.XDB.Set("translate", t.GetMd5(), t), false).Resp("添加失败")
+	device, err := global.GetConfigDevice()
+	x.FastResp(r, err).Resp()
+	_, ok, err := device.GetTranslateInfo(t.GetMd5())
+	x.FastResp(r, err).Resp()
+	x.FastResp(r, ok, false).Resp("已存在此配置")
+	x.FastResp(r, device.SaveConfig(t.GetMd5(), t), false).Resp("添加失败")
 	x.FastResp(r, global.StatisticalProcess.CreateEvent(t)).Resp("添加失败")
+	x.FastResp(r, buffer.Buffer.Init(), false).Resp("写入成功但重新初始化失败")
+	x.FastResp(r).Resp()
+}
+
+// RefreshConfigCache 刷新配置缓存
+func RefreshConfigCache(r *ghttp.Request) {
 	x.FastResp(r, buffer.Buffer.Init(), false).Resp("写入成功但重新初始化失败")
 	x.FastResp(r).Resp()
 }

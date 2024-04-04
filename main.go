@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"uniTranslate/src/buffer"
+	"uniTranslate/src/devices"
 	"uniTranslate/src/global"
 	"uniTranslate/src/service"
 	"uniTranslate/src/translate"
@@ -32,6 +33,8 @@ func main() {
 
 func baseInit() {
 	xhttp.RespErrorMsg = true
+	// 初始化翻译配置获取
+	initTranslateConfigDevice()
 	// 开启翻译支持
 	xtranslate.InitTranslate()
 	// 初始化 chatGPT 需要的数据
@@ -62,6 +65,20 @@ func baseInit() {
 func initDataBase() (err error) {
 	err = global.StatisticalProcess.Init(global.GfCache, global.CacheMode, global.CachePlatform, global.CacheRefreshOnStartup)
 	return
+}
+
+func initTranslateConfigDevice() {
+	switch global.ConfigDeviceMode {
+	case "xdb":
+		global.ConfigDevice = devices.NewXDbConfigDevice()
+	case "mysql":
+		global.ConfigDevice = devices.NewMySQLConfigDevice()
+	default:
+		global.ConfigDevice = devices.NewXDbConfigDevice()
+	}
+	if err := global.ConfigDevice.Init(); err != nil {
+		panic(fmt.Errorf("翻译配置驱动初始化出错 %s", err))
+	}
 }
 
 // 初始化 缓存

@@ -15,10 +15,9 @@ import (
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
-	"github.com/xgd16/gf-x-tool/xstorage"
 )
 
-var Buffer = new(BufferType).SetXDB(global.XDB)
+var Buffer = new(BufferType)
 
 type BufferType struct {
 	m        sync.Mutex
@@ -26,7 +25,6 @@ type BufferType struct {
 	levelArr *garray.IntArray
 	num      int
 	idx      [][]int
-	xdb      *xstorage.XDB
 }
 
 func (t *BufferType) GetLevel() [][]*types.TranslatePlatform {
@@ -35,11 +33,6 @@ func (t *BufferType) GetLevel() [][]*types.TranslatePlatform {
 
 func (t *BufferType) GetIdx() [][]int {
 	return t.idx
-}
-
-func (t *BufferType) SetXDB(xdb *xstorage.XDB) *BufferType {
-	t.xdb = xdb
-	return t
 }
 
 func (t *BufferType) Handler(r *ghttp.Request, from, to, text, platform string, fn func(*types.TranslatePlatform, string, string, string) (*types.TranslateData, error)) (s *types.TranslateData, e error) {
@@ -91,12 +84,15 @@ func (t *BufferType) Init() (err error) {
 	t.m.Lock()
 	defer t.m.Unlock()
 	// 初始化数据
-	data := new(map[string]*types.TranslatePlatform)
-	err = t.xdb.GetGJson().Get("translate").Scan(data)
+	device, err := global.GetConfigDevice()
 	if err != nil {
 		return
 	}
-	t.level, t.idx, t.num = t.getLevelSort(*data)
+	config, err := device.GetConfig()
+	if err != nil {
+		return
+	}
+	t.level, t.idx, t.num = t.getLevelSort(config)
 	return
 }
 
