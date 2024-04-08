@@ -31,7 +31,7 @@ func InitSystemConfig() {
 	ServiceKey = SystemConfig.Get("server.key").String()
 	KeyMode = SystemConfig.Get("server.keyMode", 1).Int()
 	ConfigDeviceMode = SystemConfig.Get("server.configDeviceMode", "xdb").String()
-	ConfigDeviceMySqlDb = SystemConfig.Get("configDeviceMySqlDb", "default").String()
+	ConfigDeviceMySqlDb = SystemConfig.Get("server.configDeviceMySqlDb", "default").String()
 }
 
 // XDB 文件式存储
