@@ -16,4 +16,5 @@ func Api(r *ghttp.RouterGroup) {
 	r.GET("/getCountRecord", controller.GetCountRecord)
 	r.GET("/getRequestRecord", controller.GetRequestRecord)
 	r.GET("/getLangList", controller.GetLangList)
+	r.GET("/getSystemInitConfig", controller.GetSystemInitConfig)
 }
