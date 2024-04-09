@@ -1,13 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/encoding/gjson"
 	"uniTranslate/src/buffer"
 	"uniTranslate/src/devices"
 	"uniTranslate/src/global"
 	"uniTranslate/src/service"
 	"uniTranslate/src/translate"
+
+	"github.com/gogf/gf/v2/encoding/gjson"
 
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
@@ -57,7 +59,9 @@ func baseInit() {
 		)
 		// 配置默认日志
 		name := global.SystemConfig.Get("server.name").String()
-		glog.SetDefaultHandler(xgraylog.SwitchToGraylog(name))
+		glog.SetDefaultHandler(xgraylog.SwitchToGraylog(name, func(ctx context.Context, m g.Map) {
+
+		}))
 	}
 }
 
