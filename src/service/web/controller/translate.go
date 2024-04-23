@@ -33,6 +33,7 @@ var translateModeList = []string{
 	translate.XunFeiNiuTranslateMode,
 	translate.TencentTranslateMode,
 	translate.HuoShanTranslateMode,
+	translate.PaPaGoTranslateMode,
 }
 
 func Translate(r *ghttp.Request) {

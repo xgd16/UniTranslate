@@ -36,3 +36,14 @@ type HuoShanConfigType struct {
 	AccessKey string
 	SecretKey string
 }
+
+// PaPaGoTranslateMode 啪啪GO翻译
+const PaPaGoTranslateMode = "PaPaGo"
+
+// PaPaGoConfigType 啪啪GO翻译配置
+type PaPaGoConfigType struct {
+	KeyId       string `json:"keyId"`
+	Key         string `json:"key"`
+	CurlTimeOut int    `json:"curlTimeOut"`
+	Url         string `json:"url"`
+}

@@ -35,7 +35,7 @@ func ChatGptTranslate(config *ChatGptConfigType, from, to, text string) (result 
 	}
 	respData := gvar.New(gptResp).MapStrVar()
 	result = append(result, respData["text"].String())
-	fromLang = respData["fromLang"].String()
+	fromLang, err = xtranslate.GetYouDaoLang(respData["fromLang"].String(), ChatGptTranslateMode)
 	return
 }
 

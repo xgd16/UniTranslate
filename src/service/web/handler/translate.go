@@ -2,12 +2,13 @@ package handler
 
 import (
 	"errors"
+	"uniTranslate/src/translate"
+	"uniTranslate/src/types"
+
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/xgd16/gf-x-tool/xtranslate"
-	"uniTranslate/src/translate"
-	"uniTranslate/src/types"
 )
 
 func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text string) (data *types.TranslateData, translateErr error) {
@@ -70,6 +71,13 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 		translateTextArr, from, translateErr = translate.HuoShanTranslate(&translate.HuoShanConfigType{
 			AccessKey: gconv.String(config.Cfg["accessKey"]),
 			SecretKey: gconv.String(config.Cfg["secretKey"]),
+		}, OriginalFrom, OriginalTo, text)
+	case translate.PaPaGoTranslateMode:
+		translateTextArr, from, translateErr = translate.PaPaGoTranslate(&translate.PaPaGoConfigType{
+			KeyId:       gconv.String(config.Cfg["keyId"]),
+			Key:         gconv.String(config.Cfg["key"]),
+			CurlTimeOut: gconv.Int(config.Cfg["curlTimeOut"]),
+			Url:         gconv.String(config.Cfg["url"]),
 		}, OriginalFrom, OriginalTo, text)
 	default:
 		translateErr = errors.New("不支持的翻译")
