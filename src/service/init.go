@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"uniTranslate/src/service/cron"
 	"uniTranslate/src/service/queue"
 	"uniTranslate/src/service/web"
 )
@@ -10,7 +11,7 @@ import (
 var register = map[string]func(){
 	"WEB":   web.Service,
 	"Queue": queue.Service,
-	//"MQTT": mqtt.Service,
+	"Cron":  cron.Service,
 }
 
 // InitService 初始化系统服务

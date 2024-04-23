@@ -29,7 +29,7 @@ func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatf
 	initData := []*MySqlInit{
 		{
 			TableName: "count_record",
-			Table:     "CREATE TABLE count_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, serialNumber varchar(255) NOT NULL, successCount int NULL DEFAULT 0, errorCount int NULL DEFAULT 0, charCount int NULL DEFAULT 0, createTime datetime(6) NOT NULL, updateTime datetime(6) NULL );",
+			Table:     "CREATE TABLE count_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, serialNumber varchar(255) NOT NULL, successCount int unsigned NULL DEFAULT 0, errorCount int unsigned NULL DEFAULT 0, charCount bigint unsigned NULL DEFAULT 0, createTime datetime(6) NOT NULL, updateTime datetime(6) NULL );",
 			Index: []string{
 				"CREATE INDEX count_record_charCount_index ON count_record (charCount);",
 				"CREATE INDEX count_record_createTime_index ON count_record (createTime);",

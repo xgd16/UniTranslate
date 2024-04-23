@@ -104,7 +104,10 @@ func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *
 		return
 	}
 	result = []string{gstr.Trim(jsonData.Get("data.result.trans_result.dst").String())}
-	fromLang = oFrom
+	fromLang, err = xtranslate.GetYouDaoLang(jsonData.Get("data.result.from", "").String(), XunFeiNiuTranslateMode)
+	if fromLang == "" {
+		fromLang = oFrom
+	}
 	return
 }
 

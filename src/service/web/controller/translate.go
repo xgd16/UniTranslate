@@ -138,11 +138,13 @@ func t(r *ghttp.Request, from, to, text, platform string) (value any, err error)
 	var data *types.TranslateData
 	data, err = buffer.Buffer.Handler(r, from, to, text, platform, handler.Translate)
 	value = data
-	// 触发写入
-	queueHandler.SaveQueue.Push(&types.SaveData{
-		Data: data,
-	})
-	// 写入到缓存
+	// 缓存写入数据库
+	if global.CacheWriteToStorage {
+		queueHandler.SaveQueue.Push(&types.SaveData{
+			Data: data,
+		})
+	}
+	// 翻译计数
 	queueHandler.CountRecordQueue.Push(&types.CountRecordData{
 		Data: data,
 		Ok:   err == nil,

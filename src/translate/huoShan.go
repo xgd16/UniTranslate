@@ -46,13 +46,14 @@ func HuoShanTranslate(config *HuoShanConfigType, from, to, text string) (result 
 		err = baseErr.New("火山翻译配置异常")
 		return
 	}
+	// 处理目标语言
 	if from == "auto" {
 		from = ""
-	}
-	// 处理目标语言
-	from, err = xtranslate.SafeLangType(from, HuoShanTranslateMode)
-	if err != nil {
-		return
+	} else {
+		from, err = xtranslate.SafeLangType(from, HuoShanTranslateMode)
+		if err != nil {
+			return
+		}
 	}
 	to, err = xtranslate.SafeLangType(to, HuoShanTranslateMode)
 	if err != nil {

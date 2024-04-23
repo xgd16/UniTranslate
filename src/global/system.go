@@ -32,6 +32,8 @@ func InitSystemConfig() {
 	KeyMode = SystemConfig.Get("server.keyMode", 1).Int()
 	ConfigDeviceMode = SystemConfig.Get("server.configDeviceMode", "xdb").String()
 	ConfigDeviceMySqlDb = SystemConfig.Get("server.configDeviceMySqlDb", "default").String()
+	CacheWriteToStorage = SystemConfig.Get("server.cacheWriteToStorage", false).Bool()
+	RequestRecordKeepDays = SystemConfig.Get("server.requestRecordKeepDays", 7).Int()
 }
 
 // XDB 文件式存储
@@ -80,3 +82,9 @@ var GfCache *gcache.Cache
 var StatisticalProcess types.StatisticsInterface = new(types.MySqlStatistics)
 
 var ChatGPTLangConfig string
+
+// 是否将缓存写入存储
+var CacheWriteToStorage = false
+
+// 保留几天的请求记录
+var RequestRecordKeepDays = 7
