@@ -3,6 +3,7 @@ package translate
 import (
 	baseErr "errors"
 	"fmt"
+
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
@@ -18,6 +19,9 @@ func TencentTranslate(config *TencentConfigType, from, to, text string) (result 
 	}
 
 	from, err = xtranslate.SafeLangType(from, TencentTranslateMode)
+	if err != nil {
+		return
+	}
 	to, err = xtranslate.SafeLangType(to, TencentTranslateMode)
 	if err != nil {
 		return
@@ -38,7 +42,7 @@ func TencentTranslate(config *TencentConfigType, from, to, text string) (result 
 	request := tmt.NewTextTranslateRequest()
 
 	request.SourceText = common.StringPtr(text)
-	request.Source = common.StringPtr("auto")
+	request.Source = common.StringPtr(from)
 	request.Target = common.StringPtr(to)
 	request.ProjectId = common.Int64Ptr(0)
 

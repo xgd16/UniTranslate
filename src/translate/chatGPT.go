@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"uniTranslate/src/global"
+
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/sashabaranov/go-openai"
 	"github.com/xgd16/gf-x-tool/xtranslate"
-	"uniTranslate/src/global"
 )
 
 func ChatGptTranslate(config *ChatGptConfigType, from, to, text string) (result []string, fromLang string, err error) {
@@ -16,19 +17,16 @@ func ChatGptTranslate(config *ChatGptConfigType, from, to, text string) (result 
 	}
 	// 语言标记转换
 	from, err = xtranslate.SafeLangType(from, ChatGptTranslateMode)
-	to, err = xtranslate.SafeLangType(to, ChatGptTranslateMode)
-	// google auto = ""
-	if from == "auto" {
-		from = ""
-	}
-	// 处理转换为安全语言类型错误
 	if err != nil {
 		return
 	}
-	// 处理转换后语言设置为auto
-	if to == "auto" {
-		err = errors.New("转换后语言不能为auto")
+	to, err = xtranslate.SafeLangType(to, ChatGptTranslateMode)
+	if err != nil {
 		return
+	}
+	// google auto = ""
+	if from == "auto" {
+		from = ""
 	}
 	result = make([]string, 0)
 	gptResp, err := SendToChatGpt(config.Key, fmt.Sprintf("将[%s]翻译成%s按照格式{\"fromLang\":\"源语言\",\"text\":\"翻译结果\"}返回给我fromLang有这几种语言直接给我返回对应的key位置%s不需要其他任何回复严格按照我给你的格式", text, to, global.ChatGPTLangConfig))

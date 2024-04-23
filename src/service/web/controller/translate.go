@@ -3,14 +3,15 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/net/gtrace"
-	"github.com/gogf/gf/v2/text/gstr"
 	"uniTranslate/src/buffer"
 	"uniTranslate/src/global"
 	queueHandler "uniTranslate/src/service/queue/handler"
 	"uniTranslate/src/service/web/handler"
 	"uniTranslate/src/translate"
 	"uniTranslate/src/types"
+
+	"github.com/gogf/gf/v2/net/gtrace"
+	"github.com/gogf/gf/v2/text/gstr"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -43,6 +44,7 @@ func Translate(r *ghttp.Request) {
 	x.FastResp(r, platform != "" && !xlib.InArr(platform, translateModeList), false).Resp("不支持的平台")
 	from := fromT.String()
 	to := toT.String()
+	x.FastResp(r, to == "auto", false).Resp("转换后语言不支持 auto")
 	text := textT.String()
 	// 内容转换为md5
 	var md5 string

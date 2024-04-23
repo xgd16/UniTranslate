@@ -6,14 +6,15 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"net/url"
+	"time"
+
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/gclient"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/xgd16/gf-x-tool/xtranslate"
-	"net/url"
-	"time"
 )
 
 type xunFeiHttpConfigType struct {
@@ -54,18 +55,15 @@ func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *
 	oFrom := from
 	// 语言标记转换
 	from, err = xtranslate.SafeLangType(from, mode)
-	to, err = xtranslate.SafeLangType(to, mode)
-	if mode == XunFeiTranslateMode && from == "auto" {
-		err = errors.New("当前翻译平台不支持自动识别源语言语种")
-		return
-	}
-	// 处理转换为安全语言类型错误
 	if err != nil {
 		return
 	}
-	// 处理转换后语言设置为auto
-	if to == "auto" {
-		err = errors.New("转换后语言不能为auto")
+	to, err = xtranslate.SafeLangType(to, mode)
+	if err != nil {
+		return
+	}
+	if mode == XunFeiTranslateMode && from == "auto" {
+		err = errors.New("当前翻译平台不支持自动识别源语言语种")
 		return
 	}
 	// http client

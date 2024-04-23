@@ -3,13 +3,14 @@ package translate
 import (
 	"encoding/json"
 	baseErr "errors"
+	"net/http"
+	"net/url"
+	"time"
+
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/pkg/errors"
 	"github.com/volcengine/volc-sdk-golang/base"
 	"github.com/xgd16/gf-x-tool/xtranslate"
-	"net/http"
-	"net/url"
-	"time"
 )
 
 var (
@@ -48,11 +49,11 @@ func HuoShanTranslate(config *HuoShanConfigType, from, to, text string) (result 
 	if from == "auto" {
 		from = ""
 	}
-	if to == "auto" {
-		return nil, "", errors.New("转换后语言不能为auto")
-	}
 	// 处理目标语言
 	from, err = xtranslate.SafeLangType(from, HuoShanTranslateMode)
+	if err != nil {
+		return
+	}
 	to, err = xtranslate.SafeLangType(to, HuoShanTranslateMode)
 	if err != nil {
 		return
@@ -77,6 +78,7 @@ func HuoShanTranslate(config *HuoShanConfigType, from, to, text string) (result 
 	}
 	if code != 200 {
 		err = errors.New(string(resp))
+		return
 	}
 	jsonData, err := gjson.DecodeToJson(resp)
 	if err != nil {

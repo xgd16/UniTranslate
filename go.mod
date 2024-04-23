@@ -8,11 +8,11 @@ require (
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.7.0
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.7.0
 	github.com/gogf/gf/v2 v2.7.0
-	github.com/sashabaranov/go-openai v1.20.5
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.895
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.895
+	github.com/sashabaranov/go-openai v1.22.0
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.907
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.907
 	github.com/volcengine/volc-sdk-golang v1.0.149
-	github.com/xgd16/gf-x-tool v0.5.11
+	github.com/xgd16/gf-x-tool v0.5.13
 )
 
 require (

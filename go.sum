@@ -429,8 +429,8 @@ github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjR
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
-github.com/sashabaranov/go-openai v1.20.5 h1:Sab4nzBLtoyxm4jRqH9G9pkIh50WpBFacPTEpruPB6o=
-github.com/sashabaranov/go-openai v1.20.5/go.mod h1:lj5b/K+zjTSFxVLijLSTDZuP7adOgerWeFyZLUhAKRg=
+github.com/sashabaranov/go-openai v1.22.0 h1:bjYkELQCbOBMW9B7zi/KA5L4syPfn/3qRvUoyV49Fvs=
+github.com/sashabaranov/go-openai v1.22.0/go.mod h1:lj5b/K+zjTSFxVLijLSTDZuP7adOgerWeFyZLUhAKRg=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
@@ -456,10 +456,10 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.895 h1:mcGC8MgWtWFP+uEfEIcoSpHxPiA77I3wQ0qT/5fcDec=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.895/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.895 h1:fRKQw9nozTsLu8Q2pqFrbQO6oMM0ETulb6jw1/735Ec=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.895/go.mod h1:DbD0ZS7xgWTPo6vgyBP1DMxJKlRjeNQTZif6YIKalWs=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.907 h1:NEijId2e5a3qHbKmCmLAhaCB2PGYn21tykus3cW1l0E=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.907/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.907 h1:/l850U1nn0AQaW81s28At/XlSsGzERdaKkoIp0ts9wM=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.907/go.mod h1:ioW9wUTmgx1LUivmdmoR6Dh/szrfM4T8pQ/jnjnvUMo=
 github.com/tv42/httpunix v0.0.0-20150427012821-b75d8614f926/go.mod h1:9ESjWnEqriFuLhtthL60Sar/7RFoluCcXsuvEwTV5KM=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
 github.com/volcengine/volc-sdk-golang v1.0.149 h1:XuyRHJ3SZMX+B+rMq0Cn/opnPWyDAC/XhAJFFbT9ulc=
@@ -467,8 +467,8 @@ github.com/volcengine/volc-sdk-golang v1.0.149/go.mod h1:l+W4Ian9MiOE8sI0QBgwLgk
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.0.2/go.mod h1:1WAq6h33pAW+iRreB34OORO2Nf7qel3VV3fjBj+hCSs=
 github.com/xdg-go/stringprep v1.0.2/go.mod h1:8F9zXuvzgwmyT5DUm4GUfZGDdT3W+LCvS6+da4O5kxM=
-github.com/xgd16/gf-x-tool v0.5.11 h1:e0pQ1wl/Mzk5hBaCcAx8ZifyS+NaFOyabOwxn4+B88U=
-github.com/xgd16/gf-x-tool v0.5.11/go.mod h1:mmfK1rXjhMeiyDIcpEg22e0JY1zGZCmMbXA3lUNvyNA=
+github.com/xgd16/gf-x-tool v0.5.13 h1:mITofhzB+1r1kgV+SCGJ+WjVdXuozxPJmS/XJggt10A=
+github.com/xgd16/gf-x-tool v0.5.13/go.mod h1:OKUSf2oZz+mIsnciUNs+JaPd9jeJFLJT+zg/N6bpPzU=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
