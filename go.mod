@@ -12,7 +12,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.907
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.907
 	github.com/volcengine/volc-sdk-golang v1.0.149
-	github.com/xgd16/gf-x-tool v0.5.13
+	github.com/xgd16/gf-x-tool v0.5.15
 )
 
 require (

@@ -1,9 +1,10 @@
 package devices
 
 import (
-	"github.com/xgd16/gf-x-tool/xstorage"
 	"uniTranslate/src/global"
 	"uniTranslate/src/types"
+
+	"github.com/xgd16/gf-x-tool/xstorage"
 )
 
 type XDbConfigDevice struct {
@@ -23,7 +24,10 @@ func (t *XDbConfigDevice) Init() (err error) {
 	return
 }
 
-func (t *XDbConfigDevice) GetConfig() (mapData map[string]*types.TranslatePlatform, err error) {
+func (t *XDbConfigDevice) GetConfig(refresh bool) (mapData map[string]*types.TranslatePlatform, err error) {
+	if refresh {
+		t.xdb.Init()
+	}
 	err = t.xdb.GetGJson().Get(defaultKeyName).Scan(&mapData)
 	return
 }

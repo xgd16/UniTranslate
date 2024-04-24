@@ -42,7 +42,7 @@ func baseInit() {
 	// 初始化 chatGPT 需要的数据
 	global.ChatGPTLangConfig = gjson.MustEncodeString(xtranslate.BaseTranslateConf[translate.ChatGptTranslateMode])
 	// 初始化缓冲区
-	if err := buffer.Buffer.Init(); err != nil {
+	if err := buffer.Buffer.Init(false); err != nil {
 		panic(err)
 	}
 	// 初始化缓存

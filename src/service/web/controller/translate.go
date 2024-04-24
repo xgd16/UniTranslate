@@ -94,7 +94,7 @@ func GetConfigList(r *ghttp.Request) {
 	device, err := global.GetConfigDevice()
 	x.FastResp(r, err).Resp()
 	// 获取配置
-	config, err := device.GetConfig()
+	config, err := device.GetConfig(true)
 	x.FastResp(r, err).Resp()
 
 	respData := make([]map[string]any, 0)
@@ -124,13 +124,13 @@ func AddConfig(r *ghttp.Request) {
 	x.FastResp(r, ok, false).Resp("已存在此配置")
 	x.FastResp(r, device.SaveConfig(t.GetMd5(), t), false).Resp("添加失败")
 	x.FastResp(r, global.StatisticalProcess.CreateEvent(t)).Resp("添加失败")
-	x.FastResp(r, buffer.Buffer.Init(), false).Resp("写入成功但重新初始化失败")
+	x.FastResp(r, buffer.Buffer.Init(true), false).Resp("写入成功但重新初始化失败")
 	x.FastResp(r).Resp()
 }
 
 // RefreshConfigCache 刷新配置缓存
 func RefreshConfigCache(r *ghttp.Request) {
-	x.FastResp(r, buffer.Buffer.Init(), false).Resp("写入成功但重新初始化失败")
+	x.FastResp(r, buffer.Buffer.Init(true), false).Resp("写入成功但重新初始化失败")
 	x.FastResp(r).Resp()
 }
 

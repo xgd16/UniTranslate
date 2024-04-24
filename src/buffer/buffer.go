@@ -3,14 +3,15 @@ package buffer
 import (
 	"errors"
 	"fmt"
-	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/net/gtrace"
-	"github.com/gogf/gf/v2/os/gtime"
-	"github.com/gogf/gf/v2/text/gstr"
 	"sync"
 	"uniTranslate/src/global"
 	queueHandler "uniTranslate/src/service/queue/handler"
 	"uniTranslate/src/types"
+
+	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/net/gtrace"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/text/gstr"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
@@ -80,7 +81,7 @@ func (t *BufferType) Handler(r *ghttp.Request, from, to, text, platform string, 
 	return
 }
 
-func (t *BufferType) Init() (err error) {
+func (t *BufferType) Init(refresh bool) (err error) {
 	t.m.Lock()
 	defer t.m.Unlock()
 	// 初始化数据
@@ -88,7 +89,7 @@ func (t *BufferType) Init() (err error) {
 	if err != nil {
 		return
 	}
-	config, err := device.GetConfig()
+	config, err := device.GetConfig(refresh)
 	if err != nil {
 		return
 	}
@@ -110,6 +111,9 @@ func (t *BufferType) getLevelSort(data map[string]*types.TranslatePlatform) (arr
 	// 创建用于操作的结构数据
 	arr = make([][]*types.TranslatePlatform, l)
 	for _, platform := range data {
+		if platform.Status == 0 {
+			continue
+		}
 		idx := t.levelArr.Search(platform.Level)
 		arr[idx] = append(arr[idx], platform)
 	}

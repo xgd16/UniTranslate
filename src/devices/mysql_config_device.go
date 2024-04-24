@@ -3,12 +3,13 @@ package devices
 import (
 	"context"
 	"fmt"
+	"uniTranslate/src/global"
+	"uniTranslate/src/types"
+
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/frame/gins"
-	"uniTranslate/src/global"
-	"uniTranslate/src/types"
 )
 
 type MySQLConfigDevice struct {
@@ -65,8 +66,9 @@ func (t *MySQLConfigDevice) Init() (err error) {
 	return
 }
 
-func (t *MySQLConfigDevice) GetConfig() (mapData map[string]*types.TranslatePlatform, err error) {
+func (t *MySQLConfigDevice) GetConfig(refresh bool) (mapData map[string]*types.TranslatePlatform, err error) {
 	mapData = make(map[string]*types.TranslatePlatform)
+
 	allT, err := t.model().All()
 	if err != nil {
 		return
