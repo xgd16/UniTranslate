@@ -54,6 +54,9 @@ func (t *BufferType) Handler(r *ghttp.Request, from, to, text, platform string, 
 		// 获取操作对象
 		idx := bufferArr.GetIdx(i)
 		p := bufferArr.GetPlatformConfig(idx[0], idx[1])
+		if p.Status == 0 {
+			continue
+		}
 		// 释放锁
 		t.m.Unlock()
 		// 调用处理
@@ -111,9 +114,6 @@ func (t *BufferType) getLevelSort(data map[string]*types.TranslatePlatform) (arr
 	// 创建用于操作的结构数据
 	arr = make([][]*types.TranslatePlatform, l)
 	for _, platform := range data {
-		if platform.Status == 0 {
-			continue
-		}
 		idx := t.levelArr.Search(platform.Level)
 		arr[idx] = append(arr[idx], platform)
 	}
