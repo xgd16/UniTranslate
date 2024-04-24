@@ -55,6 +55,7 @@ func (t *BufferType) Handler(r *ghttp.Request, from, to, text, platform string, 
 		idx := bufferArr.GetIdx(i)
 		p := bufferArr.GetPlatformConfig(idx[0], idx[1])
 		if p.Status == 0 {
+			t.m.Unlock()
 			continue
 		}
 		// 释放锁
