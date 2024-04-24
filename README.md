@@ -18,7 +18,7 @@
 [UniTranslate-web-console](https://github.com/xgd16/UniTranslate-web-console)
 
 ## 功能特点 ✨
-- 支持百度、有道、谷歌和 Deepl 平台的翻译接入
+- 支持百度、有道、谷歌和 Deepl 腾讯 ChatGPT 火山 讯飞 PaPaGo 平台的翻译接入
 - 支持设置翻译 API 的等级优先调用配置的低等级 API
 - 同一个 API 提供商可配置不限次 可设置为不同等级
 - 在配置多个 API 时如果调用当前 API 失败自动切换到下一个
@@ -32,11 +32,12 @@
 - [x] 更合理安全的身份验证
 - [x] 腾讯翻译
 - [x] 火山翻译
+- [x] PaPaGo
 - [x] 支持更多国家语言
 - [ ] 客户端更多翻译功能支持
 
 ## 基础类型 🪨
-`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu` `Tencent` `HuoShan`
+`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu` `Tencent` `HuoShan` `PaPaGo`
 
 ## Docker 启动 🚀
 ```shell

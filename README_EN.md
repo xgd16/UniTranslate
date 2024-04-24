@@ -5,7 +5,7 @@
 [中文](./README.md) | [English](./README_EN.md)
 
 # Project Introduction 📒
-This project is a tool that supports translation across multiple platforms and writes translation results to Redis cache.
+This project is a tool that supports translation across multiple platforms and writes translation results into Redis cache.
 
 ## Dependencies
 `MySQL: 8.*` `redis`
@@ -14,35 +14,36 @@ Optional
 
 `graylog`
 
-## WEB Management
+## Web Management
 [UniTranslate-web-console](https://github.com/xgd16/UniTranslate-web-console)
 
 ## Features ✨
-- Supports integration of translation services from Baidu, Youdao, Google, and Deepl platforms.
-- Supports setting the priority level of translation APIs for calling lower-level APIs.
-- Multiple calls are allowed for the same API provider; different levels can be set.
+- Supports integration with translation APIs from Baidu, Youdao, Google, Deepl, Tencent, ChatGPT, Huoshan, Xunfei, and PaPaGo platforms.
+- Supports setting priority levels for translation APIs and configuring lower-level APIs to be called first.
+- Allows configuring unlimited requests for the same API provider and setting different priority levels.
 - Automatically switches to the next API if the current API call fails when configuring multiple APIs.
-- Translated content can be written to `Redis` or `Memory` cache to reduce redundant API calls for repeated translation content.
+- Can write translated content into `Redis` `Memory` cache to reduce repetitive calls to translation APIs.
 
-## Future Support (priority in order, checked if implemented) ✈️
-- [x] Persistence of translated content to `MySQL`
-- [x] Web control page
-- [x] ChatGPT AI translation
-- [x] XunFei translation
-- [x] More reasonable and secure authentication
-- [x] Tencent translation
-- [x] HuoShan translation
-- [x] Support for more languages ​​in different countries
-- [ ] More translation feature support for clients
+## Future Support (prioritized, checked means implemented) ✈️
+- [x] Persist translated content to `MySQL`.
+- [x] Web control panel.
+- [x] ChatGPT AI translation.
+- [x] Xunfei translation.
+- [x] More secure and reasonable authentication.
+- [x] Tencent translation.
+- [x] Huoshan translation.
+- [x] PaPaGo translation.
+- [x] Support for more languages.
+- [ ] More translation features supported by the client.
 
-## Basic Types 🪨
-`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu` `Tencent` `HuoShan`
+## Base Types 🪨
+`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu` `Tencent` `HuoShan` `PaPaGo`
 
 ## Docker Startup 🚀
 ```shell
 # In the project directory
 docker build -t uni-translate:latest .
-# Then execute (it is best to create a network to put mysql and redis under the same network, then directly use the container name to access the application in the configuration)
+# Then execute (it's better to create a network to put MySQL and Redis in the same one, then directly access the application using the container name in the configuration)
 docker run -d --name uniTranslate -v {local directory}/config.yaml:/app/config.yaml -p 9431:{port configured in your config.yaml} --network baseRun uni-translate:latest
 ```
 
@@ -52,13 +53,13 @@ docker run -d --name uniTranslate -v {local directory}/config.yaml:/app/config.y
 server:
   name: uniTranslate
   address: "0.0.0.0:9431"
-  cacheMode: redis # redis, mem, off modes mem will store translation results in program memory, mode off does not write any cache
-  cachePlatform: false # Does the execution cache key generation contain the platform (will affect the automatic initialization of stored keys when the project starts)
-  key: "hdasdhasdhsahdkasjfsoufoqjoje" # Key for http API docking authentication
-  keyMode: 1 # Mode 1 directly passes in the key for verification, mode 2 uses key encryption and signing data for verification
+  cacheMode: redis # redis , mem , off modes. 'mem' stores translation results in program memory. 'off' does not write to any cache.
+  cachePlatform: false # Whether to include platform in cache key generation (affects automatic initialization of stored keys during project startup).
+  key: "hdasdhasdhsahdkasjfsoufoqjoje" # Key for HTTP API integration authentication.
+  keyMode: 1 # Mode 1 directly passes the key for validation. Mode 2 uses key encryption and signing data for validation.
 ```
 
-## Interface Authentication ts Example
+## Interface Authentication TS Example
 ```typescript
 import { MD5 } from "crypto-js";
 
@@ -109,51 +110,51 @@ Request Example
 
 ```shell
 curl --location --request POST 'http://127.0.0.1:9431/api/translate' \
---header 'auth_key: xxxxxxxxx{place AuthEncrypt function result here}' \
+--header 'auth_key: xxxxxxxxx{result of AuthEncrypt function}' \
 --header 'User-Agent: Apifox/1.0.0 (https://apifox.com)' \
 --header 'Content-Type: application/json' \
 --data '{
     "from": "auto",
     "to": "en",
-    "text": "Test",
+    "text": "测试一下",
     "platform": "YouDao"
 }'
 ```
 
 
-## Unsupported Translated Content ??? 🤔
-All supported languages ​​in this program are uniformly marked based on the identifier of the _Youdao_ translation API in the [translate.json](./translate.json) file.
+## Translation Not Supported??? 🤔
+All supported languages in this program are based on the identifiers of the _Youdao_ translation API in the [translate.json](./translate.json) file.
 
 Please modify the `translate.json` file based on the identifiers supported by the _Youdao_ translation API documentation.
 
-## Basic Language Identifiers
+## Base Language Identifiers
 
-| English Name              | Chinese Name     | Code      |
-|-------------------------|-------------|---------|
-| Arabic                  | 阿拉伯语        | ar      |
-| German                  | 德语          | de      |
-| English                 | 英语          | en      |
-| Spanish                 | 西班牙语        | es      |
-| French                  | 法语          | fr      |
-| Hindi                   | 印地语         | hi      |
-| Indonesian              | 印度尼西亚语      | id      |
-| Italian                 | 意大利语        | it      |
-| Japanese                | 日语          | ja      |
-| Korean                  | 韩语          | ko      |
-| Dutch                   | 荷兰语         | nl      |
-| Portuguese              | 葡萄牙语        | pt      |
-| Russian                 | 俄语          | ru      |
-| Thai                    | 泰语          | th      |
-| Vietnamese              | 越南语         | vi      |
-| Chinese                 | 简体中文        | zh-CHS  |
-| Chinese                 | 繁体中文        | zh-CHT  |
-| Afrikaans               | 南非荷兰语       | af      |
-| Amharic                 | 阿姆哈拉语       | am      |
-| Azerbaijani             | 阿塞拜疆语       | az      |
-| Belarusian              | 白俄罗斯语       | be      |
-| Bulgarian               | 保加利亚语       | bg      |
-| Bengali                 | 孟加拉语        | bn      |
-| Bosnian (Latin)         | 波斯尼亚语       | bs      |
+| English Name    | Chinese Name | Code   |
+| --------------- | ------------ | ------ |
+| Arabic          | 阿拉伯语     | ar     |
+| German          | 德语         | de     |
+| English         | 英语         | en     |
+| Spanish         | 西班牙语     | es     |
+| French          | 法语         | fr     |
+| Hindi           | 印地语       | hi     |
+| Indonesian      | 印度尼西亚语 | id     |
+| Italian         | 意大利语     | it     |
+| Japanese        | 日语         | ja     |
+| Korean          | 韩语         | ko     |
+| Dutch           | 荷兰语       | nl     |
+| Portuguese      | 葡萄牙语     | pt     |
+| Russian         | 俄语         | ru     |
+| Thai            | 泰语         | th     |
+| Vietnamese      | 越南语       | vi     |
+| Chinese         | 简体中文     | zh-CHS |
+| Chinese         | 繁体中文     | zh-CHT |
+| Afrikaans       | 南非荷兰语   | af     |
+| Amharic         | 阿姆哈拉语   | am     |
+| Azerbaijani     | 阿塞拜疆语   | az     |
+| Belarusian      | 白俄罗斯语   | be     |
+| Bulgarian       | 保加利亚语   | bg     |
+| Bengali         | 孟加拉语     | bn     |
+| Bosnian (Latin) | 波斯尼亚语   | bs      |
 | Catalan                 | 加泰隆语        | ca      |
 | Cebuano                 | 宿务语         | ceb     |
 | Corsican                | 科西嘉语        | co      |
@@ -242,10 +243,8 @@ Please modify the `translate.json` file based on the identifiers supported by th
 | Yoruba                  | 约鲁巴语        | yo      |
 | Yucatec                 | 尤卡坦玛雅语      | yua     |
 | Cantonese (Traditional) | 粤语          | yue     |
-| Zulu                    | 南
-
-非祖鲁语       | zu      |
-| 自动识别                    | auto        |         |
+| Zulu                    | 南非祖鲁语       | zu      |
+| auto                    | 自动识别        |         |
 
 ## API Documentation 🌍
 [Open Api File](./uniTranslate%20(统一翻译).openapi.json)
