@@ -63,6 +63,10 @@ func (t *MySQLConfigDevice) Init() (err error) {
 			}
 		}
 	}
+	// 初始化计数表
+	if err = t.initCountRecord(); err != nil {
+		return
+	}
 	return
 }
 
@@ -133,6 +137,33 @@ func (t *MySQLConfigDevice) initMd5() (err error) {
 			"md5": item.Md5,
 		}, g.Map{
 			"id": item.Id,
+		}); err != nil {
+			return
+		}
+	}
+	return
+}
+
+func (t *MySQLConfigDevice) initCountRecord() (err error) {
+	all, err := g.Model("translation_platform").Fields("md5").All()
+	if err != nil {
+		return
+	}
+
+	m := g.Model("count_record")
+
+	for _, v := range all {
+		md5 := v["md5"].String()
+		count, err1 := m.Clone().Where("serialNumber", md5).Count()
+		if err1 != nil {
+			err = err1
+			return
+		}
+		if count > 0 {
+			continue
+		}
+		if _, err = m.Clone().InsertIgnore(g.Map{
+			"serialNumber": md5,
 		}); err != nil {
 			return
 		}

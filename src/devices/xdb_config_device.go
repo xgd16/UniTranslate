@@ -4,6 +4,7 @@ import (
 	"uniTranslate/src/global"
 	"uniTranslate/src/types"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/xgd16/gf-x-tool/xstorage"
 )
 
@@ -21,6 +22,7 @@ func NewXDbConfigDevice() *XDbConfigDevice {
 }
 
 func (t *XDbConfigDevice) Init() (err error) {
+	err = t.initCountRecord()
 	return
 }
 
@@ -43,5 +45,27 @@ func (t *XDbConfigDevice) GetTranslateInfo(serialNumber string) (platform *types
 
 func (t *XDbConfigDevice) SaveConfig(serialNumber string, data *types.TranslatePlatform) (err error) {
 	err = t.xdb.Set(defaultKeyName, serialNumber, data)
+	return
+}
+
+func (t *XDbConfigDevice) initCountRecord() (err error) {
+
+	m := g.Model("count_record")
+
+	for k := range t.xdb.GetGJson().Get("translate").MapStrVar() {
+		count, err1 := m.Clone().Where("serialNumber", k).Count()
+		if err1 != nil {
+			err = err1
+			return
+		}
+		if count > 0 {
+			continue
+		}
+		if _, err = m.Clone().InsertIgnore(g.Map{
+			"serialNumber": k,
+		}); err != nil {
+			return
+		}
+	}
 	return
 }
