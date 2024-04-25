@@ -66,7 +66,7 @@ func (t *BufferType) Handler(r *ghttp.Request, from, to, text, platform string, 
 			e = fmt.Errorf("调用翻译失败 %s", err)
 			queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
 				ClientIp: r.GetClientIp(),
-				Body:     gstr.TrimAll(r.GetBodyString()),
+				Body:     gstr.Trim(r.GetBodyString()),
 				Time:     gtime.Now().UnixMilli(),
 				Ok:       err == nil,
 				ErrMsg:   err,

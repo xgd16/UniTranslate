@@ -67,7 +67,7 @@ func Translate(r *ghttp.Request) {
 		dataAny, err = t(r, from, to, text, platform)
 		data = gvar.New(dataAny)
 	} else {
-		data, err = global.GfCache.GetOrSetFunc(r.GetCtx(), fmt.Sprintf("Translate-%s", md5), func(ctx context.Context) (value any, err error) {
+		data, err = global.GfCache.GetOrSetFunc(r.GetCtx(), fmt.Sprintf("Translate:%s", md5), func(ctx context.Context) (value any, err error) {
 			return t(r, from, to, text, platform)
 		}, 0)
 	}
@@ -77,7 +77,7 @@ func Translate(r *ghttp.Request) {
 	// 记录翻译
 	queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
 		ClientIp: r.GetClientIp(),
-		Body:     gstr.TrimAll(r.GetBodyString()),
+		Body:     gstr.Trim(r.GetBodyString()),
 		Time:     gtime.Now().UnixMilli(),
 		Ok:       err == nil,
 		ErrMsg:   err,

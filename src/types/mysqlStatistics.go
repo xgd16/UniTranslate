@@ -94,7 +94,7 @@ func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatf
 
 // 存储到缓存
 func saveToCache(ctx context.Context, cache *gcache.Cache, m *MySqlStatistics, cacheMode string, cachePlatform bool) (err error) {
-	const keyName = "Translate-"
+	const keyName = "Translate:"
 	if cacheMode == "redis" {
 		conn, connErr := g.Redis().Conn(ctx)
 		if connErr != nil {

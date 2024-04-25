@@ -145,7 +145,7 @@ func (t *MySQLConfigDevice) initMd5() (err error) {
 }
 
 func (t *MySQLConfigDevice) initCountRecord() (err error) {
-	all, err := g.Model("translation_platform").Fields("md5").All()
+	all, err := t.model().Fields("md5").All()
 	if err != nil {
 		return
 	}
