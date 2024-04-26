@@ -48,6 +48,24 @@ func (t *XDbConfigDevice) SaveConfig(serialNumber string, data *types.TranslateP
 	return
 }
 
+func (t *XDbConfigDevice) DelConfig(serialNumber string) (err error) {
+	err = t.xdb.Del(defaultKeyName, serialNumber)
+	return
+}
+
+func (t *XDbConfigDevice) UpdateStatus(serialNumber string, status int) (err error) {
+	platform, ok, err := t.GetTranslateInfo(serialNumber)
+	if err != nil {
+		return
+	}
+	if !ok {
+		return
+	}
+	platform.Status = status
+	err = t.SaveConfig(serialNumber, platform)
+	return
+}
+
 func (t *XDbConfigDevice) initCountRecord() (err error) {
 
 	m := g.Model("count_record")

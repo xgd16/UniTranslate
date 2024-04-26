@@ -111,6 +111,24 @@ func (t *MySQLConfigDevice) SaveConfig(serialNumber string, data *types.Translat
 	return
 }
 
+func (t *MySQLConfigDevice) DelConfig(serialNumber string) (err error) {
+	if _, err = t.model().Where("md5", serialNumber).Delete(); err != nil {
+		return
+	}
+	return
+}
+
+func (t *MySQLConfigDevice) UpdateStatus(serialNumber string, status int) (err error) {
+	if _, err = t.model().Update(g.Map{
+		"status": status,
+	}, g.Map{
+		"md5": serialNumber,
+	}); err != nil {
+		return
+	}
+	return
+}
+
 func (t *MySQLConfigDevice) db() gdb.DB {
 	return gins.Database(t.dbName)
 }

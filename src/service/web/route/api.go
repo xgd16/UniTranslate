@@ -1,9 +1,10 @@
 package route
 
 import (
-	"github.com/gogf/gf/v2/net/ghttp"
 	"uniTranslate/src/service/web/controller"
 	"uniTranslate/src/service/web/middleware"
+
+	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 // Api 路由注册
@@ -17,4 +18,6 @@ func Api(r *ghttp.RouterGroup) {
 	r.GET("/getRequestRecord", controller.GetRequestRecord)
 	r.GET("/getLangList", controller.GetLangList)
 	r.GET("/getSystemInitConfig", controller.GetSystemInitConfig)
+	r.POST("/delConfig", controller.DelConfig)
+	r.POST("/updateStatus", controller.UpdateStatus)
 }
