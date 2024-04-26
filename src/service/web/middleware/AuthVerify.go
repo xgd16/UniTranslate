@@ -1,9 +1,10 @@
 package middleware
 
 import (
-	"github.com/gogf/gf/v2/net/ghttp"
 	"uniTranslate/src/global"
 	"uniTranslate/src/lib"
+
+	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 // AuthVerifyMiddleware 身份验证

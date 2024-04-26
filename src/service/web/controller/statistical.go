@@ -1,12 +1,13 @@
 package controller
 
 import (
+	"uniTranslate/src/global"
+	"uniTranslate/src/types"
+
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/xgd16/gf-x-tool/x"
-	"uniTranslate/src/global"
-	"uniTranslate/src/types"
 )
 
 // GetCountRecord 获取账号计数信息
