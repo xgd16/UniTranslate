@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"sort"
 	"uniTranslate/src/buffer"
 	"uniTranslate/src/global"
 	queueHandler "uniTranslate/src/service/queue/handler"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/gogf/gf/v2/net/gtrace"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -107,6 +109,11 @@ func GetConfigList(r *ghttp.Request) {
 			"type":     v.Type,
 		})
 	}
+	// 按照level排序
+	sort.Slice(respData, func(i, j int) bool {
+		return gconv.Int(respData[i]["level"]) > gconv.Int(respData[j]["level"])
+	})
+
 	x.FastResp(r).SetData(respData).Resp()
 }
 
