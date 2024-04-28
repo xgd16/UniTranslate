@@ -10,7 +10,6 @@ import (
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/pkg/errors"
 	"github.com/volcengine/volc-sdk-golang/base"
-	"github.com/xgd16/gf-x-tool/xtranslate"
 )
 
 var (
@@ -50,12 +49,12 @@ func HuoShanTranslate(config *HuoShanConfigType, from, to, text string) (result 
 	if from == "auto" {
 		from = ""
 	} else {
-		from, err = xtranslate.SafeLangType(from, HuoShanTranslateMode)
+		from, err = SafeLangType(from, HuoShanTranslateMode)
 		if err != nil {
 			return
 		}
 	}
-	to, err = xtranslate.SafeLangType(to, HuoShanTranslateMode)
+	to, err = SafeLangType(to, HuoShanTranslateMode)
 	if err != nil {
 		return
 	}
@@ -86,6 +85,6 @@ func HuoShanTranslate(config *HuoShanConfigType, from, to, text string) (result 
 		return
 	}
 	result = jsonData.Get("TranslationList.0.Translation").Strings()
-	fromLang, err = xtranslate.GetYouDaoLang(jsonData.Get("TranslationList.0.DetectedSourceLanguage").String(), HuoShanTranslateMode)
+	fromLang, err = GetYouDaoLang(jsonData.Get("TranslationList.0.DetectedSourceLanguage").String(), HuoShanTranslateMode)
 	return
 }

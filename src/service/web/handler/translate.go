@@ -8,7 +8,6 @@ import (
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
-	"github.com/xgd16/gf-x-tool/xtranslate"
 )
 
 func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text string) (data *types.TranslateData, translateErr error) {
@@ -18,28 +17,28 @@ func Translate(config *types.TranslatePlatform, OriginalFrom, OriginalTo, text s
 	)
 	// 调用对应平台
 	switch config.Type {
-	case xtranslate.Baidu:
-		translateTextArr, from, translateErr = xtranslate.BaiduTranslate(&xtranslate.BaiduConfigType{
+	case translate.BaiduTranslateMode:
+		translateTextArr, from, translateErr = translate.BaiduTranslate(&translate.BaiduConfigType{
 			CurlTimeOut: gconv.Int(config.Cfg["curlTimeOut"]),
 			Url:         gconv.String(config.Cfg["url"]),
 			AppId:       gconv.String(config.Cfg["appId"]),
 			Key:         gconv.String(config.Cfg["key"]),
 		}, OriginalFrom, OriginalTo, text)
-	case xtranslate.YouDao:
-		translateTextArr, from, translateErr = xtranslate.YouDaoTranslate(&xtranslate.YouDaoConfigType{
+	case translate.YouDaoTranslateMode:
+		translateTextArr, from, translateErr = translate.YouDaoTranslate(&translate.YouDaoConfigType{
 			CurlTimeOut: gconv.Int(config.Cfg["curlTimeOut"]),
 			Url:         gconv.String(config.Cfg["url"]),
 			AppKey:      gconv.String(config.Cfg["appKey"]),
 			SecKey:      gconv.String(config.Cfg["secKey"]),
 		}, OriginalFrom, OriginalTo, text)
-	case xtranslate.Google:
-		translateTextArr, from, translateErr = xtranslate.GoogleTranslate(&xtranslate.GoogleConfigType{
+	case translate.GoogleTranslateMode:
+		translateTextArr, from, translateErr = translate.GoogleTranslate(&translate.GoogleConfigType{
 			CurlTimeOut: gconv.Int(config.Cfg["curlTimeOut"]),
 			Url:         gconv.String(config.Cfg["url"]),
 			Key:         gconv.String(config.Cfg["key"]),
 		}, OriginalFrom, OriginalTo, text)
-	case xtranslate.Deepl:
-		translateTextArr, from, translateErr = xtranslate.DeeplTranslate(&xtranslate.DeeplConfigType{
+	case translate.DeeplTranslateMode:
+		translateTextArr, from, translateErr = translate.DeeplTranslate(&translate.DeeplConfigType{
 			CurlTimeOut: gconv.Int(config.Cfg["curlTimeOut"]),
 			Url:         gconv.String(config.Cfg["url"]),
 			Key:         gconv.String(config.Cfg["key"]),

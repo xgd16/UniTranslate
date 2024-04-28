@@ -14,7 +14,6 @@ import (
 	"github.com/gogf/gf/v2/net/gclient"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/text/gstr"
-	"github.com/xgd16/gf-x-tool/xtranslate"
 )
 
 type xunFeiHttpConfigType struct {
@@ -54,11 +53,11 @@ func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *
 	}
 	oFrom := from
 	// 语言标记转换
-	from, err = xtranslate.SafeLangType(from, mode)
+	from, err = SafeLangType(from, mode)
 	if err != nil {
 		return
 	}
-	to, err = xtranslate.SafeLangType(to, mode)
+	to, err = SafeLangType(to, mode)
 	if err != nil {
 		return
 	}
@@ -104,7 +103,7 @@ func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *
 		return
 	}
 	result = []string{gstr.Trim(jsonData.Get("data.result.trans_result.dst").String())}
-	fromLang, err = xtranslate.GetYouDaoLang(jsonData.Get("data.result.from", "").String(), XunFeiNiuTranslateMode)
+	fromLang, err = GetYouDaoLang(jsonData.Get("data.result.from", "").String(), XunFeiNiuTranslateMode)
 	if fromLang == "" {
 		fromLang = oFrom
 	}

@@ -8,7 +8,6 @@ import (
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/xgd16/gf-x-tool/xtranslate"
 )
 
 func PaPaGoTranslate(config *PaPaGoConfigType, from, to, text string) (result []string, fromLang string, err error) {
@@ -17,11 +16,11 @@ func PaPaGoTranslate(config *PaPaGoConfigType, from, to, text string) (result []
 		return
 	}
 	// 处理目标语言
-	from, err = xtranslate.SafeLangType(from, PaPaGoTranslateMode)
+	from, err = SafeLangType(from, PaPaGoTranslateMode)
 	if err != nil {
 		return
 	}
-	to, err = xtranslate.SafeLangType(to, PaPaGoTranslateMode)
+	to, err = SafeLangType(to, PaPaGoTranslateMode)
 	if err != nil {
 		return
 	}
@@ -61,6 +60,6 @@ func PaPaGoTranslate(config *PaPaGoConfigType, from, to, text string) (result []
 		return
 	}
 	result = []string{respTextT.String()}
-	fromLang, err = xtranslate.GetYouDaoLang(jsonData.Get("message.result.srcLangType").String(), PaPaGoTranslateMode)
+	fromLang, err = GetYouDaoLang(jsonData.Get("message.result.srcLangType").String(), PaPaGoTranslateMode)
 	return
 }

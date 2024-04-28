@@ -9,7 +9,6 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	tmt "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt/v20180321"
-	"github.com/xgd16/gf-x-tool/xtranslate"
 )
 
 func TencentTranslate(config *TencentConfigType, from, to, text string) (result []string, fromLang string, err error) {
@@ -18,11 +17,11 @@ func TencentTranslate(config *TencentConfigType, from, to, text string) (result 
 		return
 	}
 
-	from, err = xtranslate.SafeLangType(from, TencentTranslateMode)
+	from, err = SafeLangType(from, TencentTranslateMode)
 	if err != nil {
 		return
 	}
-	to, err = xtranslate.SafeLangType(to, TencentTranslateMode)
+	to, err = SafeLangType(to, TencentTranslateMode)
 	if err != nil {
 		return
 	}
@@ -60,6 +59,6 @@ func TencentTranslate(config *TencentConfigType, from, to, text string) (result 
 		return
 	}
 	result = jsonData.Get("Response.TargetText").Strings()
-	fromLang, err = xtranslate.GetYouDaoLang(jsonData.Get("Response.Source").String(), TencentTranslateMode)
+	fromLang, err = GetYouDaoLang(jsonData.Get("Response.Source").String(), TencentTranslateMode)
 	return
 }

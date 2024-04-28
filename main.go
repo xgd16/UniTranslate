@@ -19,7 +19,6 @@ import (
 	"github.com/xgd16/gf-x-tool/xgraylog"
 	"github.com/xgd16/gf-x-tool/xhttp"
 	"github.com/xgd16/gf-x-tool/xlib"
-	"github.com/xgd16/gf-x-tool/xtranslate"
 )
 
 func main() {
@@ -42,9 +41,9 @@ func baseInit() {
 	// 初始化翻译配置获取
 	initTranslateConfigDevice()
 	// 开启翻译支持
-	xtranslate.InitTranslate()
+	translate.InitTranslate()
 	// 初始化 chatGPT 需要的数据
-	global.ChatGPTLangConfig = gjson.MustEncodeString(xtranslate.BaseTranslateConf[translate.ChatGptTranslateMode])
+	global.ChatGPTLangConfig = gjson.MustEncodeString(translate.BaseTranslateConf[translate.ChatGptTranslateMode])
 	// 初始化缓冲区
 	if err := buffer.Buffer.Init(false); err != nil {
 		panic(err)

@@ -8,7 +8,6 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/sashabaranov/go-openai"
-	"github.com/xgd16/gf-x-tool/xtranslate"
 )
 
 func ChatGptTranslate(config *ChatGptConfigType, from, to, text string) (result []string, fromLang string, err error) {
@@ -16,11 +15,11 @@ func ChatGptTranslate(config *ChatGptConfigType, from, to, text string) (result 
 		return nil, "", errors.New("chatGPT翻译配置异常")
 	}
 	// 语言标记转换
-	from, err = xtranslate.SafeLangType(from, ChatGptTranslateMode)
+	from, err = SafeLangType(from, ChatGptTranslateMode)
 	if err != nil {
 		return
 	}
-	to, err = xtranslate.SafeLangType(to, ChatGptTranslateMode)
+	to, err = SafeLangType(to, ChatGptTranslateMode)
 	if err != nil {
 		return
 	}
@@ -35,7 +34,7 @@ func ChatGptTranslate(config *ChatGptConfigType, from, to, text string) (result 
 	}
 	respData := gvar.New(gptResp).MapStrVar()
 	result = append(result, respData["text"].String())
-	fromLang, err = xtranslate.GetYouDaoLang(respData["fromLang"].String(), ChatGptTranslateMode)
+	fromLang, err = GetYouDaoLang(respData["fromLang"].String(), ChatGptTranslateMode)
 	return
 }
 

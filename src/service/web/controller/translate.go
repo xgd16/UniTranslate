@@ -22,21 +22,7 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/xgd16/gf-x-tool/x"
 	"github.com/xgd16/gf-x-tool/xlib"
-	"github.com/xgd16/gf-x-tool/xtranslate"
 )
-
-var translateModeList = []string{
-	xtranslate.Baidu,
-	xtranslate.Deepl,
-	xtranslate.Google,
-	xtranslate.YouDao,
-	translate.ChatGptTranslateMode,
-	translate.XunFeiTranslateMode,
-	translate.XunFeiNiuTranslateMode,
-	translate.TencentTranslateMode,
-	translate.HuoShanTranslateMode,
-	translate.PaPaGoTranslateMode,
-}
 
 func Translate(r *ghttp.Request) {
 	fromT := r.Get("from")
@@ -44,7 +30,7 @@ func Translate(r *ghttp.Request) {
 	textT := r.Get("text")
 	platform := r.Get("platform").String()
 	x.FastResp(r, fromT.IsEmpty() || toT.IsEmpty() || textT.IsEmpty(), false).Resp("参数错误")
-	x.FastResp(r, platform != "" && !xlib.InArr(platform, translateModeList), false).Resp("不支持的平台")
+	x.FastResp(r, platform != "" && !xlib.InArr(platform, translate.TranslateModeList), false).Resp("不支持的平台")
 	from := fromT.String()
 	to := toT.String()
 	x.FastResp(r, to == "auto", false).Resp("转换后语言不支持 auto")
@@ -123,7 +109,7 @@ func AddConfig(r *ghttp.Request) {
 	x.FastResp(r, r.GetStruct(t)).Resp()
 	x.FastResp(r, t.Platform == "", false).Resp("名称不能为空")
 	t.InitMd5()
-	x.FastResp(r, t.Type != "" && !xlib.InArr(t.Type, translateModeList), false).Resp("不支持的平台")
+	x.FastResp(r, t.Type != "" && !xlib.InArr(t.Type, translate.TranslateModeList), false).Resp("不支持的平台")
 	device, err := global.GetConfigDevice()
 	x.FastResp(r, err).Resp()
 	_, ok, err := device.GetTranslateInfo(t.GetMd5())
@@ -163,5 +149,5 @@ func t(r *ghttp.Request, from, to, text, platform string) (value any, err error)
 }
 
 func GetLangList(r *ghttp.Request) {
-	x.FastResp(r).SetData(xtranslate.BaseTranslateConf[xtranslate.YouDao]).Resp()
+	x.FastResp(r).SetData(translate.BaseTranslateConf[translate.YouDaoTranslateMode]).Resp()
 }
