@@ -117,12 +117,12 @@ var InitTranslateBaseConf = func() (m map[string]map[string]string) {
 	// 读取配置文件
 	translate := gfile.GetContents("./translate.json")
 	if translate == "" {
-		return nil
+		return
 	}
 	// 解析配置文件
 	json, err := gjson.DecodeToJson(translate)
 	if err != nil {
-		return nil
+		return
 	}
 	// 转换为map
 	m = make(map[string]map[string]string, 1)
@@ -132,6 +132,7 @@ var InitTranslateBaseConf = func() (m map[string]map[string]string) {
 	return
 }
 
+// InitTranslate 初始化翻译
 func InitTranslate() {
 	// 初始化基本配置
 	BaseTranslateConf = InitTranslateBaseConf()
@@ -140,42 +141,47 @@ func InitTranslate() {
 	}
 }
 
-func SafeLangType(t, app string) (string, error) {
+// SafeLangType 安全的语言类型
+func SafeLangType(t, app string) (lang string, err error) {
 	if t == "auto" {
-		return "auto", nil
+		lang = "auto"
+		return
 	}
-
-	a := BaseTranslateConf[app]
-
-	if a == nil {
-		return "", errors.New("没有找到应用")
+	// 从配置文件中获取
+	languages := BaseTranslateConf[app]
+	if languages == nil {
+		err = errors.New("没有找到应用")
+		return
 	}
-
-	l := a[t]
-
-	if l == "" {
-		return "", errors.New("不支持的语言类型")
+	// 获取语言
+	lang = languages[t]
+	if lang == "" {
+		err = errors.New("不支持的语言类型")
+		return
 	}
-
-	return l, nil
+	return
 }
 
-func GetYouDaoLang(lang, app string) (string, error) {
+// GetYouDaoLang 获取有道语言
+func GetYouDaoLang(lang, app string) (youDaoLang string, err error) {
 	if lang == "auto" {
-		return "auto", nil
+		youDaoLang = "auto"
+		return
 	}
-
-	a := BaseTranslateConf[app]
-
-	if a == nil {
-		return "", errors.New("没有找到应用")
+	// 从配置文件中获取
+	languages := BaseTranslateConf[app]
+	if languages == nil {
+		err = errors.New("没有找到应用")
+		return
 	}
-
-	for s, s2 := range a {
+	// 获取语言
+	for s, s2 := range languages {
 		if s2 == lang {
-			return s, nil
+			youDaoLang = s
+			return
 		}
 	}
-
-	return lang, nil
+	// 获取语言
+	youDaoLang = lang
+	return
 }
