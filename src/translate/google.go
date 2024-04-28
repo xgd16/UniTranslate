@@ -11,19 +11,27 @@ import (
 	"github.com/gogf/gf/v2/os/gctx"
 )
 
-// GoogleTranslate google 翻译
-func GoogleTranslate(config *GoogleConfigType, from, to, text string) (result []string, fromLang string, err error) {
-	if config == nil || config.Url == "" || config.Key == "" {
+// GoogleConfigType 谷歌配置类型
+type GoogleConfigType struct {
+	CurlTimeOut int    `json:"curlTimeOut"`
+	Url         string `json:"url"`
+	Key         string `json:"key"`
+}
+
+// Translate google 翻译
+func (t *GoogleConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+	if t == nil || t.Url == "" || t.Key == "" {
 		err = errors.New("google翻译配置异常")
 		return
 	}
+	mode := t.GetMode()
 	ctx := gctx.New()
 	// 语言标记转换
-	from, err = SafeLangType(from, GoogleTranslateMode)
+	from, err = SafeLangType(from, mode)
 	if err != nil {
 		return
 	}
-	to, err = SafeLangType(to, GoogleTranslateMode)
+	to, err = SafeLangType(to, mode)
 	if err != nil {
 		return
 	}
@@ -33,11 +41,11 @@ func GoogleTranslate(config *GoogleConfigType, from, to, text string) (result []
 	}
 	// 调用翻译
 	HttpResult, err := g.Client().
-		SetTimeout(time.Duration(config.CurlTimeOut)*time.Millisecond).
+		SetTimeout(time.Duration(t.CurlTimeOut)*time.Millisecond).
 		Get(ctx, fmt.Sprintf(
 			"%s?key=%s&q=%s&source=%s&target=%s",
-			config.Url,
-			config.Key,
+			t.Url,
+			t.Key,
 			url.QueryEscape(text),
 			from,
 			to,
@@ -75,6 +83,10 @@ func GoogleTranslate(config *GoogleConfigType, from, to, text string) (result []
 		result = tr.Strings()
 	}
 	// 将语言种类转换为有道标准
-	fromLang, err = GetYouDaoLang(fromLang, GoogleTranslateMode)
+	fromLang, err = GetYouDaoLang(fromLang, mode)
 	return
+}
+
+func (t *GoogleConfigType) GetMode() string {
+	return GoogleTranslateMode
 }

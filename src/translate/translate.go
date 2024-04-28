@@ -6,6 +6,7 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 var TranslateModeList = []string{
@@ -21,12 +22,49 @@ var TranslateModeList = []string{
 	PaPaGoTranslateMode,
 }
 
+// ITranslate 翻译接口
+type ITranslate interface {
+	// Translate 翻译
+	Translate(from, to, text string) (result []string, fromLang string, err error)
+	// GetMode 获取模式
+	GetMode() (mode string)
+}
+
+func GetTranslate(mode string, config map[string]any) (t ITranslate, err error) {
+	// 调用对应平台
+	switch mode {
+	case BaiduTranslateMode:
+		t = new(BaiduConfigType)
+	case YouDaoTranslateMode:
+		t = new(YouDaoConfigType)
+	case GoogleTranslateMode:
+		t = new(GoogleConfigType)
+	case DeeplTranslateMode:
+		t = new(DeeplConfigType)
+	case ChatGptTranslateMode:
+		t = new(ChatGptConfigType)
+	case XunFeiTranslateMode:
+		t = new(XunFeiConfigType)
+	case XunFeiNiuTranslateMode:
+		t = new(XunFeiNiuConfigType)
+	case TencentTranslateMode:
+		t = new(TencentConfigType)
+	case HuoShanTranslateMode:
+		t = new(HuoShanConfigType)
+	case PaPaGoTranslateMode:
+		t = new(PaPaGoConfigType)
+	default:
+		err = errors.New("不支持的翻译")
+		return
+	}
+	if err = gconv.Struct(config, t); err != nil {
+		return
+	}
+	return
+}
+
 // ChatGptTranslateMode ChatGPT 支持
 const ChatGptTranslateMode = "ChatGPT"
-
-type ChatGptConfigType struct {
-	Key string `json:"key"`
-}
 
 // XunFeiTranslateMode 讯飞常用版本
 const XunFeiTranslateMode = "XunFei"
@@ -34,40 +72,13 @@ const XunFeiTranslateMode = "XunFei"
 // XunFeiNiuTranslateMode 讯飞新版
 const XunFeiNiuTranslateMode = "XunFeiNiu"
 
-type XunFeiConfigType struct {
-	AppId  string `json:"appId"`
-	Secret string `json:"secret"`
-	ApiKey string `json:"apiKey"`
-}
-
 const TencentTranslateMode = "Tencent"
-
-type TencentConfigType struct {
-	Url       string `json:"url"`
-	SecretId  string `json:"secretId"`
-	SecretKey string `json:"secretKey"`
-	Region    string `json:"region"`
-}
 
 // HuoShanTranslateMode 火山翻译
 const HuoShanTranslateMode = "HuoShan"
 
-// HuoShanConfigType 火山翻译配置
-type HuoShanConfigType struct {
-	AccessKey string
-	SecretKey string
-}
-
 // PaPaGoTranslateMode 啪啪GO翻译
 const PaPaGoTranslateMode = "PaPaGo"
-
-// PaPaGoConfigType 啪啪GO翻译配置
-type PaPaGoConfigType struct {
-	KeyId       string `json:"keyId"`
-	Key         string `json:"key"`
-	CurlTimeOut int    `json:"curlTimeOut"`
-	Url         string `json:"url"`
-}
 
 const (
 	YouDaoTranslateMode = "YouDao" // 有道
@@ -75,36 +86,6 @@ const (
 	GoogleTranslateMode = "Google" // 谷歌
 	DeeplTranslateMode  = "Deepl"  // Deepl
 )
-
-// BaiduConfigType 百度的配置类型
-type BaiduConfigType struct {
-	CurlTimeOut int    `json:"curlTimeOut"`
-	Url         string `json:"url"`
-	AppId       string `json:"appId"`
-	Key         string `json:"key"`
-}
-
-// YouDaoConfigType 有道配置类型
-type YouDaoConfigType struct {
-	CurlTimeOut int    `json:"curlTimeOut"`
-	Url         string `json:"url"`
-	AppKey      string `json:"appKey"`
-	SecKey      string `json:"secKey"`
-}
-
-// GoogleConfigType 谷歌配置类型
-type GoogleConfigType struct {
-	CurlTimeOut int    `json:"curlTimeOut"`
-	Url         string `json:"url"`
-	Key         string `json:"key"`
-}
-
-// DeeplConfigType Deepl配置类型
-type DeeplConfigType struct {
-	CurlTimeOut int    `json:"curlTimeOut"`
-	Url         string `json:"url"`
-	Key         string `json:"key"`
-}
 
 // BaseTranslateConf 基础翻译配置
 var BaseTranslateConf map[string]map[string]string

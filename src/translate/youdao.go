@@ -14,14 +14,23 @@ import (
 	"github.com/xgd16/gf-x-tool/xlib"
 )
 
-// YouDaoTranslate 有道翻译
-func YouDaoTranslate(YouDaoConfig *YouDaoConfigType, from, to, text string) (result []string, fromLang string, err error) {
-	if YouDaoConfig == nil || YouDaoConfig.AppKey == "" || YouDaoConfig.Url == "" || YouDaoConfig.SecKey == "" {
+// YouDaoConfigType 有道配置类型
+type YouDaoConfigType struct {
+	CurlTimeOut int    `json:"curlTimeOut"`
+	Url         string `json:"url"`
+	AppKey      string `json:"appKey"`
+	SecKey      string `json:"secKey"`
+}
+
+// Translate 有道翻译
+func (t *YouDaoConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+	if t == nil || t.AppKey == "" || t.Url == "" || t.SecKey == "" {
 		err = errors.New("有道翻译配置异常")
 		return
 	}
+	mode := t.GetMode()
 	// 语言标记转换
-	from, err = SafeLangType(from, YouDaoTranslateMode)
+	from, err = SafeLangType(from, mode)
 	if err != nil {
 		return
 	}
@@ -40,12 +49,12 @@ func YouDaoTranslate(YouDaoConfig *YouDaoConfigType, from, to, text string) (res
 
 	salt := gtime.Now().UnixMilli()
 	curTime := int(math.Round(float64(salt / 1000)))
-	signStr := fmt.Sprintf("%s%s%d%d%s", YouDaoConfig.AppKey, truncate(text), salt, curTime, YouDaoConfig.SecKey)
+	signStr := fmt.Sprintf("%s%s%d%d%s", t.AppKey, truncate(text), salt, curTime, t.SecKey)
 	sign := xlib.Sha256(signStr)
 
-	post, err := g.Client().SetTimeout(time.Duration(YouDaoConfig.CurlTimeOut)*time.Millisecond).Post(gctx.New(), YouDaoConfig.Url, g.Map{
+	post, err := g.Client().SetTimeout(time.Duration(t.CurlTimeOut)*time.Millisecond).Post(gctx.New(), t.Url, g.Map{
 		"q":        text,
-		"appKey":   YouDaoConfig.AppKey,
+		"appKey":   t.AppKey,
 		"salt":     salt,
 		"from":     from,
 		"to":       to,
@@ -73,4 +82,8 @@ func YouDaoTranslate(YouDaoConfig *YouDaoConfigType, from, to, text string) (res
 	// 获取 from
 	returnFrom := gstr.Split(json.Get("l").String(), "2")[0]
 	return json.Get("translation").Strings(), returnFrom, nil
+}
+
+func (t *YouDaoConfigType) GetMode() string {
+	return YouDaoTranslateMode
 }

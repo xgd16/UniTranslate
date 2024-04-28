@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"runtime"
 	"uniTranslate/src/buffer"
 	"uniTranslate/src/devices"
 	"uniTranslate/src/global"
@@ -22,6 +23,8 @@ import (
 )
 
 func main() {
+	runtime.SetMutexProfileFraction(1) // (非必需)开启对锁调用的跟踪
+	runtime.SetBlockProfileRate(1)     // (非必需)开启对阻塞操作的跟踪
 	// 初始化系统配置
 	global.InitSystemConfig()
 	// 初始化基础

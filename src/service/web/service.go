@@ -33,6 +33,7 @@ func Service() {
 			<div style="text-align:center;"><div style="font-size: 5rem">404</div><div style="font-size: 3rem">%s</div></div>
 		`, gtime.Now().Format("Y-m-d H:i:s"))
 	})
+	server.EnablePProf()
 	// 启动web服务
 	server.Run()
 }

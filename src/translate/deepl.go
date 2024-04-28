@@ -10,18 +10,26 @@ import (
 	"github.com/gogf/gf/v2/os/gctx"
 )
 
-func DeeplTranslate(config *DeeplConfigType, from, to, text string) (result []string, fromLang string, err error) {
-	if config == nil || config.Url == "" || config.Key == "" {
+// DeeplConfigType Deepl配置类型
+type DeeplConfigType struct {
+	CurlTimeOut int    `json:"curlTimeOut"`
+	Url         string `json:"url"`
+	Key         string `json:"key"`
+}
+
+func (t *DeeplConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+	if t == nil || t.Url == "" || t.Key == "" {
 		err = errors.New("deepl翻译配置异常")
 		return
 	}
 	ctx := gctx.New()
+	mode := t.GetMode()
 	// 语言标记转换
-	from, err = SafeLangType(from, DeeplTranslateMode)
+	from, err = SafeLangType(from, mode)
 	if err != nil {
 		return
 	}
-	to, err = SafeLangType(to, DeeplTranslateMode)
+	to, err = SafeLangType(to, mode)
 	if err != nil {
 		return
 	}
@@ -29,9 +37,9 @@ func DeeplTranslate(config *DeeplConfigType, from, to, text string) (result []st
 		from = ""
 	}
 	// 调用翻译
-	HttpResult, err := g.Client().SetTimeout(time.Duration(config.CurlTimeOut)*time.Millisecond).Header(g.MapStrStr{
-		"Authorization": fmt.Sprintf("DeepL-Auth-Key %s", config.Key),
-	}).Post(ctx, config.Url, g.Map{
+	HttpResult, err := g.Client().SetTimeout(time.Duration(t.CurlTimeOut)*time.Millisecond).Header(g.MapStrStr{
+		"Authorization": fmt.Sprintf("DeepL-Auth-Key %s", t.Key),
+	}).Post(ctx, t.Url, g.Map{
 		"text":        text,
 		"source_lang": from,
 		"target_lang": to,
@@ -69,6 +77,10 @@ func DeeplTranslate(config *DeeplConfigType, from, to, text string) (result []st
 		result = tr.Strings()
 	}
 	// 将语言种类转换为有道标准
-	fromLang, err = GetYouDaoLang(fromLang, DeeplTranslateMode)
+	fromLang, err = GetYouDaoLang(fromLang, mode)
 	return
+}
+
+func (t *DeeplConfigType) GetMode() string {
+	return DeeplTranslateMode
 }

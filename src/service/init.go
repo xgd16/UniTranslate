@@ -9,9 +9,9 @@ import (
 
 // 填写注册服务
 var register = map[string]func(){
-	"WEB":   web.Service,
 	"Queue": queue.Service,
 	"Cron":  cron.Service,
+	"WEB":   web.Service,
 }
 
 // InitService 初始化系统服务

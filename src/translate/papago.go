@@ -10,29 +10,38 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-func PaPaGoTranslate(config *PaPaGoConfigType, from, to, text string) (result []string, fromLang string, err error) {
-	if config == nil || config.Key == "" || config.KeyId == "" || config.Url == "" {
+// PaPaGoConfigType 啪啪GO翻译配置
+type PaPaGoConfigType struct {
+	KeyId       string `json:"keyId"`
+	Key         string `json:"key"`
+	CurlTimeOut int    `json:"curlTimeOut"`
+	Url         string `json:"url"`
+}
+
+func (t *PaPaGoConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+	if t == nil || t.Key == "" || t.KeyId == "" || t.Url == "" {
 		err = errors.New("PaPaGo配置异常")
 		return
 	}
+	mode := t.GetMode()
 	// 处理目标语言
-	from, err = SafeLangType(from, PaPaGoTranslateMode)
+	from, err = SafeLangType(from, mode)
 	if err != nil {
 		return
 	}
-	to, err = SafeLangType(to, PaPaGoTranslateMode)
+	to, err = SafeLangType(to, mode)
 	if err != nil {
 		return
 	}
 	// 发起请求
 	resp, err := g.Client().
-		SetTimeout(time.Duration(config.CurlTimeOut)*time.Millisecond).
+		SetTimeout(time.Duration(t.CurlTimeOut)*time.Millisecond).
 		ContentJson().
 		Header(g.MapStrStr{
-			"X-NCP-APIGW-API-KEY-ID": config.KeyId,
-			"X-NCP-APIGW-API-KEY":    config.Key,
+			"X-NCP-APIGW-API-KEY-ID": t.KeyId,
+			"X-NCP-APIGW-API-KEY":    t.Key,
 		}).
-		Post(context.Background(), config.Url, g.Map{"source": from, "target": to, "text": text})
+		Post(context.Background(), t.Url, g.Map{"source": from, "target": to, "text": text})
 	if err != nil {
 		return
 	}
@@ -60,6 +69,10 @@ func PaPaGoTranslate(config *PaPaGoConfigType, from, to, text string) (result []
 		return
 	}
 	result = []string{respTextT.String()}
-	fromLang, err = GetYouDaoLang(jsonData.Get("message.result.srcLangType").String(), PaPaGoTranslateMode)
+	fromLang, err = GetYouDaoLang(jsonData.Get("message.result.srcLangType").String(), mode)
 	return
+}
+
+func (t *PaPaGoConfigType) GetMode() string {
+	return PaPaGoTranslateMode
 }

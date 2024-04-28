@@ -37,13 +37,37 @@ func init() {
 	xunFeiNiuHttpConfig.Uri = parse.Path
 }
 
-// XunFeiNiuTranslate 讯飞新翻译引擎
-func XunFeiNiuTranslate(config *XunFeiConfigType, from, to, text string) (result []string, fromLang string, err error) {
-	return xunFeiBaseTranslate(xunFeiNiuHttpConfig, XunFeiNiuTranslateMode, config, from, to, text)
+type XunFeiNiuConfigType struct {
+	AppId  string `json:"appId"`
+	Secret string `json:"secret"`
+	ApiKey string `json:"apiKey"`
 }
 
-func XunFeiTranslate(config *XunFeiConfigType, from, to, text string) (result []string, fromLang string, err error) {
-	return xunFeiBaseTranslate(xunFeiHttpConfig, XunFeiTranslateMode, config, from, to, text)
+// XunFeiNiuTranslate 讯飞新翻译引擎
+func (t *XunFeiNiuConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+	return xunFeiBaseTranslate(xunFeiNiuHttpConfig, t.GetMode(), &XunFeiConfigType{
+		AppId:  t.AppId,
+		Secret: t.Secret,
+		ApiKey: t.ApiKey,
+	}, from, to, text)
+}
+
+func (t *XunFeiNiuConfigType) GetMode() string {
+	return XunFeiNiuTranslateMode
+}
+
+type XunFeiConfigType struct {
+	AppId  string `json:"appId"`
+	Secret string `json:"secret"`
+	ApiKey string `json:"apiKey"`
+}
+
+func (t *XunFeiConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+	return xunFeiBaseTranslate(xunFeiHttpConfig, t.GetMode(), t, from, to, text)
+}
+
+func (t *XunFeiConfigType) GetMode() string {
+	return XunFeiTranslateMode
 }
 
 // xunFeiBaseTranslate 讯飞基础翻译实现

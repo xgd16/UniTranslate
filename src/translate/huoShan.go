@@ -39,29 +39,36 @@ type Req struct {
 	TextList       []string `json:"TextList"`
 }
 
-// HuoShanTranslate 火山翻译
-func HuoShanTranslate(config *HuoShanConfigType, from, to, text string) (result []string, fromLang string, err error) {
-	if config.SecretKey == "" || config.AccessKey == "" {
+// HuoShanConfigType 火山翻译配置
+type HuoShanConfigType struct {
+	AccessKey string
+	SecretKey string
+}
+
+// Translate 火山翻译
+func (t *HuoShanConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+	if t == nil || t.SecretKey == "" || t.AccessKey == "" {
 		err = baseErr.New("火山翻译配置异常")
 		return
 	}
+	mode := t.GetMode()
 	// 处理目标语言
 	if from == "auto" {
 		from = ""
 	} else {
-		from, err = SafeLangType(from, HuoShanTranslateMode)
+		from, err = SafeLangType(from, mode)
 		if err != nil {
 			return
 		}
 	}
-	to, err = SafeLangType(to, HuoShanTranslateMode)
+	to, err = SafeLangType(to, mode)
 	if err != nil {
 		return
 	}
 
 	client := base.NewClient(ServiceInfo, ApiInfoList)
-	client.SetAccessKey(config.AccessKey)
-	client.SetSecretKey(config.SecretKey)
+	client.SetAccessKey(t.AccessKey)
+	client.SetSecretKey(t.SecretKey)
 
 	req := Req{
 		SourceLanguage: from,
@@ -85,6 +92,10 @@ func HuoShanTranslate(config *HuoShanConfigType, from, to, text string) (result 
 		return
 	}
 	result = jsonData.Get("TranslationList.0.Translation").Strings()
-	fromLang, err = GetYouDaoLang(jsonData.Get("TranslationList.0.DetectedSourceLanguage").String(), HuoShanTranslateMode)
+	fromLang, err = GetYouDaoLang(jsonData.Get("TranslationList.0.DetectedSourceLanguage").String(), mode)
 	return
+}
+
+func (t *HuoShanConfigType) GetMode() string {
+	return HuoShanTranslateMode
 }

@@ -11,30 +11,37 @@ import (
 	tmt "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt/v20180321"
 )
 
-func TencentTranslate(config *TencentConfigType, from, to, text string) (result []string, fromLang string, err error) {
-	if config.SecretId == "" || config.SecretKey == "" || config.Region == "" || config.Url == "" {
+type TencentConfigType struct {
+	Url       string `json:"url"`
+	SecretId  string `json:"secretId"`
+	SecretKey string `json:"secretKey"`
+	Region    string `json:"region"`
+}
+
+func (t *TencentConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+	if t == nil || t.SecretId == "" || t.SecretKey == "" || t.Region == "" || t.Url == "" {
 		err = baseErr.New("腾讯翻译配置异常")
 		return
 	}
-
-	from, err = SafeLangType(from, TencentTranslateMode)
+	mode := t.GetMode()
+	from, err = SafeLangType(from, mode)
 	if err != nil {
 		return
 	}
-	to, err = SafeLangType(to, TencentTranslateMode)
+	to, err = SafeLangType(to, mode)
 	if err != nil {
 		return
 	}
 
 	credential := common.NewCredential(
-		config.SecretId,
-		config.SecretKey,
+		t.SecretId,
+		t.SecretKey,
 	)
 
 	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.Endpoint = config.Url
+	cpf.HttpProfile.Endpoint = t.Url
 
-	client, err := tmt.NewClient(credential, config.Region, cpf)
+	client, err := tmt.NewClient(credential, t.Region, cpf)
 	if err != nil {
 		return
 	}
@@ -59,6 +66,10 @@ func TencentTranslate(config *TencentConfigType, from, to, text string) (result 
 		return
 	}
 	result = jsonData.Get("Response.TargetText").Strings()
-	fromLang, err = GetYouDaoLang(jsonData.Get("Response.Source").String(), TencentTranslateMode)
+	fromLang, err = GetYouDaoLang(jsonData.Get("Response.Source").String(), mode)
 	return
+}
+
+func (t *TencentConfigType) GetMode() string {
+	return TencentTranslateMode
 }
