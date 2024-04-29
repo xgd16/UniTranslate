@@ -11,7 +11,7 @@ import (
 )
 
 func Service() {
-	gcron.Add(gctx.New(), "0 */2 * * *", func(ctx context.Context) {
+	if _, err := gcron.Add(gctx.New(), "@hourly", func(ctx context.Context) {
 		defer func() {
 			if err := recover(); err != nil {
 				g.Log().Error(ctx, "清理请求记录失败", err)
@@ -22,7 +22,9 @@ func Service() {
 			g.Log().Error(ctx, "清理请求记录失败", err)
 
 		}
-	})
+	}); err != nil {
+		g.Log().Error(gctx.New(), "清理请求记录定时任务添加失败", err)
+	}
 }
 
 func clearRequestRecord(ctx context.Context) (err error) {
