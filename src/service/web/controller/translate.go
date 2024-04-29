@@ -29,6 +29,7 @@ func Translate(r *ghttp.Request) {
 	toT := r.Get("to")
 	textT := r.Get("text")
 	platform := r.Get("platform").String()
+	batch := r.Get("batch", false).Bool()
 	x.FastResp(r, fromT.IsEmpty() || toT.IsEmpty() || textT.IsEmpty(), false).Resp("参数错误")
 	x.FastResp(r, platform != "" && !xlib.InArr(platform, translate.TranslateModeList), false).Resp("不支持的平台")
 	from := fromT.String()
@@ -36,12 +37,16 @@ func Translate(r *ghttp.Request) {
 	x.FastResp(r, to == "auto", false).Resp("转换后语言不支持 auto")
 	text := textT.String()
 	// 内容转换为md5
-	var md5 string
+	var keyStr string
 	if global.CachePlatform {
-		md5 = gmd5.MustEncrypt(fmt.Sprintf("to:%s-text:%s-platform:%s", to, text, platform))
+		keyStr = fmt.Sprintf("to:%s-text:%s-platform:%s", to, text, platform)
 	} else {
-		md5 = gmd5.MustEncrypt(fmt.Sprintf("to:%s-text:%s", to, text))
+		keyStr = fmt.Sprintf("to:%s-text:%s", to, text)
 	}
+	if batch {
+		keyStr += "-batch"
+	}
+	md5 := gmd5.MustEncrypt(keyStr)
 	// 写入到缓存
 	var (
 		data *gvar.Var
