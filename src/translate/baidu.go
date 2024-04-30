@@ -1,13 +1,12 @@
 package translate
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
 
-	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/os/gtime"
@@ -21,23 +20,34 @@ type BaiduConfigType struct {
 	Key         string `json:"key"`
 }
 
-func (t *BaiduConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+type BaiduHTTPTranslateResp struct {
+	From        string        `json:"from"`
+	To          string        `json:"to"`
+	TransResult []TransResult `json:"trans_result"`
+}
+
+type TransResult struct {
+	Src string `json:"src"`
+	Dst string `json:"dst"`
+}
+
+func (t *BaiduConfigType) Translate(req *TranslateReq) (resp []*TranslateResp, err error) {
 	if t == nil || t.Url == "" || t.AppId == "" || t.Key == "" {
 		err = errors.New("百度翻译配置异常")
 		return
 	}
 	mode := t.GetMode()
 	// 语言标记转换
-	from, err = SafeLangType(from, mode)
+	from, err := SafeLangType(req.From, mode)
 	if err != nil {
 		return
 	}
-	to, err = SafeLangType(to, mode)
+	to, err := SafeLangType(req.To, mode)
 	if err != nil {
 		return
 	}
 	salt := gtime.Now().UnixMilli()
-	signStr := fmt.Sprintf("%s%s%d%s", t.AppId, text, salt, t.Key)
+	signStr := fmt.Sprintf("%s%s%d%s", t.AppId, req.TextStr, salt, t.Key)
 	sign, err := gmd5.EncryptString(signStr)
 	// 处理MD5加密失败
 	if err != nil {
@@ -45,7 +55,7 @@ func (t *BaiduConfigType) Translate(from, to, text string) (result []string, fro
 	}
 	// 发起请求
 	post, err := g.Client().SetTimeout(time.Duration(t.CurlTimeOut)*time.Millisecond).Post(gctx.New(), t.Url, g.Map{
-		"q":     text,
+		"q":     req.TextStr,
 		"from":  from,
 		"to":    to,
 		"appid": t.AppId,
@@ -59,34 +69,30 @@ func (t *BaiduConfigType) Translate(from, to, text string) (result []string, fro
 	// 推出函数时关闭链接
 	defer func() { _ = post.Close() }()
 	// 返回的json解析
-	respStr := post.ReadAllString()
+	respByte := post.ReadAll()
 	// 判断状态码
 	if post.StatusCode != 200 {
-		err = fmt.Errorf("请求失败 状态码: %d 返回结果: %s", post.StatusCode, respStr)
+		err = fmt.Errorf("请求失败 状态码: %d 返回结果: %s", post.StatusCode, respByte)
 		return
 	}
-	json, err := gjson.DecodeToJson(respStr)
-	// 处理json错误
-	if err != nil {
+	httpResp := new(BaiduHTTPTranslateResp)
+	if err = json.Unmarshal(respByte, httpResp); err != nil {
 		return
 	}
-	// 判断获取到的数据是否正常
-	if json.Get("trans_result").IsEmpty() {
-		err = fmt.Errorf("请求数据异常 账号: %s 返回结果: %s", t.AppId, respStr)
-		return
-	}
-	// 循环获取数据
-	var arr []string
-	for _, v := range json.Get("trans_result").Maps() {
-		arr = append(arr, gvar.New(v["dst"], true).String())
+	resp = make([]*TranslateResp, 0)
+	for _, item := range httpResp.TransResult {
+		lang, err1 := GetYouDaoLang(httpResp.From, mode)
+		if err1 != nil {
+			err = err1
+			return
+		}
+		resp = append(resp, &TranslateResp{
+			Text:     item.Dst,
+			FromLang: lang,
+		})
 	}
 
-	lang, err := GetYouDaoLang(json.Get("from").String(), mode)
-	if err != nil {
-		return
-	}
-
-	return arr, lang, nil
+	return
 }
 
 func (t *BaiduConfigType) GetMode() string {

@@ -17,7 +17,7 @@ func Service() {
 				g.Log().Error(ctx, "清理请求记录失败", err)
 			}
 		}()
-		g.Log().Infof(ctx, "每2小时执行一次 清理请求记录")
+		g.Log().Infof(ctx, "每1小时执行一次 清理请求记录")
 		if err := clearRequestRecord(ctx); err != nil {
 			g.Log().Error(ctx, "清理请求记录失败", err)
 

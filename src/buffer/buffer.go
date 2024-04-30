@@ -6,6 +6,7 @@ import (
 	"sync"
 	"uniTranslate/src/global"
 	queueHandler "uniTranslate/src/service/queue/handler"
+	"uniTranslate/src/translate"
 	"uniTranslate/src/types"
 
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -36,15 +37,15 @@ func (t *BufferType) GetIdx() [][]int {
 	return t.idx
 }
 
-func (t *BufferType) Handler(r *ghttp.Request, from, to, text, platform string, fn func(*types.TranslatePlatform, string, string, string) (*types.TranslateData, error)) (s *types.TranslateData, e error) {
+func (t *BufferType) Handler(r *ghttp.Request, req *translate.TranslateReq, fn func(config *types.TranslatePlatform, req *translate.TranslateReq) (*types.TranslateData, error)) (s *types.TranslateData, e error) {
 	t.m.Lock()
 	var bufferArr BufferArrInterface
-	if platform == "" {
+	if req.Platfrom == "" {
 		bufferArr = new(RandomSortBufferArr)
 	} else {
 		bufferArr = new(PlatformSortBufferArr)
 	}
-	bufferArr.Init(t, platform)
+	bufferArr.Init(t, req.Platfrom)
 	t.m.Unlock()
 	// 创建上下文
 	ctx := gctx.New()
@@ -61,7 +62,7 @@ func (t *BufferType) Handler(r *ghttp.Request, from, to, text, platform string, 
 		// 释放锁
 		t.m.Unlock()
 		// 调用处理
-		t, err := fn(p, from, to, text)
+		t, err := fn(p, req)
 		if err != nil {
 			e = fmt.Errorf("调用翻译失败 %s", err)
 			queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{

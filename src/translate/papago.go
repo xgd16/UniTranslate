@@ -2,11 +2,12 @@ package translate
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
-	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -18,58 +19,71 @@ type PaPaGoConfigType struct {
 	Url         string `json:"url"`
 }
 
-func (t *PaPaGoConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+type PaPaGoHTTPTranslateResp struct {
+	Message Message `json:"message"`
+}
+
+type Message struct {
+	Result Result `json:"result"`
+}
+
+type Result struct {
+	SrcLangType    string `json:"srcLangType"`
+	TarLangType    string `json:"tarLangType"`
+	TranslatedText string `json:"translatedText"`
+}
+
+func (t *PaPaGoConfigType) Translate(req *TranslateReq) (resp []*TranslateResp, err error) {
 	if t == nil || t.Key == "" || t.KeyId == "" || t.Url == "" {
 		err = errors.New("PaPaGo配置异常")
 		return
 	}
 	mode := t.GetMode()
 	// 处理目标语言
-	from, err = SafeLangType(from, mode)
+	from, err := SafeLangType(req.From, mode)
 	if err != nil {
 		return
 	}
-	to, err = SafeLangType(to, mode)
+	to, err := SafeLangType(req.To, mode)
 	if err != nil {
 		return
 	}
 	// 发起请求
-	resp, err := g.Client().
+	postResp, err := g.Client().
 		SetTimeout(time.Duration(t.CurlTimeOut)*time.Millisecond).
 		ContentJson().
 		Header(g.MapStrStr{
 			"X-NCP-APIGW-API-KEY-ID": t.KeyId,
 			"X-NCP-APIGW-API-KEY":    t.Key,
 		}).
-		Post(context.Background(), t.Url, g.Map{"source": from, "target": to, "text": text})
+		Post(context.Background(), t.Url, g.Map{"source": from, "target": to, "text": req.TextStr})
 	if err != nil {
 		return
 	}
 	defer func() {
-		_ = resp.Close()
+		_ = postResp.Close()
 	}()
-	bodyStr := resp.ReadAllString()
+	bodyByte := postResp.ReadAll()
 	// 判断请求状态
-	if resp.StatusCode != 200 {
-		err = fmt.Errorf("PaPaGo 请求失败 %d %s", resp.StatusCode, bodyStr)
+	if postResp.StatusCode != 200 {
+		err = fmt.Errorf("PaPaGo 请求失败 %d %s", postResp.StatusCode, bodyByte)
 		return
 	}
-	// 转换json
-	jsonData, err := gjson.DecodeToJson(bodyStr)
+	httpResp := new(PaPaGoHTTPTranslateResp)
+	if err = json.Unmarshal(bodyByte, httpResp); err != nil {
+		return
+	}
+	lang, err := GetYouDaoLang(httpResp.Message.Result.TarLangType, mode)
 	if err != nil {
 		return
 	}
-	if !jsonData.Get("error").IsEmpty() {
-		err = errors.New(jsonData.Get("error.message").String())
-		return
+	for _, v := range strings.Split(httpResp.Message.Result.TranslatedText, "\n") {
+		resp = append(resp, &TranslateResp{
+			Text:     v,
+			FromLang: lang,
+		})
 	}
-	respTextT := jsonData.Get("message.result.translatedText")
-	if respTextT.IsEmpty() {
-		err = fmt.Errorf("PaPaGo 返回结果错误 %s", bodyStr)
-		return
-	}
-	result = []string{respTextT.String()}
-	fromLang, err = GetYouDaoLang(jsonData.Get("message.result.srcLangType").String(), mode)
+
 	return
 }
 

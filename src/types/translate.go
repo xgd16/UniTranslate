@@ -1,17 +1,19 @@
 package types
 
-import "github.com/gogf/gf/v2/os/gcache"
+import (
+	"uniTranslate/src/translate"
+
+	"github.com/gogf/gf/v2/os/gcache"
+)
 
 type TranslateData struct {
-	Md5              string   `json:"-"`
-	TranslateTextArr []string `json:"translate" orm:"translate"`
-	From             string   `json:"from" orm:"fromLang"`
-	To               string   `json:"to" orm:"toLang"`
-	Platform         string   `json:"platform" orm:"platform"`
-	OriginalText     string   `json:"originalText" orm:"text"`
-	OriginalTextMd5  string   `json:"-" orm:"textMd5"`
-	OriginalTextLen  int      `json:"originalTextLen" orm:"textLen"`
-	TranslationLen   int      `json:"translationLen" orm:"translationLen"`
+	Md5             string                     `json:"-"`
+	Translate       []*translate.TranslateResp `json:"translate"`
+	To              string                     `json:"to" orm:"toLang"`
+	Platform        string                     `json:"platform" orm:"platform"`
+	OriginalText    string                     `json:"originalText" orm:"text"`
+	OriginalTextMd5 string                     `json:"-" orm:"textMd5"`
+	OriginalTextLen int                        `json:"originalTextLen" orm:"textLen"`
 }
 
 type StatisticsInterface interface {

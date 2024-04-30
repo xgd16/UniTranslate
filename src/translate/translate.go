@@ -25,9 +25,22 @@ var TranslateModeList = []string{
 // ITranslate 翻译接口
 type ITranslate interface {
 	// Translate 翻译
-	Translate(from, to, text string) (result []string, fromLang string, err error)
+	Translate(req *TranslateReq) (resp []*TranslateResp, err error)
 	// GetMode 获取模式
 	GetMode() (mode string)
+}
+
+type TranslateResp struct {
+	Text     string `json:"text"`
+	FromLang string `json:"fromLang"`
+}
+
+type TranslateReq struct {
+	From     string   `json:"from"`
+	To       string   `json:"to"`
+	Platfrom string   `json:"platform"`
+	Text     []string `json:"text"`
+	TextStr  string   `json:"textStr"`
 }
 
 func GetTranslate(mode string, config map[string]any) (t ITranslate, err error) {

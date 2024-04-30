@@ -3,12 +3,11 @@ package translate
 import (
 	"encoding/json"
 	baseErr "errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"time"
 
-	"github.com/gogf/gf/v2/encoding/gjson"
-	"github.com/pkg/errors"
 	"github.com/volcengine/volc-sdk-golang/base"
 )
 
@@ -45,13 +44,34 @@ type HuoShanConfigType struct {
 	SecretKey string
 }
 
+type HuoShanHTTPTranslateResp struct {
+	TranslationList  []TranslationList `json:"TranslationList"`
+	ResponseMetadata ResponseMetadata  `json:"ResponseMetadata"`
+	ResponseMetaData ResponseMetadata  `json:"ResponseMetaData"`
+}
+
+type ResponseMetadata struct {
+	RequestID string `json:"RequestId"`
+	Action    string `json:"Action"`
+	Version   string `json:"Version"`
+	Service   string `json:"Service"`
+	Region    string `json:"Region"`
+}
+
+type TranslationList struct {
+	Translation            string      `json:"Translation"`
+	DetectedSourceLanguage string      `json:"DetectedSourceLanguage"`
+	Extra                  interface{} `json:"Extra"`
+}
+
 // Translate 火山翻译
-func (t *HuoShanConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+func (t *HuoShanConfigType) Translate(req *TranslateReq) (resp []*TranslateResp, err error) {
 	if t == nil || t.SecretKey == "" || t.AccessKey == "" {
 		err = baseErr.New("火山翻译配置异常")
 		return
 	}
 	mode := t.GetMode()
+	from := req.From
 	// 处理目标语言
 	if from == "auto" {
 		from = ""
@@ -61,7 +81,7 @@ func (t *HuoShanConfigType) Translate(from, to, text string) (result []string, f
 			return
 		}
 	}
-	to, err = SafeLangType(to, mode)
+	to, err := SafeLangType(req.To, mode)
 	if err != nil {
 		return
 	}
@@ -70,29 +90,38 @@ func (t *HuoShanConfigType) Translate(from, to, text string) (result []string, f
 	client.SetAccessKey(t.AccessKey)
 	client.SetSecretKey(t.SecretKey)
 
-	req := Req{
+	body, err := json.Marshal(Req{
 		SourceLanguage: from,
 		TargetLanguage: to,
-		TextList:       []string{text},
-	}
-	body, err := json.Marshal(req)
+		TextList:       req.Text,
+	})
 	if err != nil {
 		return
 	}
-	resp, code, err := client.Json("TranslateText", nil, string(body))
+	respByte, code, err := client.Json("TranslateText", nil, string(body))
 	if err != nil {
 		return
 	}
 	if code != 200 {
-		err = errors.New(string(resp))
+		err = fmt.Errorf("火山翻译请求失败,状态码:%d 返回数据: %s", code, respByte)
 		return
 	}
-	jsonData, err := gjson.DecodeToJson(resp)
-	if err != nil {
+	httpResp := new(HuoShanHTTPTranslateResp)
+	if err = json.Unmarshal(respByte, httpResp); err != nil {
 		return
 	}
-	result = jsonData.Get("TranslationList.0.Translation").Strings()
-	fromLang, err = GetYouDaoLang(jsonData.Get("TranslationList.0.DetectedSourceLanguage").String(), mode)
+	for _, item := range httpResp.TranslationList {
+		lang, err1 := GetYouDaoLang(item.DetectedSourceLanguage, mode)
+		if err1 != nil {
+			err = err1
+			return
+		}
+		resp = append(resp, &TranslateResp{
+			Text:     item.Translation,
+			FromLang: lang,
+		})
+
+	}
 	return
 }
 

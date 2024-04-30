@@ -1,11 +1,11 @@
 package translate
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
 
-	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
 )
@@ -17,7 +17,16 @@ type DeeplConfigType struct {
 	Key         string `json:"key"`
 }
 
-func (t *DeeplConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+type DeeplHTTPTranslateResp struct {
+	Translations []DeeplTranslation `json:"translations"`
+}
+
+type DeeplTranslation struct {
+	DetectedSourceLanguage string `json:"detected_source_language"`
+	Text                   string `json:"text"`
+}
+
+func (t *DeeplConfigType) Translate(req *TranslateReq) (resp []*TranslateResp, err error) {
 	if t == nil || t.Url == "" || t.Key == "" {
 		err = errors.New("deepl翻译配置异常")
 		return
@@ -25,11 +34,11 @@ func (t *DeeplConfigType) Translate(from, to, text string) (result []string, fro
 	ctx := gctx.New()
 	mode := t.GetMode()
 	// 语言标记转换
-	from, err = SafeLangType(from, mode)
+	from, err := SafeLangType(req.From, mode)
 	if err != nil {
 		return
 	}
-	to, err = SafeLangType(to, mode)
+	to, err := SafeLangType(req.To, mode)
 	if err != nil {
 		return
 	}
@@ -40,7 +49,7 @@ func (t *DeeplConfigType) Translate(from, to, text string) (result []string, fro
 	HttpResult, err := g.Client().SetTimeout(time.Duration(t.CurlTimeOut)*time.Millisecond).Header(g.MapStrStr{
 		"Authorization": fmt.Sprintf("DeepL-Auth-Key %s", t.Key),
 	}).Post(ctx, t.Url, g.Map{
-		"text":        text,
+		"text":        req.Text,
 		"source_lang": from,
 		"target_lang": to,
 	})
@@ -51,33 +60,35 @@ func (t *DeeplConfigType) Translate(from, to, text string) (result []string, fro
 	// 推出函数时关闭链接
 	defer func() { _ = HttpResult.Close() }()
 	// 判断状态码
-	respStr := HttpResult.ReadAllString()
+	respByte := HttpResult.ReadAll()
 	if HttpResult.StatusCode != 200 {
-		err = fmt.Errorf("请求失败 状态码: %d 返回结果: %s", HttpResult.StatusCode, respStr)
+		err = fmt.Errorf("请求失败 状态码: %d 返回结果: %s", HttpResult.StatusCode, respByte)
 		return
 	}
-	// 返回的json解析
-	json, err := gjson.DecodeToJson(respStr)
+	fmt.Printf("deepl resp: %s\n", respByte)
+	httpResp := new(DeeplHTTPTranslateResp)
+	if err = json.Unmarshal(respByte, httpResp); err != nil {
+		return
+	}
+	if len(httpResp.Translations) == 0 {
+		return
+	}
+	respData := httpResp.Translations[0]
+
+	lang, err := GetYouDaoLang(respData.DetectedSourceLanguage, mode)
 	if err != nil {
 		return
 	}
-	// 获取源语言
-	dsl := json.Get("translations.0.detected_source_language")
-	if dsl.IsEmpty() {
-		fromLang = from
-	} else {
-		fromLang = dsl.String()
-	}
-	// 返回翻译结果
-	tr := json.Get("translations.0.text")
-	if tr.IsEmpty() {
-		err = errors.New("翻译失败请重试 " + respStr)
+	strArr := make([]string, 0)
+	if err = json.Unmarshal([]byte(respData.Text), &strArr); err != nil {
 		return
-	} else {
-		result = tr.Strings()
 	}
-	// 将语言种类转换为有道标准
-	fromLang, err = GetYouDaoLang(fromLang, mode)
+	for _, v := range strArr {
+		resp = append(resp, &TranslateResp{
+			Text:     v,
+			FromLang: lang,
+		})
+	}
 	return
 }
 

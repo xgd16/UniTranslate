@@ -4,16 +4,17 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/gclient"
 	"github.com/gogf/gf/v2/os/gctx"
-	"github.com/gogf/gf/v2/text/gstr"
 )
 
 type xunFeiHttpConfigType struct {
@@ -44,12 +45,12 @@ type XunFeiNiuConfigType struct {
 }
 
 // XunFeiNiuTranslate 讯飞新翻译引擎
-func (t *XunFeiNiuConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+func (t *XunFeiNiuConfigType) Translate(req *TranslateReq) (resp []*TranslateResp, err error) {
 	return xunFeiBaseTranslate(xunFeiNiuHttpConfig, t.GetMode(), &XunFeiConfigType{
 		AppId:  t.AppId,
 		Secret: t.Secret,
 		ApiKey: t.ApiKey,
-	}, from, to, text)
+	}, req.From, req.To, req.Text)
 }
 
 func (t *XunFeiNiuConfigType) GetMode() string {
@@ -62,20 +63,43 @@ type XunFeiConfigType struct {
 	ApiKey string `json:"apiKey"`
 }
 
-func (t *XunFeiConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
-	return xunFeiBaseTranslate(xunFeiHttpConfig, t.GetMode(), t, from, to, text)
+func (t *XunFeiConfigType) Translate(req *TranslateReq) (resp []*TranslateResp, err error) {
+	return xunFeiBaseTranslate(xunFeiHttpConfig, t.GetMode(), t, req.From, req.To, req.Text)
 }
 
 func (t *XunFeiConfigType) GetMode() string {
 	return XunFeiTranslateMode
 }
 
+type XunFeiHTTPTranslateResp struct {
+	Code    int64      `json:"code"`
+	Data    XunFeiData `json:"data"`
+	Message string     `json:"message"`
+	Sid     string     `json:"sid"`
+}
+
+type XunFeiData struct {
+	Result XunFeiResult `json:"result"`
+}
+
+type XunFeiResult struct {
+	From        string            `json:"from"`
+	To          string            `json:"to"`
+	TransResult XunFeiTransResult `json:"trans_result"`
+}
+
+type XunFeiTransResult struct {
+	Dst string `json:"dst"`
+	Src string `json:"src"`
+}
+
 // xunFeiBaseTranslate 讯飞基础翻译实现
-func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *XunFeiConfigType, from, to, text string) (result []string, fromLang string, err error) {
+func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *XunFeiConfigType, from, to string, text []string) (resp []*TranslateResp, err error) {
 	if config.AppId == "" || config.ApiKey == "" || config.Secret == "" {
-		return nil, "", errors.New("讯飞翻译配置异常")
+		err = errors.New("讯飞翻译配置异常")
+		return
 	}
-	oFrom := from
+	// oFrom := from
 	// 语言标记转换
 	from, err = SafeLangType(from, mode)
 	if err != nil {
@@ -99,7 +123,7 @@ func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *
 			"to":   to,
 		},
 		"data": map[string]interface{}{
-			"text": base64.StdEncoding.EncodeToString([]byte(text)),
+			"text": base64.StdEncoding.EncodeToString([]byte(strings.Join(text, "№"))),
 		},
 	}
 	currentTime := time.Now().UTC().Format(time.RFC1123)
@@ -117,19 +141,29 @@ func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *
 	if err != nil {
 		return
 	}
-	// to json
-	jsonData, err := gjson.DecodeToJson(xunFeiResp.ReadAllString())
+	defer func() { _ = xunFeiResp.Close() }()
+	if xunFeiResp.StatusCode != 200 {
+		err = fmt.Errorf("请求失败 状态码: %d 返回结果: %s", xunFeiResp.StatusCode, xunFeiResp.ReadAllString())
+		return
+	}
+	respByte := xunFeiResp.ReadAll()
+	httpResp := new(XunFeiHTTPTranslateResp)
+	if err = json.Unmarshal(respByte, httpResp); err != nil {
+		return
+	}
+	if httpResp.Code != 0 {
+		err = fmt.Errorf("讯飞翻译请求失败 %d %s", httpResp.Code, respByte)
+		return
+	}
+	lang, err := GetYouDaoLang(httpResp.Data.Result.To, mode)
 	if err != nil {
 		return
 	}
-	if jsonData.Get("code").Int() != 0 {
-		err = errors.New(jsonData.Get("message").String())
-		return
-	}
-	result = []string{gstr.Trim(jsonData.Get("data.result.trans_result.dst").String())}
-	fromLang, err = GetYouDaoLang(jsonData.Get("data.result.from", "").String(), XunFeiNiuTranslateMode)
-	if fromLang == "" {
-		fromLang = oFrom
+	for _, item := range strings.Split(httpResp.Data.Result.TransResult.Dst, "№") {
+		resp = append(resp, &TranslateResp{
+			Text:     item,
+			FromLang: lang,
+		})
 	}
 	return
 }

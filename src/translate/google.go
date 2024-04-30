@@ -1,12 +1,11 @@
 package translate
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
 	"time"
 
-	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
 )
@@ -18,8 +17,21 @@ type GoogleConfigType struct {
 	Key         string `json:"key"`
 }
 
+type GoogleHTTPTranslateResp struct {
+	Data GoogleData `json:"data"`
+}
+
+type GoogleData struct {
+	Translations []GoogleTranslation `json:"translations"`
+}
+
+type GoogleTranslation struct {
+	TranslatedText         string `json:"translatedText"`
+	DetectedSourceLanguage string `json:"detectedSourceLanguage"`
+}
+
 // Translate google 翻译
-func (t *GoogleConfigType) Translate(from, to, text string) (result []string, fromLang string, err error) {
+func (t *GoogleConfigType) Translate(req *TranslateReq) (resp []*TranslateResp, err error) {
 	if t == nil || t.Url == "" || t.Key == "" {
 		err = errors.New("google翻译配置异常")
 		return
@@ -27,63 +39,52 @@ func (t *GoogleConfigType) Translate(from, to, text string) (result []string, fr
 	mode := t.GetMode()
 	ctx := gctx.New()
 	// 语言标记转换
-	from, err = SafeLangType(from, mode)
+	from, err := SafeLangType(req.From, mode)
 	if err != nil {
 		return
 	}
-	to, err = SafeLangType(to, mode)
+	to, err := SafeLangType(req.To, mode)
 	if err != nil {
 		return
 	}
-	// google auto = ""
 	if from == "auto" {
 		from = ""
 	}
-	// 调用翻译
-	HttpResult, err := g.Client().
-		SetTimeout(time.Duration(t.CurlTimeOut)*time.Millisecond).
-		Get(ctx, fmt.Sprintf(
-			"%s?key=%s&q=%s&source=%s&target=%s",
-			t.Url,
-			t.Key,
-			url.QueryEscape(text),
-			from,
-			to,
-		))
-	// 处理调用接口错误
+	// 发起请求翻译
+	postResp, err := g.Client().Discovery(nil).ContentJson().SetTimeout(time.Duration(t.CurlTimeOut)*time.Millisecond).Post(ctx, fmt.Sprintf("%s?key=%s", t.Url, t.Key), g.Map{
+		"q":      req.Text,
+		"target": to,
+		"source": from,
+	})
 	if err != nil {
 		return
 	}
-	// 推出函数时关闭链接
-	defer func() { _ = HttpResult.Close() }()
-	// 判断状态码
-	respStr := HttpResult.ReadAllString()
-	if HttpResult.StatusCode != 200 {
-		err = fmt.Errorf("请求失败 状态码: %d 返回结果: %s", HttpResult.StatusCode, respStr)
+	defer func() {
+		_ = postResp.Close()
+	}()
+	respByte := postResp.ReadAll()
+	// 处理HTTP状态
+	if postResp.StatusCode != 200 {
+		err = fmt.Errorf("google翻译请求失败,状态码:%d 返回数据: %s", postResp.StatusCode, respByte)
 		return
 	}
-	// 返回的json解析
-	json, err := gjson.DecodeToJson(respStr)
-	if err != nil {
+	// 解析json
+	httpResp := new(GoogleHTTPTranslateResp)
+	if err = json.Unmarshal(respByte, httpResp); err != nil {
 		return
 	}
-	// 获取源语言
-	dsl := json.Get("data.translations.0.detectedSourceLanguage")
-	if dsl.IsEmpty() {
-		fromLang = from
-	} else {
-		fromLang = dsl.String()
+	resp = make([]*TranslateResp, 0)
+	for _, item := range httpResp.Data.Translations {
+		lang, err1 := GetYouDaoLang(item.DetectedSourceLanguage, mode)
+		if err1 != nil {
+			err = err1
+			return
+		}
+		resp = append(resp, &TranslateResp{
+			Text:     item.TranslatedText,
+			FromLang: lang,
+		})
 	}
-	// 返回翻译结果
-	tr := json.Get("data.translations.0.translatedText")
-	if tr.IsEmpty() {
-		err = errors.New("翻译失败请重试 " + respStr)
-		return
-	} else {
-		result = tr.Strings()
-	}
-	// 将语言种类转换为有道标准
-	fromLang, err = GetYouDaoLang(fromLang, mode)
 	return
 }
 

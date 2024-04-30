@@ -24,6 +24,19 @@ Optional
 - Automatically switches to the next API if the current API call fails when configuring multiple APIs.
 - Can write translated content into `Redis` `Memory` cache to reduce repetitive calls to translation APIs.
 
+## Batch Translation Support
+
+| Platform | Batch Translation Support | Perfect Support | Accurate Source Language | Note                                                                                                                                    |
+| :------: | :-----------------------: | :-------------: | :----------------------: | :-------------------------------------------------------------------------------------------------------------------------------------- |
+|  Baidu   |            Yes            |       No        |            No            | Does not support accurate return of specific source language for each result                                                            |
+|  Google  |            Yes            |       Yes       |           Yes            |                                                                                                                                         |
+|  Youdao  |            Yes            |       No        |            No            | Source language identification is not accurate                                                                                          |
+| Huoshan  |            Yes            |       Yes       |           Yes            |                                                                                                                                         |
+|  Deepl   |            Yes            |       No        |            No            | Source language identification is not accurate                                                                                          |
+|   iFly   |            Yes            |       No        |            No            | Officially does not support batch translation, implemented through special character № splitting and may result in non-multiple outputs |
+|  PaPaGo  |            Yes            |       No        |            No            | Implemented based on \n splitting and cannot recognize different source language types                                                  |
+| ChatGPT  |            Yes            |       Yes       |           Yes            |                                                                                                                                         |
+
 ## Future Support (prioritized, checked means implemented) ✈️
 - [x] Persist translated content to `MySQL`.
 - [x] Web control panel.

@@ -81,7 +81,7 @@ var GfCache *gcache.Cache
 
 var StatisticalProcess types.StatisticsInterface = new(types.MySqlStatistics)
 
-var ChatGPTLangConfig string
+
 
 // 是否将缓存写入存储
 var CacheWriteToStorage = false

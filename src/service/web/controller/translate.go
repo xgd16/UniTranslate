@@ -29,22 +29,18 @@ func Translate(r *ghttp.Request) {
 	toT := r.Get("to")
 	textT := r.Get("text")
 	platform := r.Get("platform").String()
-	batch := r.Get("batch", false).Bool()
 	x.FastResp(r, fromT.IsEmpty() || toT.IsEmpty() || textT.IsEmpty(), false).Resp("参数错误")
 	x.FastResp(r, platform != "" && !xlib.InArr(platform, translate.TranslateModeList), false).Resp("不支持的平台")
 	from := fromT.String()
 	to := toT.String()
 	x.FastResp(r, to == "auto", false).Resp("转换后语言不支持 auto")
-	text := textT.String()
+	text := textT.Strings()
 	// 内容转换为md5
 	var keyStr string
 	if global.CachePlatform {
 		keyStr = fmt.Sprintf("to:%s-text:%s-platform:%s", to, text, platform)
 	} else {
 		keyStr = fmt.Sprintf("to:%s-text:%s", to, text)
-	}
-	if batch {
-		keyStr += "-batch"
 	}
 	md5 := gmd5.MustEncrypt(keyStr)
 	// 写入到缓存
@@ -54,14 +50,21 @@ func Translate(r *ghttp.Request) {
 	)
 	// 记录从翻译到获取到结果的时间
 	startTime := gtime.Now().UnixMilli()
+	req := &translate.TranslateReq{
+		From:     from,
+		To:       to,
+		Platfrom: platform,
+		Text:     text,
+		TextStr:  gstr.Join(text, "\n"),
+	}
 	// 判断是否进行缓存
 	if global.CacheMode == "off" {
 		var dataAny any
-		dataAny, err = t(r, from, to, text, platform)
+		dataAny, err = t(r, req)
 		data = gvar.New(dataAny)
 	} else {
 		data, err = global.GfCache.GetOrSetFunc(r.GetCtx(), fmt.Sprintf("Translate:%s", md5), func(ctx context.Context) (value any, err error) {
-			return t(r, from, to, text, platform)
+			return t(r, req)
 		}, 0)
 	}
 	endTime := gtime.Now().UnixMilli()
@@ -132,9 +135,9 @@ func RefreshConfigCache(r *ghttp.Request) {
 	x.FastResp(r).Resp()
 }
 
-func t(r *ghttp.Request, from, to, text, platform string) (value any, err error) {
+func t(r *ghttp.Request, req *translate.TranslateReq) (value any, err error) {
 	var data *types.TranslateData
-	data, err = buffer.Buffer.Handler(r, from, to, text, platform, handler.Translate)
+	data, err = buffer.Buffer.Handler(r, req, handler.Translate)
 	value = data
 
 	if data != nil {
