@@ -35,12 +35,13 @@ func Translate(r *ghttp.Request) {
 	to := toT.String()
 	x.FastResp(r, to == "auto", false).Resp("转换后语言不支持 auto")
 	text := textT.Strings()
+	textStr := gstr.Join(text, "\n")
 	// 内容转换为md5
 	var keyStr string
 	if global.CachePlatform {
-		keyStr = fmt.Sprintf("to:%s-text:%s-platform:%s", to, text, platform)
+		keyStr = fmt.Sprintf("to:%s-text:%s-platform:%s", to, textStr, platform)
 	} else {
-		keyStr = fmt.Sprintf("to:%s-text:%s", to, text)
+		keyStr = fmt.Sprintf("to:%s-text:%s", to, textStr)
 	}
 	md5 := gmd5.MustEncrypt(keyStr)
 	// 写入到缓存
@@ -55,7 +56,7 @@ func Translate(r *ghttp.Request) {
 		To:       to,
 		Platfrom: platform,
 		Text:     text,
-		TextStr:  gstr.Join(text, "\n"),
+		TextStr:  textStr,
 	}
 	// 判断是否进行缓存
 	if global.CacheMode == "off" {
