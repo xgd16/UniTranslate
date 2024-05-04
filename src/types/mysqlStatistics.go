@@ -202,3 +202,22 @@ func (m *MySqlStatistics) GetterCache(fn func(data []*TranslateData) (err error)
 	}
 	return nil
 }
+
+func (m *MySqlStatistics) GetCountRecord() (data map[string]*CountRecord, err error) {
+	all, err := g.Model("count_record").All()
+	if err != nil {
+		return
+	}
+	if all.IsEmpty() {
+		return
+	}
+	temp := make([]*CountRecord, 0)
+	if err = all.Structs(&temp); err != nil {
+		return
+	}
+	data = make(map[string]*CountRecord)
+	for _, item := range temp {
+		data[item.SerialNumber] = item
+	}
+	return
+}

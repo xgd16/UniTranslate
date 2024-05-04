@@ -6,6 +6,7 @@ import (
 	"github.com/gogf/gf/v2/os/gcache"
 )
 
+// TranslateData 翻译数据
 type TranslateData struct {
 	Md5             string                     `json:"-"`
 	Translate       []*translate.TranslateResp `json:"translate"`
@@ -17,6 +18,15 @@ type TranslateData struct {
 	OriginalTextLen int                        `json:"originalTextLen" orm:"textLen"`
 }
 
+// CountRecord 计数记录
+type CountRecord struct {
+	SerialNumber string `json:"serialNumber"`
+	SuccessCount int    `json:"successCount"`
+	ErrorCount   int    `json:"errorCount"`
+	CharCount    int    `json:"charCount"`
+}
+
+// StatisticsInterface 统计接口
 type StatisticsInterface interface {
 	// Init 初始化数据库
 	Init(cache *gcache.Cache, cacheMode string, cachePlatform, cacheRefreshOnStartup bool) error
@@ -30,6 +40,8 @@ type StatisticsInterface interface {
 	SaveCache(data *SaveData) error
 	// GetterCache 获取翻译结果
 	GetterCache(fn func(data []*TranslateData) (err error)) error
+	// GetCountRecord 获取计数记录
+	GetCountRecord() (data map[string]*CountRecord, err error)
 }
 
 type CountRecordData struct {

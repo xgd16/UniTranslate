@@ -93,15 +93,26 @@ func GetConfigList(r *ghttp.Request) {
 	// 获取配置
 	config, err := device.GetConfig(true)
 	x.FastResp(r, err).Resp()
+	// 获取计数记录
+	countRecordMap, err := global.StatisticalProcess.GetCountRecord()
+	x.FastResp(r, err, false).Resp()
 
 	respData := make([]map[string]any, 0)
 	for k, v := range config {
+		var (
+			countRecord *types.CountRecord
+			ok          bool
+		)
+		if countRecord, ok = countRecordMap[k]; !ok {
+			countRecord = new(types.CountRecord)
+		}
 		respData = append(respData, g.Map{
-			"id":       k,
-			"level":    v.Level,
-			"platform": v.Platform,
-			"status":   v.Status,
-			"type":     v.Type,
+			"id":          k,
+			"level":       v.Level,
+			"platform":    v.Platform,
+			"status":      v.Status,
+			"type":        v.Type,
+			"countRecord": countRecord,
 		})
 	}
 	// 按照level排序
