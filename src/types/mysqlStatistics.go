@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -52,7 +53,7 @@ func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatf
 		},
 		{
 			TableName: "translate_cache",
-			Table:     "CREATE TABLE translate_cache ( id bigint UNSIGNED AUTO_INCREMENT, translate json NOT NULL COMMENT '翻译后结果', text text NOT NULL, fromLang varchar(16) NULL COMMENT '翻译前语言', toLang varchar(16) NULL COMMENT '翻译后语言', textMd5 char(32) NOT NULL COMMENT '翻译前语言md5值', platform varchar(16) NOT NULL COMMENT '翻译平台 Baidu YouDao Google Deepl', textLen int NULL DEFAULT 0 COMMENT '原文文字长度', translationLen int NULL DEFAULT 0 COMMENT '翻译后文字长度', createTime datetime NOT NULL, updateTime datetime NULL, PRIMARY KEY (id) );",
+			Table:     "CREATE TABLE translate_cache ( id bigint UNSIGNED AUTO_INCREMENT, translate json NOT NULL COMMENT '翻译后结果', text json NOT NULL, fromLang varchar(16) NULL COMMENT '翻译前语言', toLang varchar(16) NULL COMMENT '翻译后语言', textMd5 char(32) NOT NULL COMMENT '翻译前语言md5值', platform varchar(16) NOT NULL COMMENT '翻译平台 Baidu YouDao Google Deepl', textLen int NULL DEFAULT 0 COMMENT '原文文字长度', translationLen int NULL DEFAULT 0 COMMENT '翻译后文字长度', createTime datetime NOT NULL, updateTime datetime NULL, PRIMARY KEY (id) );",
 			Index: []string{
 				"CREATE INDEX translate_cache_createTime_index ON translate_cache (createTime);",
 				"CREATE INDEX translate_cache_fromLang_index ON translate_cache (fromLang);",
@@ -95,34 +96,17 @@ func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatf
 // 存储到缓存
 func saveToCache(ctx context.Context, cache *gcache.Cache, m *MySqlStatistics, cacheMode string, cachePlatform bool) (err error) {
 	const keyName = "Translate:"
-	if cacheMode == "redis" {
-		conn, connErr := g.Redis().Conn(ctx)
-		if connErr != nil {
-			return connErr
-		}
-		defer func() {
-			if err = conn.Close(ctx); err != nil {
-				return
-			}
-		}()
-		keys, keysErr := conn.Do(ctx, "KEYS", fmt.Sprintf("%s*", keyName))
-		if keysErr != nil {
-			return keysErr
-		}
-		for _, item := range keys.Strings() {
-			if _, delErr := conn.Do(ctx, "DEL", item); delErr != nil {
-				return delErr
-			}
-		}
+	if err = cache.Clear(ctx); err != nil {
+		return
 	}
 	// 内存缓存是否 包含 平台
 	err = m.GetterCache(func(data []*TranslateData) (err error) {
 		for _, item := range data {
 			var md5 string
 			if cachePlatform {
-				md5 = gmd5.MustEncrypt(fmt.Sprintf("to:%s-text:%s-platform:%s", item.To, item.OriginalText, item.Platform))
+				md5 = gmd5.MustEncrypt(fmt.Sprintf("to:%s-text:%s-platform:%s", item.To, *item.OriginalTextStr, item.Platform))
 			} else {
-				md5 = gmd5.MustEncrypt(fmt.Sprintf("to:%s-text:%s", item.To, item.OriginalText))
+				md5 = gmd5.MustEncrypt(fmt.Sprintf("to:%s-text:%s", item.To, *item.OriginalTextStr))
 			}
 			if err = cache.Set(ctx, fmt.Sprintf("%s%s", keyName, md5), item, 0); err != nil {
 				return
@@ -207,6 +191,10 @@ func (m *MySqlStatistics) GetterCache(fn func(data []*TranslateData) (err error)
 		newData := make([]*TranslateData, 0)
 		if err = model.Clone().Page(i+1, pageSize).Scan(&newData); err != nil {
 			return err
+		}
+		for _, item := range newData {
+			textStr := strings.Join(item.OriginalText, "\n")
+			item.OriginalTextStr = &textStr
 		}
 		if err = fn(newData); err != nil {
 			return err

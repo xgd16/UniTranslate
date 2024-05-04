@@ -12,6 +12,7 @@ type TranslateData struct {
 	To              string                     `json:"to" orm:"toLang"`
 	Platform        string                     `json:"platform" orm:"platform"`
 	OriginalText    []string                   `json:"originalText" orm:"text"`
+	OriginalTextStr *string                    `json:"-" orm:"-"`
 	OriginalTextMd5 string                     `json:"-" orm:"textMd5"`
 	OriginalTextLen int                        `json:"originalTextLen" orm:"textLen"`
 }

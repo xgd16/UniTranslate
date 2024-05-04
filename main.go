@@ -37,10 +37,13 @@ func main() {
 
 func baseInit() {
 	xhttp.RespErrorMsg = true
+	// 初始化缓存
+	global.GfCache = initCache()
 	// 初始化数据库
 	if err := initDataBase(); err != nil {
 		panic(fmt.Errorf("初始化数据库失败 %s", err))
-	}
+	} // 初始化缓存
+	global.GfCache = initCache()
 	// 初始化翻译配置获取
 	initTranslateConfigDevice()
 	// 开启翻译支持
@@ -51,8 +54,6 @@ func baseInit() {
 	if err := buffer.Buffer.Init(false); err != nil {
 		panic(err)
 	}
-	// 初始化缓存
-	global.GfCache = initCache()
 	// 配置 GrayLog 基础配置 host 和 port
 	if global.SystemConfig.Get("grayLog.open").Bool() {
 		xgraylog.SetGrayLogConfig(
