@@ -22,7 +22,7 @@ func Translate(config *types.TranslatePlatform, req *translate.TranslateReq) (da
 	}
 	// 返回数据
 	data = &types.TranslateData{
-		OriginalText:    req.TextStr,
+		OriginalText:    req.Text,
 		OriginalTextMd5: gmd5.MustEncrypt(req.TextStr),
 		Translate:       resp,
 		To:              req.To,
