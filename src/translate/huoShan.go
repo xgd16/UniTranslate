@@ -110,6 +110,10 @@ func (t *HuoShanConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 	if err = json.Unmarshal(respByte, httpResp); err != nil {
 		return
 	}
+	if len(httpResp.TranslationList) == 0 {
+		err = fmt.Errorf("火山翻译返回数据异常: %s", respByte)
+		return
+	}
 	for _, item := range httpResp.TranslationList {
 		lang, err1 := GetYouDaoLang(item.DetectedSourceLanguage, mode)
 		if err1 != nil {
