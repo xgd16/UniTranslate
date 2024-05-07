@@ -12,7 +12,8 @@ import (
 var ChatGPTLangConfig string
 
 type ChatGptConfigType struct {
-	Key string `json:"key"`
+	Key   string `json:"key"`
+	Model string `json:"model"`
 }
 
 type ChatGPTHTTPTranslateResp []ChatGPTHTTPTranslateRespElement
@@ -49,7 +50,7 @@ func (t *ChatGptConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 			}
 		}
 		return
-	}(), to, ChatGPTLangConfig))
+	}(), to, ChatGPTLangConfig), t.Model)
 	if err != nil {
 		return
 	}
@@ -67,12 +68,22 @@ func (t *ChatGptConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 	return
 }
 
-func SendToChatGpt(key, msg string) (resp string, err error) {
+func SendToChatGpt(key, msg, modelStr string) (resp string, err error) {
 	client := openai.NewClient(key)
+	model := openai.GPT3Dot5Turbo0125
+	switch modelStr {
+	case "gpt-3.5-turbo-0125":
+		model = openai.GPT3Dot5Turbo0125
+	case "gpt-4-turbo":
+		model = openai.GPT4Turbo
+	case "gpt-3.5-turbo":
+		model = openai.GPT3Dot5Turbo
+	}
+
 	respData, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: openai.GPT4Turbo,
+			Model: model,
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleUser,
