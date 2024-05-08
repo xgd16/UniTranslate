@@ -8,7 +8,7 @@ import (
 	"uniTranslate/src/types"
 )
 
-var CountRecordQueue = gqueue.New(10000000)
+var CountRecordQueue = gqueue.New()
 
 func CountRecordQueueHandler() {
 	ctx := gctx.New()

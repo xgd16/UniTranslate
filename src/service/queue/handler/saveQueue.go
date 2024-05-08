@@ -8,7 +8,7 @@ import (
 	"uniTranslate/src/types"
 )
 
-var SaveQueue = gqueue.New(10000000)
+var SaveQueue = gqueue.New()
 
 func SaveQueueHandler() {
 	ctx := gctx.New()

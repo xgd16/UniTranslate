@@ -1,10 +1,10 @@
 package queue
 
 import (
-	"fmt"
+	"uniTranslate/src/service/queue/handler"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
-	"uniTranslate/src/service/queue/handler"
 )
 
 var register = map[string]func(){
@@ -24,6 +24,6 @@ func Service() {
 			}()
 			fn()
 		}(k, fn)
-		fmt.Printf("[%s] 队列已启动\n", k)
+		g.Log().Infof(ctx, "[%s] 队列已启动", k)
 	}
 }
