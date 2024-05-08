@@ -4,6 +4,7 @@ import (
 	"uniTranslate/src/buffer"
 	"uniTranslate/src/global"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/xgd16/gf-x-tool/x"
 )
@@ -17,6 +18,18 @@ func GetSystemInitConfig(r *ghttp.Request) {
 	x.FastResp(r).Resp("", &SystemInitConfigData{
 		AuthMode: global.KeyMode,
 	})
+}
+
+// CleanCache 清除缓存
+func CleanCache(r *ghttp.Request) {
+	x.FastResp(r, global.GfCache.Clear(r.Context()), false).Resp()
+	x.FastResp(r).Resp()
+}
+
+func CacheSize(r *ghttp.Request) {
+	size, err := global.GfCache.Size(r.Context())
+	x.FastResp(r, err, false).Resp()
+	x.FastResp(r).SetData(g.Map{"size": size}).Resp()
 }
 
 func DelConfig(r *ghttp.Request) {
