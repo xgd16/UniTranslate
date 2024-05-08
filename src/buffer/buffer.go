@@ -74,6 +74,13 @@ func (t *BufferType) Handler(r *ghttp.Request, req *translate.TranslateReq, fn f
 				Platform: fmt.Sprintf("%s [ %s ]", p.Type, p.Platform),
 				TraceId:  gtrace.GetTraceID(r.Context()),
 			})
+			// 翻译计数
+			queueHandler.CountRecordQueue.Push(&types.CountRecordData{
+				Data: &types.TranslateData{
+					Md5: p.Md5,
+				},
+				Ok: false,
+			})
 			g.Log().Error(ctx, e)
 			continue
 		}

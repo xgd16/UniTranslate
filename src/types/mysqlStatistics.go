@@ -132,7 +132,9 @@ func (m *MySqlStatistics) CountRecord(data *CountRecordData) error {
 	if err != nil {
 		return err
 	}
-	_, err = model.Clone().Increment("charCount", data.Data.OriginalTextLen)
+	if data.Ok {
+		_, err = model.Clone().Increment("charCount", data.Data.OriginalTextLen)
+	}
 	return err
 }
 
