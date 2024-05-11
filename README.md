@@ -73,6 +73,10 @@ server:
   keyMode: 1 # 模式 1 直接传入 key 做验证 模式 2 使用 key 加密加签数据进行验证
 ```
 
+## API 文档 🌍
+[在线文档](https://apifox.com/apidoc/shared-335b66b6-90dd-42af-8a1b-f7d1a2c3f351)
+[Open Api File](./uniTranslate%20(统一翻译).openapi.json)
+
 ## 接口身份验证 ts 示例
 ```typescript
 import { MD5 } from "crypto-js";
@@ -259,6 +263,3 @@ curl --location --request POST 'http://127.0.0.1:9431/api/translate' \
 | Cantonese (Traditional) | 粤语          | yue     |
 | Zulu                    | 南非祖鲁语       | zu      |
 | 自动识别                    | auto        |         |
-
-## API 文档 🌍
-[Open Api File](./uniTranslate%20(统一翻译).openapi.json)
