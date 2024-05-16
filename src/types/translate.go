@@ -63,3 +63,18 @@ type RequestRecordData struct {
 type SaveData struct {
 	Data *TranslateData `json:"data"`
 }
+
+// AggregateTranslationReq 聚合翻译请求
+type AggregateTranslationReq struct {
+	From     string   `p:"from" v:"required#参数错误"`
+	To       string   `p:"to" v:"required#参数错误"`
+	Text     string   `p:"text" v:"required#参数错误"`
+	Platform []string `p:"platform"`
+}
+
+type AggregateTranslateResult struct {
+	FromLang  string `json:"fromLang"`
+	Translate string `json:"translate"`
+	Platform  string `json:"platform"`
+	ErrorStr  string `json:"errorStr"`
+}

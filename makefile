@@ -1,7 +1,7 @@
 .PHONY: all run clean help
 
 # 项目名称
-APP = uniTranslate
+APP = UniTranslate
 
 GO_ROOT =$(shell go env GOROOT)
 RACE = -ldflags="-s -w" -pgo=auto -o

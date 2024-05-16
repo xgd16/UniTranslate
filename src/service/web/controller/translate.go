@@ -6,6 +6,7 @@ import (
 	"sort"
 	"uniTranslate/src/buffer"
 	"uniTranslate/src/global"
+	"uniTranslate/src/logic"
 	queueHandler "uniTranslate/src/service/queue/handler"
 	"uniTranslate/src/service/web/handler"
 	"uniTranslate/src/translate"
@@ -24,6 +25,18 @@ import (
 	"github.com/xgd16/gf-x-tool/xlib"
 )
 
+// AggregateTranslation 聚合翻译 (只支持单条翻译)
+func AggregateTranslate(r *ghttp.Request) {
+	req := new(types.AggregateTranslationReq)
+	if err := r.Parse(req); err != nil {
+		x.FastResp(r, true, false).Resp(err.Error())
+	}
+	result, err := logic.AggregateTranslate(r.Context(), req)
+	x.FastResp(r, err, false).Resp("翻译失败请重试")
+	x.FastResp(r).SetData(result).Resp()
+}
+
+// Translate 翻译
 func Translate(r *ghttp.Request) {
 	fromT := r.Get("from")
 	toT := r.Get("to")
@@ -86,6 +99,7 @@ func Translate(r *ghttp.Request) {
 	x.FastResp(r).SetData(dataMap).Resp()
 }
 
+// GetConfigList 获取配置列表
 func GetConfigList(r *ghttp.Request) {
 	// 获取配置驱动
 	device, err := global.GetConfigDevice()
@@ -168,6 +182,7 @@ func t(r *ghttp.Request, req *translate.TranslateReq) (value any, err error) {
 	return
 }
 
+// GetLangList 获取语言列表
 func GetLangList(r *ghttp.Request) {
 	x.FastResp(r).SetData(translate.BaseTranslateConf[translate.YouDaoTranslateMode]).Resp()
 }

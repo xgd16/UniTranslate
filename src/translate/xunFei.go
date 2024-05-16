@@ -155,7 +155,7 @@ func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *
 		err = fmt.Errorf("讯飞翻译请求失败 %d %s", httpResp.Code, respByte)
 		return
 	}
-	lang, err := GetYouDaoLang(httpResp.Data.Result.To, mode)
+	lang, err := GetYouDaoLang(httpResp.Data.Result.From, mode)
 	if err != nil {
 		return
 	}
