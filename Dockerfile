@@ -1,34 +1,18 @@
 FROM golang:1.21.5 as builder
-
-WORKDIR /app
-
+WORKDIR /workspace
 COPY . .
+RUN go mod tidy && CGO_ENABLED=0 go build -o app main.go
 
-RUN go mod tidy && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o uniTranslate-linux-amd64 main.go
-
-FROM bitnami/git:latest
-FROM node:18.19.0 as console
-
+FROM --platform=amd64 node:18.19.0 as console
+WORKDIR /workspace
 ARG CACHEBUST=1
-
-WORKDIR /app
-
 RUN git clone https://github.com/xgd16/UniTranslate-web-console.git console
-
-WORKDIR /app/console
-
+WORKDIR /workspace/console
 RUN npm install && npm run build
 
 FROM alpine:latest
-
-WORKDIR /app
-
-COPY --from=console /app/console/dist ./dist
-COPY --from=builder /app/uniTranslate-linux-amd64 .
-COPY --from=builder /app/translate.json .
-
-CMD ["./uniTranslate-linux-amd64"]
-
-# docker build --no-cache -t uni-translate:latest .
-
-# docker run -d --name uniTranslate -v /Users/x/docker/uniTranslate/config.yaml:/app/config.yaml -p 9431:9431 --network baseRun uni-translate:latest
+WORKDIR /workspace
+COPY --from=console /workspace/console/dist ./dist
+COPY --from=builder /workspace/app .
+COPY --from=builder /workspace/translate.json .
+ENTRYPOINT [ "./app" ]
