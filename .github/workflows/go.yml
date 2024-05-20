@@ -57,7 +57,7 @@ jobs:
       uses: docker/metadata-action@v3
       with:
         images: |
-          117503445/uni-translate
+          xgd16/uni-translate
         tags: |
           type=schedule
           type=ref,event=branch
