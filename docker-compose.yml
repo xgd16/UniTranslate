@@ -1,6 +1,6 @@
 services:
   uni-translate:
-    image: 117503445/uni-translate
+    image: xgd16/uni-translate
     build:
       context: .
       dockerfile: Dockerfile
