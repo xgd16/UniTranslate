@@ -1,0 +1,22 @@
+services:
+  uni-translate:
+    image: 117503445/uni-translate
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./config.container.yaml:/workspace/config.yaml
+    ports:
+      - 9431:9431
+  mysql:
+    image: mysql:8.4.0
+    environment:
+      MYSQL_ROOT_PASSWORD: jsnSvEEdb4as9v
+      MYSQL_DATABASE: uni_translate
+    # ports:
+    #   - 3306:3306
+  redis:
+    image: redis:7.2.4
+    command: redis-server --requirepass sGQsTh3DHrj8Yq
+    # ports:
+    #   - 6379:6379
