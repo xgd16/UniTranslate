@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: on-failure
     volumes:
       - ./config.container.yaml:/workspace/config.yaml
     ports:
