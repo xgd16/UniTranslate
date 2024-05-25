@@ -9,10 +9,8 @@ import (
 	"uniTranslate/src/translate"
 	"uniTranslate/src/types"
 
-	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/net/gtrace"
 	"github.com/gogf/gf/v2/os/gtime"
-	"github.com/gogf/gf/v2/text/gstr"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
@@ -37,7 +35,7 @@ func (t *BufferType) GetIdx() [][]int {
 	return t.idx
 }
 
-func (t *BufferType) Handler(r *ghttp.Request, req *translate.TranslateReq, fn func(config *types.TranslatePlatform, req *translate.TranslateReq) (*types.TranslateData, error)) (s *types.TranslateData, e error) {
+func (t *BufferType) Handler(req *translate.TranslateReq, fn func(config *types.TranslatePlatform, req *translate.TranslateReq) (*types.TranslateData, error)) (s *types.TranslateData, e error) {
 	t.m.Lock()
 	var bufferArr BufferArrInterface
 	if req.Platfrom == "" {
@@ -66,13 +64,13 @@ func (t *BufferType) Handler(r *ghttp.Request, req *translate.TranslateReq, fn f
 		if err != nil {
 			e = fmt.Errorf("调用翻译失败 %s", err)
 			queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
-				ClientIp: r.GetClientIp(),
-				Body:     gstr.Trim(r.GetBodyString()),
+				ClientIp: req.HttpReq.ClientIp,
+				Body:     req.HttpReq.BodyStr,
 				Time:     gtime.Now().UnixMilli(),
 				Ok:       err == nil,
 				ErrMsg:   err,
 				Platform: fmt.Sprintf("%s [ %s ]", p.Type, p.Platform),
-				TraceId:  gtrace.GetTraceID(r.Context()),
+				TraceId:  gtrace.GetTraceID(req.HttpReq.Context),
 			})
 			// 翻译计数
 			queueHandler.CountRecordQueue.Push(&types.CountRecordData{

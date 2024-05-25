@@ -72,9 +72,18 @@ type AggregateTranslationReq struct {
 	Platform []string `p:"platform"`
 }
 
+// AggregateTranslateResult 聚合翻译结果
 type AggregateTranslateResult struct {
 	FromLang  string `json:"fromLang"`
 	Translate string `json:"translate"`
 	Platform  string `json:"platform"`
 	ErrorStr  string `json:"errorStr"`
+}
+
+// TranslateReq 翻译请求
+type TranslateReq struct {
+	From     string   `json:"from" p:"from" v:"required#参数错误"`
+	To       string   `json:"to" p:"to" v:"required#参数错误"`
+	Text     []string `json:"text" p:"text" v:"required#参数错误"`
+	Platform string   `json:"platform" p:"platform"`
 }

@@ -1,6 +1,7 @@
 package translate
 
 import (
+	"context"
 	"errors"
 
 	"github.com/gogf/gf/v2/container/gvar"
@@ -35,7 +36,14 @@ type TranslateResp struct {
 	FromLang string `json:"fromLang"`
 }
 
+type TranslateHttpReq struct {
+	ClientIp string          `json:"clientIp"`
+	BodyStr  string          `json:"bodyStr"`
+	Context  context.Context `json:"context"`
+}
+
 type TranslateReq struct {
+	HttpReq  *TranslateHttpReq
 	From     string   `json:"from"`
 	To       string   `json:"to"`
 	Platfrom string   `json:"platform"`
