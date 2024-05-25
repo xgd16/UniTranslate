@@ -14,6 +14,7 @@ var ChatGPTLangConfig string
 type ChatGptConfigType struct {
 	Key   string `json:"key"`
 	Model string `json:"model"`
+	OrgId string `json:"orgId"`
 }
 
 type ChatGPTHTTPTranslateResp []ChatGPTHTTPTranslateRespElement
@@ -41,7 +42,7 @@ func (t *ChatGptConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 	if from == "auto" {
 		from = ""
 	}
-	gptResp, err := SendToChatGpt(t.Key, fmt.Sprintf("接下来模拟你是一个批量翻译接口你将 [%s] 数组数据批量翻译为 %s 返回数据结构为[ [{\"fromLang\":\"源语言\",\"text\":\"翻译结果\"}] ]标准的压缩数组json结构返回给我fromLang有这几种语言直接给我返回对应的key位置%s不需要其他任何回复严格按照我给你的格式翻译结果不要用[]包着", func() (str string) {
+	gptResp, err := SendToChatGpt(t.Key, t.OrgId, fmt.Sprintf("接下来模拟你是一个批量翻译接口你将 [%s] 数组数据批量翻译为 %s 返回数据结构为[ [{\"fromLang\":\"源语言\",\"text\":\"翻译结果\"}] ]标准的压缩数组json结构返回给我fromLang有这几种语言直接给我返回对应的key位置%s不需要其他任何回复严格按照我给你的格式翻译结果不要用[]包着", func() (str string) {
 		for k, v := range req.Text {
 			if k == 0 {
 				str = fmt.Sprintf("\"%s\"", v)
@@ -68,8 +69,12 @@ func (t *ChatGptConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 	return
 }
 
-func SendToChatGpt(key, msg, modelStr string) (resp string, err error) {
-	client := openai.NewClient(key)
+func SendToChatGpt(key, orgId, msg, modelStr string) (resp string, err error) {
+	config := openai.DefaultConfig(key)
+	if orgId != "" {
+		config.OrgID = orgId
+	}
+	client := openai.NewClientWithConfig(config)
 	model := openai.GPT3Dot5Turbo0125
 	switch modelStr {
 	case "gpt-3.5-turbo-0125":
