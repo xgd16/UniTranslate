@@ -21,6 +21,8 @@ type BaiduConfigType struct {
 }
 
 type BaiduHTTPTranslateResp struct {
+	ErrorCode   string        `json:"error_code"`
+	ErrorMsg    string        `json:"error_msg"`
 	From        string        `json:"from"`
 	To          string        `json:"to"`
 	TransResult []TransResult `json:"trans_result"`
@@ -77,6 +79,11 @@ func (t *BaiduConfigType) Translate(req *TranslateReq) (resp []*TranslateResp, e
 	}
 	httpResp := new(BaiduHTTPTranslateResp)
 	if err = json.Unmarshal(respByte, httpResp); err != nil {
+		return
+	}
+	// 判断是否请求错误
+	if httpResp.ErrorMsg != "" {
+		err = fmt.Errorf("百度翻译失败 %s", httpResp.ErrorMsg)
 		return
 	}
 	resp = make([]*TranslateResp, 0)
