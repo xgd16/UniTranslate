@@ -28,12 +28,14 @@ func CleanCache(r *ghttp.Request) {
 	x.FastResp(r).SetData(g.Map{"size": size}).Resp()
 }
 
+// CacheSize 获取缓存大小
 func CacheSize(r *ghttp.Request) {
 	size, err := global.GfCache.Size(r.Context())
 	x.FastResp(r, err, false).Resp()
 	x.FastResp(r).SetData(g.Map{"size": size}).Resp()
 }
 
+// DelConfig 删除配置
 func DelConfig(r *ghttp.Request) {
 	serialNumberT := r.Get("serialNumber")
 	x.FastResp(r, serialNumberT.IsEmpty(), false).Resp("参数错误")
@@ -42,6 +44,7 @@ func DelConfig(r *ghttp.Request) {
 	x.FastResp(r).Resp()
 }
 
+// UpdateStatus 修改配置状态
 func UpdateStatus(r *ghttp.Request) {
 	serialNumberT := r.Get("serialNumber")
 	statusT := r.Get("status")

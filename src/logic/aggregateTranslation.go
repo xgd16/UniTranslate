@@ -61,11 +61,13 @@ func AggregateTranslate(ctx context.Context, req *types.AggregateTranslationReq)
 				result.ErrorStr = "不存在的翻译平台或没有配置"
 			} else {
 				config := configs[0]
+				// 获取翻译器
 				t, err := translate.GetTranslate(platform, config.Cfg)
 				if err != nil {
 					result.ErrorStr = "翻译出错请稍后再试"
 					logger.Error(ctx, err)
 				} else {
+					// 执行翻译
 					tResp, err := t.Translate(&translate.TranslateReq{
 						From:     req.From,
 						To:       req.To,
