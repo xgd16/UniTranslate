@@ -141,5 +141,5 @@ func RefreshConfigCache(r *ghttp.Request) {
 
 // GetLangList 获取语言列表
 func GetLangList(r *ghttp.Request) {
-	x.FastResp(r).SetData(translate.BaseTranslateConf[translate.YouDaoTranslateMode]).Resp()
+	x.FastResp(r).SetData(global.LangJson).Resp()
 }
