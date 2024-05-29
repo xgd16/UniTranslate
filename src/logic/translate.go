@@ -62,7 +62,7 @@ func Translate(r *ghttp.Request, req *types.TranslateReq) (data *types.Translate
 	// 记录翻译
 	queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
 		ClientIp: r.GetClientIp(),
-		Body:     gstr.Trim(r.GetBodyString()),
+		Body:     req,
 		Time:     nowTime,
 		Ok:       err == nil,
 		ErrMsg:   err,

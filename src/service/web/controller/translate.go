@@ -27,6 +27,32 @@ func AggregateTranslate(r *ghttp.Request) {
 	x.FastResp(r).SetData(result).Resp()
 }
 
+func LibreTranslate(r *ghttp.Request) {
+	req := new(types.LibreTranslateReq)
+	if err := r.Parse(req); err != nil {
+		x.FastResp(r, true, false).Resp(err.Error())
+	}
+	data, err := logic.Translate(r, &types.TranslateReq{
+		From: req.Source,
+		To:   req.Target,
+		Text: []string{req.QueryStr},
+	})
+	if err != nil || len(data.Translate) <= 0 {
+		r.Response.Status = 500
+		r.Response.WriteJsonExit(g.Map{
+			"error": "翻译失败请重试",
+		})
+	}
+	dataItem := data.Translate[0]
+	r.Response.WriteJsonExit(g.Map{
+		"detectedLanguage": g.Map{
+			"confidence": 0,
+			"language":   dataItem.FromLang,
+		},
+		"translatedText": dataItem.Text,
+	})
+}
+
 // Translate 翻译
 func Translate(r *ghttp.Request) {
 	req := new(types.TranslateReq)

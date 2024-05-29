@@ -65,7 +65,12 @@ func (t *BufferType) Handler(req *translate.TranslateReq, fn func(config *types.
 			e = fmt.Errorf("调用翻译失败 %s", err)
 			queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
 				ClientIp: req.HttpReq.ClientIp,
-				Body:     req.HttpReq.BodyStr,
+				Body: &types.TranslateReq{
+					From:     req.From,
+					To:       req.To,
+					Text:     req.Text,
+					Platform: req.Platfrom,
+				},
 				Time:     gtime.Now().UnixMilli(),
 				Ok:       err == nil,
 				ErrMsg:   err,

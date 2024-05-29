@@ -14,6 +14,7 @@ func Api(r *ghttp.RouterGroup) {
 	rA.GET("/getConfigList", controller.GetConfigList)
 	rA.POST("/translate", controller.Translate)
 	rA.POST("/aggregateTranslate", controller.AggregateTranslate)
+	rA.POST("/libreTranslate", controller.LibreTranslate)
 	rA.GET("/refreshConfigCache", controller.RefreshConfigCache)
 	rA.GET("/getCountRecord", controller.GetCountRecord)
 	rA.GET("/getRequestRecord", controller.GetRequestRecord)

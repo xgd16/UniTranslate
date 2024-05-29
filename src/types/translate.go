@@ -50,14 +50,14 @@ type CountRecordData struct {
 }
 
 type RequestRecordData struct {
-	ClientIp string `json:"clientIp"`
-	Body     string `json:"body"`
-	Time     int64  `json:"time"`
-	Ok       bool   `json:"ok"`
-	Platform string `json:"platform"`
-	ErrMsg   error  `json:"errMsg"`
-	TraceId  string `json:"traceId" orm:"tId"`
-	TakeTime int    `json:"takeTime"`
+	ClientIp string        `json:"clientIp"`
+	Body     *TranslateReq `json:"body"`
+	Time     int64         `json:"time"`
+	Ok       bool          `json:"ok"`
+	Platform string        `json:"platform"`
+	ErrMsg   error         `json:"errMsg"`
+	TraceId  string        `json:"traceId" orm:"tId"`
+	TakeTime int           `json:"takeTime"`
 }
 
 type SaveData struct {
@@ -86,4 +86,10 @@ type TranslateReq struct {
 	To       string   `json:"to" p:"to" v:"required#参数错误"`
 	Text     []string `json:"text" p:"text" v:"required#参数错误"`
 	Platform string   `json:"platform" p:"platform"`
+}
+
+type LibreTranslateReq struct {
+	QueryStr string `json:"q" p:"q" v:"required#参数错误"`
+	Source   string `json:"source" p:"source" v:"required#参数错误" `
+	Target   string `json:"target" p:"target" v:"required#参数错误"`
 }
