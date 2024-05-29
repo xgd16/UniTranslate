@@ -9,7 +9,7 @@ type ConfigDeviceInterface interface {
 	// GetTranslateInfo 获取翻译平台信息
 	GetTranslateInfo(serialNumber string) (platform *TranslatePlatform, ok bool, err error)
 	// SaveConfig 存储配置
-	SaveConfig(serialNumber string, data *TranslatePlatform) (err error)
+	SaveConfig(serialNumber string, isUpdate bool, data *TranslatePlatform) (err error)
 	// DelConfig 删除配置
 	DelConfig(serialNumber string) (err error)
 	// UpdateStatus 更新状态

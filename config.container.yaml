@@ -11,7 +11,7 @@ server:
   configDeviceMySqlDb: "default" # 翻译配置的数据库设置
   cacheWriteToStorage: false # 是否将缓存写入到数据库
   requestRecordKeepDays: 7 # 请求记录保留天数
-
+  apiEditConfig: false # 是否开启 api 修改配置
 
 # 数据库
 database:
@@ -31,9 +31,9 @@ redis:
 
 # 日志
 logger:
-  path:    "./log/default"
-  level:   "all"
-  stdout:  false
+  path: "./log/default"
+  level: "all"
+  stdout: false
   writerColorEnable: true
 
 # GrayLog 支持

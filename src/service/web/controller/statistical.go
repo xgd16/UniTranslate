@@ -13,6 +13,7 @@ import (
 // GetCountRecord 获取账号计数信息
 func GetCountRecord(r *ghttp.Request) {
 	data, err := g.Model("count_record").OrderDesc("id").All()
+	x.FastResp(r, err).Resp()
 	device, err := global.GetConfigDevice()
 	x.FastResp(r, err).Resp()
 	for i, item := range data {

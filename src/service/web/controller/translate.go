@@ -63,14 +63,21 @@ func GetConfigList(r *ghttp.Request) {
 		if countRecord, ok = countRecordMap[k]; !ok {
 			countRecord = new(types.CountRecord)
 		}
-		respData = append(respData, g.Map{
+
+		configItem := g.Map{
 			"id":          k,
 			"level":       v.Level,
 			"platform":    v.Platform,
 			"status":      v.Status,
 			"type":        v.Type,
 			"countRecord": countRecord,
-		})
+		}
+		// 判断是否开启编辑配置
+		if global.ApiEditConfig {
+			configItem["cfg"] = v.Cfg
+		}
+
+		respData = append(respData, configItem)
 	}
 	// 按照level排序
 	sort.Slice(respData, func(i, j int) bool {
@@ -81,18 +88,20 @@ func GetConfigList(r *ghttp.Request) {
 }
 
 // AddConfig 添加配置
-func AddConfig(r *ghttp.Request) {
+func SaveConfig(r *ghttp.Request) {
 	t := new(types.TranslatePlatform)
 	x.FastResp(r, r.GetStruct(t)).Resp()
 	x.FastResp(r, t.Platform == "", false).Resp("名称不能为空")
-	t.InitMd5()
+	if t.Md5 == "" {
+		t.InitMd5()
+	}
+	x.FastResp(r, !global.ApiEditConfig && t.Md5 != "", false).Resp("非法操作")
 	x.FastResp(r, t.Type != "" && !xlib.InArr(t.Type, translate.TranslateModeList), false).Resp("不支持的平台")
 	device, err := global.GetConfigDevice()
 	x.FastResp(r, err).Resp()
 	_, ok, err := device.GetTranslateInfo(t.GetMd5())
 	x.FastResp(r, err).Resp()
-	x.FastResp(r, ok, false).Resp("已存在此配置")
-	x.FastResp(r, device.SaveConfig(t.GetMd5(), t), false).Resp("添加失败")
+	x.FastResp(r, device.SaveConfig(t.GetMd5(), ok, t), false).Resp("添加失败")
 	x.FastResp(r, global.StatisticalProcess.CreateEvent(t)).Resp("添加失败")
 	x.FastResp(r, buffer.Buffer.Init(true), false).Resp("写入成功但重新初始化失败")
 	x.FastResp(r).Resp()

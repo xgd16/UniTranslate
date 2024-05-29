@@ -43,7 +43,7 @@ func (t *XDbConfigDevice) GetTranslateInfo(serialNumber string) (platform *types
 	return
 }
 
-func (t *XDbConfigDevice) SaveConfig(serialNumber string, data *types.TranslatePlatform) (err error) {
+func (t *XDbConfigDevice) SaveConfig(serialNumber string, isUpdate bool, data *types.TranslatePlatform) (err error) {
 	err = t.xdb.Set(defaultKeyName, serialNumber, data)
 	return
 }
@@ -62,7 +62,7 @@ func (t *XDbConfigDevice) UpdateStatus(serialNumber string, status int) (err err
 		return
 	}
 	platform.Status = status
-	err = t.SaveConfig(serialNumber, platform)
+	err = t.SaveConfig(serialNumber, false, platform)
 	return
 }
 

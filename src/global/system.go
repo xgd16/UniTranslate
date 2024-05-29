@@ -34,6 +34,7 @@ func InitSystemConfig() {
 	ConfigDeviceMySqlDb = SystemConfig.Get("server.configDeviceMySqlDb", "default").String()
 	CacheWriteToStorage = SystemConfig.Get("server.cacheWriteToStorage", false).Bool()
 	RequestRecordKeepDays = SystemConfig.Get("server.requestRecordKeepDays", 7).Int()
+	ApiEditConfig = SystemConfig.Get("server.apiEditConfig", false).Bool()
 }
 
 // XDB 文件式存储
@@ -81,10 +82,11 @@ var GfCache *gcache.Cache
 
 var StatisticalProcess types.StatisticsInterface = new(types.MySqlStatistics)
 
-
-
 // 是否将缓存写入存储
 var CacheWriteToStorage = false
 
 // 保留几天的请求记录
 var RequestRecordKeepDays = 7
+
+// 是否可在API中进行编辑
+var ApiEditConfig = false

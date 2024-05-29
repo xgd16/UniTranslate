@@ -99,15 +99,20 @@ func (t *MySQLConfigDevice) GetTranslateInfo(serialNumber string) (platform *typ
 	return
 }
 
-func (t *MySQLConfigDevice) SaveConfig(serialNumber string, data *types.TranslatePlatform) (err error) {
-	_, err = t.model().Insert(g.Map{
+func (t *MySQLConfigDevice) SaveConfig(serialNumber string, isUpdate bool, data *types.TranslatePlatform) (err error) {
+	dataMap := g.Map{
 		"translatedPlatform": data.Platform,
 		"status":             data.Status,
 		"translationLevel":   data.Level,
 		"cfg":                data.Cfg,
 		"type":               data.Type,
 		"md5":                data.Md5,
-	})
+	}
+	if isUpdate {
+		_, err = t.model().Where("md5", serialNumber).Update(dataMap)
+		return
+	}
+	_, err = t.model().Insert(dataMap)
 	return
 }
 
