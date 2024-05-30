@@ -48,7 +48,7 @@
 - [x] PaPaGo
 - [x] 支持更多国家语言
 - [x] 支持模拟 `LibreTranslate` 翻译接口
-- [ ] 支持终端交互翻译
+- [x] 支持终端交互翻译
 - [ ] 客户端更多翻译功能支持
 
 ## 基础类型 🪨
@@ -62,6 +62,12 @@ docker build -t uni-translate:latest .
 docker run -d --name uniTranslate -v {本机目录}/config.yaml:/app/config.yaml -p 9431:{你在config.yaml中配置的port} --network baseRun uni-translate:latest
 ```
 
+## 终端交互方式
+在 `config.yaml` 配置完成后执行
+
+```bash
+./UniTranslate translate auto en
+```
 
 ## 配置解析 🗄️
 
