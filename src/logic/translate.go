@@ -11,14 +11,13 @@ import (
 	"uniTranslate/src/types"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/net/gtrace"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 )
 
 // Translate 翻译
-func Translate(r *ghttp.Request, req *types.TranslateReq) (data *types.TranslateData, err error) {
+func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *types.TranslateData, err error) {
 	textStr := gstr.Join(req.Text, "\n")
 	// 内容转换为md5
 	var keyStr string
@@ -33,9 +32,8 @@ func Translate(r *ghttp.Request, req *types.TranslateReq) (data *types.Translate
 	// 创建所需要的参数
 	translateReq := &translate.TranslateReq{
 		HttpReq: &translate.TranslateHttpReq{
-			ClientIp: r.GetClientIp(),
-			BodyStr:  gstr.Trim(r.GetBodyString()),
-			Context:  r.Context(),
+			ClientIp: ip,
+			Context:  ctx,
 		},
 		From:     req.From,
 		To:       req.To,
@@ -47,7 +45,7 @@ func Translate(r *ghttp.Request, req *types.TranslateReq) (data *types.Translate
 	if global.CacheMode == "off" {
 		data, err = translateHandler(translateReq)
 	} else {
-		dataT, err1 := global.GfCache.GetOrSetFunc(r.GetCtx(), fmt.Sprintf("Translate:%s", md5), func(ctx context.Context) (value any, err error) {
+		dataT, err1 := global.GfCache.GetOrSetFunc(ctx, fmt.Sprintf("Translate:%s", md5), func(ctx context.Context) (value any, err error) {
 			return translateHandler(translateReq)
 		}, 0)
 		if err1 != nil {
@@ -61,14 +59,14 @@ func Translate(r *ghttp.Request, req *types.TranslateReq) (data *types.Translate
 	nowTime := gtime.Now().UnixMilli()
 	// 记录翻译
 	queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
-		ClientIp: r.GetClientIp(),
+		ClientIp: ip,
 		Body:     req,
 		Time:     nowTime,
 		Ok:       err == nil,
 		ErrMsg:   err,
 		Platform: data.Platform,
 		TakeTime: int(nowTime - startTime),
-		TraceId:  gtrace.GetTraceID(r.Context()),
+		TraceId:  gtrace.GetTraceID(ctx),
 	})
 	return
 }

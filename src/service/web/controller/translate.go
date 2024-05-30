@@ -32,7 +32,7 @@ func LibreTranslate(r *ghttp.Request) {
 	if err := r.Parse(req); err != nil {
 		x.FastResp(r, true, false).Resp(err.Error())
 	}
-	data, err := logic.Translate(r, &types.TranslateReq{
+	data, err := logic.Translate(r.GetCtx(), r.GetClientIp(), &types.TranslateReq{
 		From: req.Source,
 		To:   req.Target,
 		Text: []string{req.QueryStr},
@@ -62,7 +62,7 @@ func Translate(r *ghttp.Request) {
 	x.FastResp(r, req.Platform != "" && !xlib.InArr(req.Platform, translate.TranslateModeList), false).Resp("不支持的平台")
 	x.FastResp(r, req.To == "auto", false).Resp("转换后语言不支持 auto")
 	// 翻译
-	data, err := logic.Translate(r, req)
+	data, err := logic.Translate(r.GetCtx(), r.GetClientIp(), req)
 	// 处理结果
 	x.FastResp(r, err, false).Resp("翻译失败请重试")
 	x.FastResp(r).SetData(data).Resp()

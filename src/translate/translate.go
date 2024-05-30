@@ -38,7 +38,6 @@ type TranslateResp struct {
 
 type TranslateHttpReq struct {
 	ClientIp string          `json:"clientIp"`
-	BodyStr  string          `json:"bodyStr"`
 	Context  context.Context `json:"context"`
 }
 

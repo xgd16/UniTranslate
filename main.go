@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 	"runtime"
+	"time"
 	"uniTranslate/src/buffer"
+	"uniTranslate/src/command"
 	"uniTranslate/src/devices"
 	"uniTranslate/src/global"
 	"uniTranslate/src/service"
+	"uniTranslate/src/service/queue"
 	"uniTranslate/src/translate"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
@@ -16,6 +19,8 @@ import (
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcache"
+	"github.com/gogf/gf/v2/os/gcmd"
+	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/os/glog"
 	"github.com/xgd16/gf-x-tool/xgraylog"
 	"github.com/xgd16/gf-x-tool/xhttp"
@@ -23,16 +28,49 @@ import (
 )
 
 func main() {
+	// 创建命令
+	mainCmd := &gcmd.Command{
+		Name: "main",
+		Brief: "开启 HTTP 服务",
+		Description: "开启 HTTP API 服务",
+		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			initHandler()
+			// 初始化系统服务
+			service.InitService()
+			// 维持
+			xlib.Maintain(nil)
+			return
+		},
+	}
+	translateCmd := &gcmd.Command{
+		Name: "translate",
+		Brief: "命令行翻译",
+		Description: "开启命令行翻译",
+		Arguments: []gcmd.Argument{
+			{Name: "from", Brief: "源语言", IsArg: true},
+			{Name: "to", Brief: "目标语言", IsArg: true},
+		},
+		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			initHandler()
+			go queue.Service()
+			time.Sleep(700 * time.Millisecond)
+			err = command.Translate(ctx, parser)
+			return
+		},
+	}
+	if err := mainCmd.AddCommand(translateCmd);err != nil {
+		panic(err)
+	}
+	mainCmd.Run(gctx.New())
+}
+
+func initHandler() {
 	runtime.SetMutexProfileFraction(1) // (非必需)开启对锁调用的跟踪
 	runtime.SetBlockProfileRate(1)     // (非必需)开启对阻塞操作的跟踪
 	// 初始化系统配置
 	global.InitSystemConfig()
 	// 初始化基础
 	baseInit()
-	// 初始化系统服务
-	service.InitService()
-	// 维持
-	xlib.Maintain(nil)
 }
 
 func baseInit() {
