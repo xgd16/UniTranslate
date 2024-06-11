@@ -25,15 +25,17 @@ import (
 	"github.com/xgd16/gf-x-tool/xgraylog"
 	"github.com/xgd16/gf-x-tool/xhttp"
 	"github.com/xgd16/gf-x-tool/xlib"
+	"github.com/xgd16/gf-x-tool/xmonitor"
 )
 
 func main() {
 	// 创建命令
 	mainCmd := &gcmd.Command{
-		Name: "main",
-		Brief: "开启 HTTP 服务",
+		Name:        "main",
+		Brief:       "开启 HTTP 服务",
 		Description: "开启 HTTP API 服务",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			xmonitor.InitPrometheusMetric("uniTranslate", "uniTranslate")
 			initHandler()
 			// 初始化系统服务
 			service.InitService()
@@ -43,8 +45,8 @@ func main() {
 		},
 	}
 	translateCmd := &gcmd.Command{
-		Name: "translate",
-		Brief: "命令行翻译",
+		Name:        "translate",
+		Brief:       "命令行翻译",
 		Description: "开启命令行翻译",
 		Arguments: []gcmd.Argument{
 			{Name: "from", Brief: "源语言", IsArg: true},
@@ -58,7 +60,7 @@ func main() {
 			return
 		},
 	}
-	if err := mainCmd.AddCommand(translateCmd);err != nil {
+	if err := mainCmd.AddCommand(translateCmd); err != nil {
 		panic(err)
 	}
 	mainCmd.Run(gctx.New())

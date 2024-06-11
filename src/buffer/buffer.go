@@ -11,6 +11,8 @@ import (
 
 	"github.com/gogf/gf/v2/net/gtrace"
 	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/xgd16/gf-x-tool/xlib"
+	"github.com/xgd16/gf-x-tool/xmonitor"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
@@ -61,6 +63,7 @@ func (t *BufferType) Handler(req *translate.TranslateReq, fn func(config *types.
 		t.m.Unlock()
 		// 调用处理
 		t, err := fn(p, req)
+		xmonitor.MetricHttpRequestTotal.WithLabelValues(fmt.Sprintf("%s_%s", xlib.IF(err == nil, "success", "error"), p.Platform)).Inc()
 		if err != nil {
 			e = fmt.Errorf("调用翻译失败 %s", err)
 			queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{

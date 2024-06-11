@@ -50,14 +50,15 @@ type CountRecordData struct {
 }
 
 type RequestRecordData struct {
-	ClientIp string        `json:"clientIp"`
-	Body     *TranslateReq `json:"body"`
-	Time     int64         `json:"time"`
-	Ok       bool          `json:"ok"`
-	Platform string        `json:"platform"`
-	ErrMsg   error         `json:"errMsg"`
-	TraceId  string        `json:"traceId" orm:"tId"`
-	TakeTime int           `json:"takeTime"`
+	ClientIp     string        `json:"clientIp"`
+	Body         *TranslateReq `json:"body"`
+	Time         int64         `json:"time"`
+	Ok           bool          `json:"ok"`
+	Platform     string        `json:"platform"`
+	ErrMsg       error         `json:"errMsg"`
+	TraceId      string        `json:"traceId" orm:"tId"`
+	TakeTime     int           `json:"takeTime"`
+	PlatformName string        `json:"platformName"`
 }
 
 type SaveData struct {
