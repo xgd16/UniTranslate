@@ -35,6 +35,7 @@ func main() {
 		Brief:       "开启 HTTP 服务",
 		Description: "开启 HTTP API 服务",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			global.RunMode = global.HttpMode
 			xmonitor.InitPrometheusMetric("uniTranslate", "uniTranslate")
 			initHandler()
 			// 初始化系统服务
@@ -53,6 +54,7 @@ func main() {
 			{Name: "to", Brief: "目标语言", IsArg: true},
 		},
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			global.RunMode = global.CmdMode
 			initHandler()
 			go queue.Service()
 			time.Sleep(700 * time.Millisecond)

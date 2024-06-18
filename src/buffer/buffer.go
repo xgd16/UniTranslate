@@ -63,7 +63,11 @@ func (t *BufferType) Handler(req *translate.TranslateReq, fn func(config *types.
 		t.m.Unlock()
 		// 调用处理
 		t, err := fn(p, req)
-		xmonitor.MetricHttpRequestTotal.WithLabelValues(fmt.Sprintf("%s_%s", xlib.IF(err == nil, "success", "error"), p.Platform)).Inc()
+		// 记录翻译
+		if global.RunMode == global.HttpMode {
+			xmonitor.MetricHttpRequestTotal.WithLabelValues(fmt.Sprintf("%s_%s", xlib.IF(err == nil, "success", "error"), p.Platform)).Inc()
+		}
+		// 处理错误
 		if err != nil {
 			e = fmt.Errorf("调用翻译失败 %s", err)
 			queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
