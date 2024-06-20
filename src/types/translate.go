@@ -26,8 +26,8 @@ type CountRecord struct {
 	CharCount    int    `json:"charCount"`
 }
 
-// StatisticsInterface 统计接口
-type StatisticsInterface interface {
+// RecordInterface 统计接口
+type RecordInterface interface {
 	// Init 初始化数据库
 	Init(cache *gcache.Cache, cacheMode string, cachePlatform, cacheRefreshOnStartup bool) error
 	// CountRecord 计数统计

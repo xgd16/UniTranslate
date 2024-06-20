@@ -3,6 +3,7 @@ package controller
 import (
 	"sort"
 	"uniTranslate/src/buffer"
+	"uniTranslate/src/devices"
 	"uniTranslate/src/global"
 	"uniTranslate/src/logic"
 	"uniTranslate/src/translate"
@@ -16,7 +17,7 @@ import (
 	"github.com/xgd16/gf-x-tool/xlib"
 )
 
-// AggregateTranslation 聚合翻译 (只支持单条翻译)
+// AggregateTranslate 聚合翻译 (只支持单条翻译)
 func AggregateTranslate(r *ghttp.Request) {
 	req := new(types.AggregateTranslationReq)
 	if err := r.Parse(req); err != nil {
@@ -27,6 +28,7 @@ func AggregateTranslate(r *ghttp.Request) {
 	x.FastResp(r).SetData(result).Resp()
 }
 
+// LibreTranslate 兼容实现
 func LibreTranslate(r *ghttp.Request) {
 	req := new(types.LibreTranslateReq)
 	if err := r.Parse(req); err != nil {
@@ -77,7 +79,7 @@ func GetConfigList(r *ghttp.Request) {
 	config, err := device.GetConfig(true)
 	x.FastResp(r, err).Resp()
 	// 获取计数记录
-	countRecordMap, err := global.StatisticalProcess.GetCountRecord()
+	countRecordMap, err := devices.RecordHandler.GetCountRecord()
 	x.FastResp(r, err, false).Resp()
 
 	respData := make([]map[string]any, 0)
@@ -113,7 +115,7 @@ func GetConfigList(r *ghttp.Request) {
 	x.FastResp(r).SetData(respData).Resp()
 }
 
-// AddConfig 添加配置
+// SaveConfig 添加配置
 func SaveConfig(r *ghttp.Request) {
 	t := new(types.TranslatePlatform)
 	x.FastResp(r, r.GetStruct(t)).Resp()
@@ -128,7 +130,7 @@ func SaveConfig(r *ghttp.Request) {
 	_, ok, err := device.GetTranslateInfo(t.GetMd5())
 	x.FastResp(r, err).Resp()
 	x.FastResp(r, device.SaveConfig(t.GetMd5(), ok, t), false).Resp("添加失败")
-	x.FastResp(r, global.StatisticalProcess.CreateEvent(t)).Resp("添加失败")
+	x.FastResp(r, devices.RecordHandler.CreateEvent(t)).Resp("添加失败")
 	x.FastResp(r, buffer.Buffer.Init(true), false).Resp("写入成功但重新初始化失败")
 	x.FastResp(r).Resp()
 }

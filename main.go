@@ -112,7 +112,7 @@ func baseInit() {
 
 // 初始化 数据库信息
 func initDataBase() (err error) {
-	err = global.StatisticalProcess.Init(global.GfCache, global.CacheMode, global.CachePlatform, global.CacheRefreshOnStartup)
+	err = devices.RecordHandler.Init(global.GfCache, global.CacheMode, global.CachePlatform, global.CacheRefreshOnStartup)
 	return
 }
 

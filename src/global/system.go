@@ -80,13 +80,11 @@ var KeyMode int
 // GfCache 全局缓存
 var GfCache *gcache.Cache
 
-var StatisticalProcess types.StatisticsInterface = new(types.MySqlStatistics)
-
-// 是否将缓存写入存储
+// CacheWriteToStorage 是否将缓存写入存储
 var CacheWriteToStorage = false
 
-// 保留几天的请求记录
+// RequestRecordKeepDays 保留几天的请求记录
 var RequestRecordKeepDays = 7
 
-// 是否可在API中进行编辑
+// ApiEditConfig 是否可在API中进行编辑
 var ApiEditConfig = false

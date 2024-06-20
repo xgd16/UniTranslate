@@ -1,4 +1,4 @@
-package types
+package devices
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"strings"
+	"uniTranslate/src/types"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -15,19 +16,20 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type MySqlStatistics struct{}
+// RecordHandler 记录处理
+var RecordHandler types.RecordInterface = NewMySQLRecordDevice()
 
-type MySqlInit struct {
-	TableName string
-	Table     string
-	Index     []string
+func NewMySQLRecordDevice() *MySQLRecordDevice {
+	return &MySQLRecordDevice{}
 }
 
-func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatform, cacheRefreshOnStartup bool) (err error) {
+type MySQLRecordDevice struct{}
+
+func (m *MySQLRecordDevice) Init(cache *gcache.Cache, cacheMode string, cachePlatform, cacheRefreshOnStartup bool) (err error) {
 	ctx := gctx.New()
 
 	// 创建表信息
-	initData := []*MySqlInit{
+	initData := []*types.MySQLInitItem{
 		{
 			TableName: "count_record",
 			Table:     "CREATE TABLE count_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, serialNumber varchar(255) NOT NULL, successCount int unsigned NULL DEFAULT 0, errorCount int unsigned NULL DEFAULT 0, charCount bigint unsigned NULL DEFAULT 0, createTime datetime(6) NOT NULL, updateTime datetime(6) NULL );",
@@ -94,13 +96,13 @@ func (m *MySqlStatistics) Init(cache *gcache.Cache, cacheMode string, cachePlatf
 }
 
 // 存储到缓存
-func saveToCache(ctx context.Context, cache *gcache.Cache, m *MySqlStatistics, cacheMode string, cachePlatform bool) (err error) {
+func saveToCache(ctx context.Context, cache *gcache.Cache, m *MySQLRecordDevice, cacheMode string, cachePlatform bool) (err error) {
 	const keyName = "Translate:"
 	if err = cache.Clear(ctx); err != nil {
 		return
 	}
 	// 内存缓存是否 包含 平台
-	err = m.GetterCache(func(data []*TranslateData) (err error) {
+	err = m.GetterCache(func(data []*types.TranslateData) (err error) {
 		for _, item := range data {
 			var md5 string
 			if cachePlatform {
@@ -117,7 +119,7 @@ func saveToCache(ctx context.Context, cache *gcache.Cache, m *MySqlStatistics, c
 	return
 }
 
-func (m *MySqlStatistics) CountRecord(data *CountRecordData) error {
+func (m *MySQLRecordDevice) CountRecord(data *types.CountRecordData) error {
 	if data.Data == nil {
 		return errors.New("翻译参数异常")
 	}
@@ -138,7 +140,7 @@ func (m *MySqlStatistics) CountRecord(data *CountRecordData) error {
 	return err
 }
 
-func (m *MySqlStatistics) RequestRecord(data *RequestRecordData) error {
+func (m *MySQLRecordDevice) RequestRecord(data *types.RequestRecordData) error {
 	var errMsg string
 	if data.ErrMsg != nil {
 		errMsg = data.ErrMsg.Error()
@@ -155,14 +157,14 @@ func (m *MySqlStatistics) RequestRecord(data *RequestRecordData) error {
 	return err
 }
 
-func (m *MySqlStatistics) CreateEvent(data *TranslatePlatform) error {
+func (m *MySQLRecordDevice) CreateEvent(data *types.TranslatePlatform) error {
 	_, err := g.Model("count_record").Data(g.Map{
 		"serialNumber": data.Md5,
 	}).Insert()
 	return err
 }
 
-func (m *MySqlStatistics) SaveCache(data *SaveData) error {
+func (m *MySQLRecordDevice) SaveCache(data *types.SaveData) error {
 	if data == nil || data.Data == nil {
 		return nil
 	}
@@ -182,7 +184,7 @@ func (m *MySqlStatistics) SaveCache(data *SaveData) error {
 	return nil
 }
 
-func (m *MySqlStatistics) GetterCache(fn func(data []*TranslateData) (err error)) error {
+func (m *MySQLRecordDevice) GetterCache(fn func(data []*types.TranslateData) (err error)) error {
 	pageSize := 1
 	model := g.Model("translate_cache")
 	dbSize, err := model.Clone().Count()
@@ -190,7 +192,7 @@ func (m *MySqlStatistics) GetterCache(fn func(data []*TranslateData) (err error)
 		return err
 	}
 	for i := 0; i < int(math.Ceil(float64(dbSize)/float64(pageSize))); i++ {
-		newData := make([]*TranslateData, 0)
+		newData := make([]*types.TranslateData, 0)
 		if err = model.Clone().Page(i+1, pageSize).Scan(&newData); err != nil {
 			return err
 		}
@@ -205,7 +207,7 @@ func (m *MySqlStatistics) GetterCache(fn func(data []*TranslateData) (err error)
 	return nil
 }
 
-func (m *MySqlStatistics) GetCountRecord() (data map[string]*CountRecord, err error) {
+func (m *MySQLRecordDevice) GetCountRecord() (data map[string]*types.CountRecord, err error) {
 	all, err := g.Model("count_record").All()
 	if err != nil {
 		return
@@ -213,11 +215,11 @@ func (m *MySqlStatistics) GetCountRecord() (data map[string]*CountRecord, err er
 	if all.IsEmpty() {
 		return
 	}
-	temp := make([]*CountRecord, 0)
+	temp := make([]*types.CountRecord, 0)
 	if err = all.Structs(&temp); err != nil {
 		return
 	}
-	data = make(map[string]*CountRecord)
+	data = make(map[string]*types.CountRecord)
 	for _, item := range temp {
 		data[item.SerialNumber] = item
 	}

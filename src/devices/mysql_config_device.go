@@ -27,7 +27,7 @@ func NewMySQLConfigDevice() *MySQLConfigDevice {
 func (t *MySQLConfigDevice) Init() (err error) {
 	ctx := context.Background()
 	// 创建表信息
-	initData := []*types.MySqlInit{
+	initData := []*types.MySQLInitItem{
 		{
 			TableName: "translation_platform",
 			Table:     "CREATE TABLE translation_platform ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, md5 char(32) NOT NULL, translatedPlatform varchar(255) NOT NULL COMMENT '翻译平台', useBytes int NOT NULL DEFAULT 0 COMMENT '使用字节', errorTimes int NULL DEFAULT 0 COMMENT '报错次数', status tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态0:关闭1:开启', translationLevel int NULL COMMENT '翻译等级', createTime datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间', updateTime datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间', cfg json NOT NULL COMMENT '配置', type varchar(15) NULL COMMENT '翻译平台类型 YouDao Baidu' ) CHARSET = utf8mb4 COMMENT '翻译平台';",
