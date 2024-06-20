@@ -152,3 +152,5 @@ curl --location --request POST 'http://127.0.0.1:9431/api/translate' \
 本程序所有支持的语言根据 [translate.json](./translate.json) 文件进行国家语言**标识**统一使用 _有道_ 翻译 API 标识符作为基准
 
 请根据 _有道_ 翻译 API 文档支持的标识作为基准修改 `translate.json` 文件
+
+## 感谢 [Jetbrains](https://www.jetbrains.com/?from=UniTranslate) 提供免费的 IDE
