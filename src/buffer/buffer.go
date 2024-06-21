@@ -3,6 +3,8 @@ package buffer
 import (
 	"errors"
 	"fmt"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 	"sync"
 	"uniTranslate/src/global"
 	queueHandler "uniTranslate/src/service/queue/handler"
@@ -62,10 +64,14 @@ func (t *BufferType) Handler(req *translate.TranslateReq, fn func(config *types.
 		// 释放锁
 		t.m.Unlock()
 		// 调用处理
-		t, err := fn(p, req)
+		translateResp, err := fn(p, req)
 		// 记录翻译
 		if global.RunMode == global.HttpMode {
 			xmonitor.MetricHttpRequestTotal.WithLabelValues(fmt.Sprintf("%s_%s", xlib.IF(err == nil, "success", "error"), p.Platform)).Inc()
+			// 统计翻译字数
+			if err == nil {
+				xmonitor.MetricHttpRequestTotal.WithLabelValues(fmt.Sprintf("fontCount_%s", p.Platform)).Add(gconv.Float64(gstr.LenRune(gstr.Join(translateResp.OriginalText, ""))))
+			}
 		}
 		// 处理错误
 		if err != nil {
@@ -94,8 +100,8 @@ func (t *BufferType) Handler(req *translate.TranslateReq, fn func(config *types.
 			g.Log().Error(ctx, e)
 			continue
 		}
-		t.Md5 = p.Md5
-		return t, nil
+		translateResp.Md5 = p.Md5
+		return translateResp, nil
 	}
 	if e == nil {
 		e = errors.New("翻译失败")
