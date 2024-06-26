@@ -16,6 +16,7 @@ import (
 	"github.com/gogf/gf/v2/encoding/gjson"
 
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
+	_ "github.com/gogf/gf/contrib/drivers/sqlite/v2"
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcache"
@@ -81,13 +82,10 @@ func baseInit() {
 	xhttp.RespErrorMsg = true
 	// 初始化缓存
 	global.GfCache = initCache()
-	// 初始化数据库
-	if err := initDataBase(); err != nil {
-		panic(fmt.Errorf("初始化数据库失败 %s", err))
-	} // 初始化缓存
-	global.GfCache = initCache()
-	// 初始化翻译配置获取
-	initTranslateConfigDevice()
+	// 初始化记录驱动
+	initRecordDevice()
+	// 初始化配置驱动
+	initConfigDevice()
 	// 开启翻译支持
 	translate.InitTranslate()
 	// 初始化 chatGPT 需要的数据
@@ -110,22 +108,31 @@ func baseInit() {
 	}
 }
 
-// 初始化 数据库信息
-func initDataBase() (err error) {
-	err = devices.RecordHandler.Init(global.GfCache, global.CacheMode, global.CachePlatform, global.CacheRefreshOnStartup)
+func initRecordDevice() {
+	switch global.RecordDeviceMode {
+	case "sqlite":
+		devices.RecordHandler = devices.NewSqlLiteRecordDevice()
+	default:
+		devices.RecordHandler = devices.NewMySQLRecordDevice()
+	}
+	if err := devices.RecordHandler.Init(global.GfCache, global.CacheMode, global.CachePlatform, global.CacheRefreshOnStartup); err != nil {
+		panic(fmt.Errorf("记录配置驱动初始化出错 %s", err))
+	}
 	return
 }
 
-func initTranslateConfigDevice() {
+func initConfigDevice() {
 	switch global.ConfigDeviceMode {
 	case "xdb":
-		global.ConfigDevice = devices.NewXDbConfigDevice()
+		devices.ConfigDevice = devices.NewXDbConfigDevice()
+	case "sqlite":
+		devices.ConfigDevice = devices.NewSqlLiteConfigDevice()
 	case "mysql":
-		global.ConfigDevice = devices.NewMySQLConfigDevice()
+		devices.ConfigDevice = devices.NewMySQLConfigDevice()
 	default:
-		global.ConfigDevice = devices.NewXDbConfigDevice()
+		devices.ConfigDevice = devices.NewXDbConfigDevice()
 	}
-	if err := global.ConfigDevice.Init(); err != nil {
+	if err := devices.ConfigDevice.Init(); err != nil {
 		panic(fmt.Errorf("翻译配置驱动初始化出错 %s", err))
 	}
 }

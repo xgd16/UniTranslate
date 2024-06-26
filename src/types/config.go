@@ -16,7 +16,7 @@ type ConfigDeviceInterface interface {
 	UpdateStatus(serialNumber string, status int) (err error)
 }
 
-type MySQLInitItem struct {
+type SQLInitItem struct {
 	TableName string   // 表名
 	Table     string   // 创建表sql
 	Index     []string // 创建索引sql

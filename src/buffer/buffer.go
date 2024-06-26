@@ -6,6 +6,7 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"sync"
+	"uniTranslate/src/devices"
 	"uniTranslate/src/global"
 	queueHandler "uniTranslate/src/service/queue/handler"
 	"uniTranslate/src/translate"
@@ -113,7 +114,7 @@ func (t *BufferType) Init(refresh bool) (err error) {
 	t.m.Lock()
 	defer t.m.Unlock()
 	// 初始化数据
-	device, err := global.GetConfigDevice()
+	device, err := devices.GetConfigDevice()
 	if err != nil {
 		return
 	}

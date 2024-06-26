@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/text/gstr"

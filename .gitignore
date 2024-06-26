@@ -11,3 +11,4 @@
 /dist/
 /test/XDB
 /__debug*
+/uniTranslate.sqlite3

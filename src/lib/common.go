@@ -3,6 +3,8 @@ package lib
 import (
 	"fmt"
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"reflect"
@@ -30,5 +32,17 @@ func SortMapToStr(data map[string]any) (str string) {
 	}
 	sort.Strings(mapArr)
 	str = gstr.Join(mapArr, "&")
+	return
+}
+
+func SqliteTableIsExists(db gdb.DB, tableName string) (isExists bool, err error) {
+	count, err := db.Model("sqlite_master").Count(g.Map{
+		"type": "table",
+		"name": tableName,
+	})
+	if err != nil {
+		return
+	}
+	isExists = count > 0
 	return
 }

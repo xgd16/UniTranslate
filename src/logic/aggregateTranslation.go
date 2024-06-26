@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"sync"
-	"uniTranslate/src/global"
+	"uniTranslate/src/devices"
 	"uniTranslate/src/translate"
 	"uniTranslate/src/types"
 
@@ -13,7 +13,7 @@ import (
 func AggregateTranslate(ctx context.Context, req *types.AggregateTranslationReq) (translateResult []*types.AggregateTranslateResult, err error) {
 	logger := g.Log()
 	// 获取配置驱动
-	device, err := global.GetConfigDevice()
+	device, err := devices.GetConfigDevice()
 	if err != nil {
 		return
 	}

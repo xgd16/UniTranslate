@@ -73,7 +73,7 @@ func Translate(r *ghttp.Request) {
 // GetConfigList 获取配置列表
 func GetConfigList(r *ghttp.Request) {
 	// 获取配置驱动
-	device, err := global.GetConfigDevice()
+	device, err := devices.GetConfigDevice()
 	x.FastResp(r, err).Resp()
 	// 获取配置
 	config, err := device.GetConfig(true)
@@ -125,7 +125,7 @@ func SaveConfig(r *ghttp.Request) {
 	}
 	x.FastResp(r, !global.ApiEditConfig && t.Md5 != "", false).Resp("非法操作")
 	x.FastResp(r, t.Type != "" && !xlib.InArr(t.Type, translate.TranslateModeList), false).Resp("不支持的平台")
-	device, err := global.GetConfigDevice()
+	device, err := devices.GetConfigDevice()
 	x.FastResp(r, err).Resp()
 	_, ok, err := device.GetTranslateInfo(t.GetMd5())
 	x.FastResp(r, err).Resp()

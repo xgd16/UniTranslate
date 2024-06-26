@@ -16,9 +16,6 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-// RecordHandler 记录处理
-var RecordHandler types.RecordInterface = NewMySQLRecordDevice()
-
 func NewMySQLRecordDevice() *MySQLRecordDevice {
 	return &MySQLRecordDevice{}
 }
@@ -29,7 +26,7 @@ func (m *MySQLRecordDevice) Init(cache *gcache.Cache, cacheMode string, cachePla
 	ctx := gctx.New()
 
 	// 创建表信息
-	initData := []*types.MySQLInitItem{
+	initData := []*types.SQLInitItem{
 		{
 			TableName: "count_record",
 			Table:     "CREATE TABLE count_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, serialNumber varchar(255) NOT NULL, successCount int unsigned NULL DEFAULT 0, errorCount int unsigned NULL DEFAULT 0, charCount bigint unsigned NULL DEFAULT 0, createTime datetime(6) NOT NULL, updateTime datetime(6) NULL );",

@@ -1,9 +1,6 @@
 package global
 
 import (
-	"errors"
-	"uniTranslate/src/types"
-
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcache"
@@ -31,7 +28,8 @@ func InitSystemConfig() {
 	ServiceKey = SystemConfig.Get("server.key").String()
 	KeyMode = SystemConfig.Get("server.keyMode", 1).Int()
 	ConfigDeviceMode = SystemConfig.Get("server.configDeviceMode", "xdb").String()
-	ConfigDeviceMySqlDb = SystemConfig.Get("server.configDeviceMySqlDb", "default").String()
+	RecordDeviceMode = SystemConfig.Get("server.recordDeviceMode", "mysql").String()
+	ConfigDeviceDb = SystemConfig.Get("server.configDeviceDb", "default").String()
 	CacheWriteToStorage = SystemConfig.Get("server.cacheWriteToStorage", false).Bool()
 	RequestRecordKeepDays = SystemConfig.Get("server.requestRecordKeepDays", 7).Int()
 	ApiEditConfig = SystemConfig.Get("server.apiEditConfig", false).Bool()
@@ -43,30 +41,11 @@ var XDB = xstorage.CreateXDB()
 // ConfigDeviceMode 配置驱动模式
 var ConfigDeviceMode = "xdb"
 
-// ConfigDeviceMySqlDb 配置驱动模式 MySQL 驱动db设置
-var ConfigDeviceMySqlDb = "default"
+// RecordDeviceMode 记录驱动模式
+var RecordDeviceMode = "mysql"
 
-// ConfigDevice 配置驱动
-var ConfigDevice types.ConfigDeviceInterface
-
-// GetConfigDevice 获取驱动配置
-func GetConfigDevice() (device types.ConfigDeviceInterface, err error) {
-	if ConfigDevice == nil {
-		err = errors.New("配置获取驱动尚未初始化")
-		return
-	}
-	device = ConfigDevice
-	return
-}
-
-// MustGetConfigDevice 忽略错误获取驱动配置
-func MustGetConfigDevice() (device types.ConfigDeviceInterface) {
-	device, err := GetConfigDevice()
-	if err != nil {
-		panic(err)
-	}
-	return
-}
+// ConfigDeviceDb 配置驱动模式驱动db设置
+var ConfigDeviceDb = "default"
 
 // CacheRefreshOnStartup 启动时是否从数据库刷新缓存 (会先清除缓存里所有的 缓存 在从数据库逐条初始化 数据 慎用!!!)
 var CacheRefreshOnStartup = false
@@ -88,3 +67,5 @@ var RequestRecordKeepDays = 7
 
 // ApiEditConfig 是否可在API中进行编辑
 var ApiEditConfig = false
+
+var Ctx = gctx.New()

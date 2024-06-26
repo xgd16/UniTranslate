@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"uniTranslate/src/global"
+	"uniTranslate/src/devices"
 	"uniTranslate/src/types"
 
 	"github.com/gogf/gf/v2/container/gvar"
@@ -14,7 +14,7 @@ import (
 func GetCountRecord(r *ghttp.Request) {
 	data, err := g.Model("count_record").OrderDesc("id").All()
 	x.FastResp(r, err).Resp()
-	device, err := global.GetConfigDevice()
+	device, err := devices.GetConfigDevice()
 	x.FastResp(r, err).Resp()
 	for i, item := range data {
 		var (

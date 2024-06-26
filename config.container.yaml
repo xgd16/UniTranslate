@@ -8,7 +8,8 @@ server:
   key: "hdasdhasdhsahdkasjfsoufoqjoje" # http api 对接时的密钥
   keyMode: 1 # 模式 1 直接传入 key 做验证 模式 2 使用 key 加密加签数据进行验证
   configDeviceMode: "xdb" # xdb 内置数据库 mysql 使用 MySQL 作为配置存储引擎
-  configDeviceMySqlDb: "default" # 翻译配置的数据库设置
+  recordDeviceMode: "mysql" # 支持 mysql 和 sqlite
+  configDeviceDb: "default" # 翻译配置的数据库设置
   cacheWriteToStorage: false # 是否将缓存写入到数据库
   requestRecordKeepDays: 7 # 请求记录保留天数
   apiEditConfig: false # 是否开启 api 修改配置
