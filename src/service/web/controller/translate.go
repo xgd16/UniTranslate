@@ -130,7 +130,9 @@ func SaveConfig(r *ghttp.Request) {
 	_, ok, err := device.GetTranslateInfo(t.GetMd5())
 	x.FastResp(r, err).Resp()
 	x.FastResp(r, device.SaveConfig(t.GetMd5(), ok, t), false).Resp("添加失败")
-	x.FastResp(r, devices.RecordHandler.CreateEvent(t)).Resp("添加失败")
+	if !ok {
+		x.FastResp(r, devices.RecordHandler.CreateEvent(t)).Resp("添加失败")
+	}
 	x.FastResp(r, buffer.Buffer.Init(true), false).Resp("写入成功但重新初始化失败")
 	x.FastResp(r).Resp()
 }
