@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
-	"strings"
 	"time"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
@@ -44,13 +43,22 @@ type XunFeiNiuConfigType struct {
 	ApiKey string `json:"apiKey"`
 }
 
-// XunFeiNiuTranslate 讯飞新翻译引擎
+// Translate 讯飞新翻译引擎
 func (t *XunFeiNiuConfigType) Translate(req *TranslateReq) (resp []*TranslateResp, err error) {
-	return xunFeiBaseTranslate(xunFeiNiuHttpConfig, t.GetMode(), &XunFeiConfigType{
-		AppId:  t.AppId,
-		Secret: t.Secret,
-		ApiKey: t.ApiKey,
-	}, req.From, req.To, req.Text)
+	resp = make([]*TranslateResp, 0)
+	for _, item := range req.Text {
+		translate, err1 := xunFeiBaseTranslate(xunFeiNiuHttpConfig, t.GetMode(), &XunFeiConfigType{
+			AppId:  t.AppId,
+			Secret: t.Secret,
+			ApiKey: t.ApiKey,
+		}, req.From, req.To, item)
+		if err1 != nil {
+			err = err1
+			return
+		}
+		resp = append(resp, translate)
+	}
+	return
 }
 
 func (t *XunFeiNiuConfigType) GetMode() string {
@@ -64,7 +72,20 @@ type XunFeiConfigType struct {
 }
 
 func (t *XunFeiConfigType) Translate(req *TranslateReq) (resp []*TranslateResp, err error) {
-	return xunFeiBaseTranslate(xunFeiHttpConfig, t.GetMode(), t, req.From, req.To, req.Text)
+	resp = make([]*TranslateResp, 0)
+	for _, item := range req.Text {
+		translate, err1 := xunFeiBaseTranslate(xunFeiHttpConfig, t.GetMode(), &XunFeiConfigType{
+			AppId:  t.AppId,
+			Secret: t.Secret,
+			ApiKey: t.ApiKey,
+		}, req.From, req.To, item)
+		if err1 != nil {
+			err = err1
+			return
+		}
+		resp = append(resp, translate)
+	}
+	return
 }
 
 func (t *XunFeiConfigType) GetMode() string {
@@ -94,7 +115,7 @@ type XunFeiTransResult struct {
 }
 
 // xunFeiBaseTranslate 讯飞基础翻译实现
-func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *XunFeiConfigType, from, to string, text []string) (resp []*TranslateResp, err error) {
+func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *XunFeiConfigType, from, to string, text string) (resp *TranslateResp, err error) {
 	if config.AppId == "" || config.ApiKey == "" || config.Secret == "" {
 		err = errors.New("讯飞翻译配置异常")
 		return
@@ -123,7 +144,7 @@ func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *
 			"to":   to,
 		},
 		"data": map[string]interface{}{
-			"text": base64.StdEncoding.EncodeToString([]byte(strings.Join(text, "№"))),
+			"text": base64.StdEncoding.EncodeToString([]byte(text)),
 		},
 	}
 	currentTime := time.Now().UTC().Format(time.RFC1123)
@@ -159,11 +180,9 @@ func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *
 	if err != nil {
 		return
 	}
-	for _, item := range strings.Split(httpResp.Data.Result.TransResult.Dst, "№") {
-		resp = append(resp, &TranslateResp{
-			Text:     item,
-			FromLang: lang,
-		})
+	resp = &TranslateResp{
+		Text:     httpResp.Data.Result.TransResult.Dst,
+		FromLang: lang,
 	}
 	return
 }
