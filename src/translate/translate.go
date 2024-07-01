@@ -3,11 +3,11 @@ package translate
 import (
 	"context"
 	"errors"
+	"github.com/gogf/gf/v2/util/gconv"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 var TranslateModeList = []string{
@@ -21,6 +21,7 @@ var TranslateModeList = []string{
 	TencentTranslateMode,
 	HuoShanTranslateMode,
 	PaPaGoTranslateMode,
+	FreeGoogleMode,
 }
 
 // ITranslate 翻译接口
@@ -45,7 +46,7 @@ type TranslateReq struct {
 	HttpReq  *TranslateHttpReq
 	From     string   `json:"from"`
 	To       string   `json:"to"`
-	Platfrom string   `json:"platform"`
+	Platform string   `json:"platform"`
 	Text     []string `json:"text"`
 	TextStr  string   `json:"textStr"`
 }
@@ -73,12 +74,16 @@ func GetTranslate(mode string, config map[string]any) (t ITranslate, err error) 
 		t = new(HuoShanConfigType)
 	case PaPaGoTranslateMode:
 		t = new(PaPaGoConfigType)
+	case FreeGoogleMode:
+		t = new(FreeGoogle)
 	default:
 		err = errors.New("不支持的翻译")
 		return
 	}
-	if err = gconv.Struct(config, t); err != nil {
-		return
+	if config != nil {
+		if err = gconv.Struct(config, t); err != nil {
+			return
+		}
 	}
 	return
 }
@@ -101,10 +106,11 @@ const HuoShanTranslateMode = "HuoShan"
 const PaPaGoTranslateMode = "PaPaGo"
 
 const (
-	YouDaoTranslateMode = "YouDao" // 有道
-	BaiduTranslateMode  = "Baidu"  // 百度
-	GoogleTranslateMode = "Google" // 谷歌
-	DeeplTranslateMode  = "Deepl"  // Deepl
+	YouDaoTranslateMode = "YouDao"     // 有道
+	BaiduTranslateMode  = "Baidu"      // 百度
+	GoogleTranslateMode = "Google"     // 谷歌
+	DeeplTranslateMode  = "Deepl"      // Deepl
+	FreeGoogleMode      = "FreeGoogle" // 谷歌免费翻译
 )
 
 // BaseTranslateConf 基础翻译配置

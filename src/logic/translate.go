@@ -37,7 +37,7 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 		},
 		From:     req.From,
 		To:       req.To,
-		Platfrom: req.Platform,
+		Platform: req.Platform,
 		Text:     req.Text,
 		TextStr:  textStr,
 	}

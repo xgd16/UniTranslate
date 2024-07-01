@@ -72,7 +72,7 @@ func AggregateTranslate(ctx context.Context, req *types.AggregateTranslationReq)
 						From:     req.From,
 						To:       req.To,
 						Text:     []string{req.Text},
-						Platfrom: platform,
+						Platform: platform,
 					})
 					if err != nil {
 						result.ErrorStr = "翻译出错请稍后再试"
