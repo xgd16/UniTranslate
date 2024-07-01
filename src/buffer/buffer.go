@@ -43,12 +43,12 @@ func (t *BufferType) GetIdx() [][]int {
 func (t *BufferType) Handler(req *translate.TranslateReq, fn func(config *types.TranslatePlatform, req *translate.TranslateReq) (*types.TranslateData, error)) (s *types.TranslateData, e error) {
 	t.m.Lock()
 	var bufferArr BufferArrInterface
-	if req.Platfrom == "" {
+	if req.Platform == "" {
 		bufferArr = new(RandomSortBufferArr)
 	} else {
 		bufferArr = new(PlatformSortBufferArr)
 	}
-	bufferArr.Init(t, req.Platfrom)
+	bufferArr.Init(t, req.Platform)
 	t.m.Unlock()
 	// 创建上下文
 	ctx := gctx.New()
@@ -83,7 +83,7 @@ func (t *BufferType) Handler(req *translate.TranslateReq, fn func(config *types.
 					From:     req.From,
 					To:       req.To,
 					Text:     req.Text,
-					Platform: req.Platfrom,
+					Platform: req.Platform,
 				},
 				Time:     gtime.Now().UnixMilli(),
 				Ok:       err == nil,
