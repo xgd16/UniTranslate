@@ -3,11 +3,11 @@ package translate
 import (
 	"context"
 	"errors"
+	"github.com/gogf/gf/v2/util/gconv"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 var TranslateModeList = []string{
@@ -80,8 +80,10 @@ func GetTranslate(mode string, config map[string]any) (t ITranslate, err error) 
 		err = errors.New("不支持的翻译")
 		return
 	}
-	if err = gconv.Struct(config, t); err != nil {
-		return
+	if config != nil {
+		if err = gconv.Struct(config, t); err != nil {
+			return
+		}
 	}
 	return
 }

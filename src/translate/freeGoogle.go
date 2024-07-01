@@ -11,24 +11,21 @@ import (
 type FreeGoogle struct {
 }
 
-func (f FreeGoogle) Translate(request *TranslateReq) (resp []*TranslateResp, err error) {
-	var responses []*TranslateResp
-	fmt.Println("测试", request)
-	for _, str := range request.Text {
-		response, err1 := translatedContent(str, request.From, request.To)
+func (f *FreeGoogle) Translate(request *TranslateReq) (resp []*TranslateResp, err error) {
+	resp = make([]*TranslateResp, 0)
 
+	for _, str := range request.Text {
+		response, err1 := f.translatedContent(str, request.From, request.To)
 		if err1 != nil {
-			err = fmt.Errorf("翻译错误: %s", err.Error())
+			err = fmt.Errorf("翻译错误: %s", err)
 			return
 		}
-
-		responses = append(responses, response)
+		resp = append(resp, response)
 	}
-
-	return responses, nil
+	return
 }
 
-func (f FreeGoogle) GetMode() (mode string) {
+func (f *FreeGoogle) GetMode() (mode string) {
 	return FreeGoogleMode
 }
 
@@ -39,7 +36,13 @@ func translatedContent(text, fromLanguage string, targetLanguage string) (*Trans
 		"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
 		"User-Agent":   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36",
 	}
-	post, err := g.Client().SetHeaderMap(headers).Post(gctx.New(), url, g.MapStrStr{
+	// 启动一个http请求
+	client := g.Client()
+	// 判断是否需要使用代理
+	if f.Proxy != "" {
+		client.SetProxy(f.Proxy)
+	}
+	post, err := client.SetHeaderMap(headers).SetTimeout(f.CurlTimeOut*time.Millisecond).Post(gctx.New(), url, g.MapStrStr{
 		"f.req": fmt.Sprintf(`[[["MkEWBc","[[\"%s\",\"%s\",\"%s\",true],[null]]",null,"generic"]]]`, text, fromLanguage, targetLanguage),
 	})
 	if err != nil {
