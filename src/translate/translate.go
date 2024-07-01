@@ -46,7 +46,7 @@ type TranslateReq struct {
 	HttpReq  *TranslateHttpReq
 	From     string   `json:"from"`
 	To       string   `json:"to"`
-	Platfrom string   `json:"platform"`
+	Platform string   `json:"platform"`
 	Text     []string `json:"text"`
 	TextStr  string   `json:"textStr"`
 }
