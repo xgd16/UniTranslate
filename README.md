@@ -92,7 +92,7 @@ server:
   keyMode: 1 # 模式 1 直接传入 key 做验证 模式 2 使用 key 加密加签数据进行验证
 ```
 
-## 32位 最后支持版本 (从v1.5.2后不在提供对32位系统的兼容)
+## 32 位 最后支持版本 (从 v1.5.2 后不在提供对 32 位系统的兼容)
 
 [最后支持的版本 v1.5.1](https://github.com/xgd16/UniTranslate/releases/tag/v1.5.1)
 
@@ -170,3 +170,7 @@ curl --location --request POST 'http://127.0.0.1:9431/api/translate' \
 请根据 _有道_ 翻译 API 文档支持的标识作为基准修改 `translate.json` 文件
 
 ## 感谢 [Jetbrains](https://www.jetbrains.com/?from=UniTranslate) 提供免费的 IDE
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=xgd16/UniTranslate&type=Date)](https://star-history.com/#xgd16/UniTranslate&Date)
