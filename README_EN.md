@@ -5,65 +5,76 @@
 [中文](./README.md) | [English](./README_EN.md)
 
 # Project Introduction 📒
-This project is a tool that supports multi-platform translation and writes translation results into Redis cache.
+
+This project is a tool that supports multi-platform translation and writing translation results into Redis cache.
 
 ## Dependencies
+
 `MySQL: 8.*` `redis`
 
 Optional
 
 `graylog`
 
-## Web Management
+## WEB Management
+
 [UniTranslate-web-console](https://github.com/xgd16/UniTranslate-web-console)
 
 ## Features ✨
-- Supports translation integration for platforms including Baidu, Youdao, Google, Deepl, Tencent, ChatGPT, Volcano, iFLYTEK, and PaPaGo
-- Allows setting translation API priority levels, configuring lower-level APIs to be called first
-- Unlimited configurations for the same API provider, can be set at different levels
+
+- Supports translation integration with Baidu, Youdao, Google, Deepl, Tencent, ChatGPT, Volcano, iFlytek, PaPaGo, and free Google platforms
+- Allows setting translation API priorities to call lower priority APIs first
+- Configurable unlimited instances for the same API provider at different priority levels
 - Automatically switches to the next API if the current one fails when multiple APIs are configured
-- Can write translated content into `Redis` or `Memory` cache to reduce repeated calls to the translation API
+- Can write translated content into `Redis` and `Memory` cache to reduce repeated API calls for the same content
 
 ## Batch Translation Support
 
-|  Platform  | Supports Batch Translation | Perfect Support | Accurate Source Language |                             Notes                             |
-| :--------: | :------------------------: | :-------------: | :----------------------: | :----------------------------------------------------------: |
-|    Baidu   |            Yes             |        No       |           No             | Does not support accurately returning the source language type for each result |
-|   Google   |            Yes             |       Yes       |          Yes             |                                                              |
-|   Youdao   |            Yes             |        No       |           No             |        Source language type recognition is inaccurate         |
-|  Volcano   |            Yes             |       Yes       |          Yes             |                                                              |
-|   Deepl    |            Yes             |        No       |           No             |        Source language type recognition is inaccurate         |
-|   iFLYTEK  |            Yes             |        No       |           No             | Officially does not support batch translation, achieved through special character № slicing, may result in non-multiple results |
-|  PaPaGo    |            Yes             |        No       |           No             | Implemented through \n slicing, cannot recognize different source language types |
-|  ChatGPT   |            Yes             |       Yes       |          Yes             |                                                              |
+|    Platform    | Batch Translation Supported | Perfectly Supported | Accurate Source Language |                      Remarks                       |
+| :------------: | :-------------------------: | :-----------------: | :----------------------: | :------------------------------------------------: |
+|      Baidu     |             Yes             |         No          |           No             | Does not support accurately returning the source language for each result |
+|     Google     |             Yes             |         Yes         |           Yes            |                                                    |
+|     Youdao     |             Yes             |         No          |           No             |             Inaccurate source language recognition              |
+|     Volcano    |             Yes             |         Yes         |           Yes            |                                                    |
+|     Deepl      |             Yes             |         No          |           No             |             Inaccurate source language recognition              |
+|     iFlytek    |             Yes             |         Yes         |           Yes            |                    Loop implementation                     |
+|     PaPaGo     |             Yes             |         No          |           No             | Based on \n split implementation and cannot recognize different source languages |
+|    ChatGPT     |             Yes             |         Yes         |           Yes            |                                                    |
+|   FreeGoogle   |             Yes             |         Yes         |           Yes            |                    Loop implementation                     |
 
-## Future Support (Priority Order, Checked Items are Implemented) ✈️
-- [x] Persistent storage of translations to `MySQL`
-- [x] Web control page
+## Future Support (Priority in order, checked items are implemented) ✈️
+
+- [x] Persist translated content to `MySQL`
+- [x] Web control panel
 - [x] ChatGPT AI translation
-- [x] iFLYTEK translation
+- [x] iFlytek translation
 - [x] More reasonable and secure authentication
 - [x] Tencent translation
 - [x] Volcano translation
 - [x] PaPaGo
-- [x] Support for more national languages
+- [x] Support for more languages
 - [x] Support for simulating `LibreTranslate` translation interface
 - [x] Support for terminal interactive translation
-- [ ] More translation features support for the client
+- [x] Free Google translation
+- [x] SQL Lite support
+- [ ] More client translation features support
 
 ## Basic Types 🪨
-`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu` `Tencent` `HuoShan` `PaPaGo`
+
+`YouDao` `Baidu` `Google` `Deepl` `ChatGPT` `XunFei` `XunFeiNiu` `Tencent` `HuoShan` `PaPaGo` `FreeGoogle`
 
 ## Docker Startup 🚀
+
 ```shell
 # In the project directory
 docker build -t uni-translate:latest .
-# Then execute (preferably create a network to place mysql and redis in the same network, then directly access the application with the container name in the configuration)
-docker run -d --name uniTranslate -v {local_directory}/config.yaml:/app/config.yaml -p 9431:{port_configured_in_config.yaml} --network baseRun uni-translate:latest
+# Then execute (it's better to create a network to put MySQL and Redis under the same network, and then access the application directly by the container name in the configuration)
+docker run -d --name uniTranslate -v {local_directory}/config.yaml:/app/config.yaml -p 9431:{port_in_config.yaml} --network baseRun uni-translate:latest
 ```
 
-## Terminal Interaction
-After configuring `config.yaml`, execute
+## Terminal Interactive Mode
+
+After completing the `config.yaml` configuration, execute
 
 ```bash
 ./UniTranslate translate auto en
@@ -75,30 +86,31 @@ After configuring `config.yaml`, execute
 server:
   name: uniTranslate
   address: "0.0.0.0:9431"
-  cacheMode: redis # redis , mem , off modes. mem stores translation results in program memory, off does not write to any cache
-  cachePlatform: false # Whether to include the platform in the cache key generation (affects the key stored during project startup initialization)
-  key: "hdasdhasdhsahdkasjfsoufoqjoje" # Secret key for http api integration
-  keyMode: 1 # Mode 1 uses key for direct verification, Mode 2 uses key to encrypt and sign data for verification
+  cacheMode: redis # redis, mem, off mode; mem stores translation results in program memory; off does not write to any cache
+  cachePlatform: false # Whether to include the platform in the cache key generation (affects the key stored during project initialization)
+  key: "hdasdhasdhsahdkasjfsoufoqjoje" # Key for HTTP API integration
+  keyMode: 1 # Mode 1: direct key verification; Mode 2: use key to encrypt and sign data for verification
 ```
 
 ## API Documentation 🌍
-[Online Documentation](https://apifox.com/apidoc/shared-335b66b6-90dd-42af-8a1b-f7d1a2c3f351)
-[Open Api File](./uniTranslate%20(统一翻译).openapi.json)
+
+[Online Documentation](https://apifox.com/apidoc/shared-335b66b6-90dd-42af-8a1b-f7d1a2c3f351)  
+[Open API File](<./uniTranslate%20(统一翻译).openapi.json>)
 
 ## Interface Authentication TS Example
+
 ```typescript
 import { MD5 } from "crypto-js";
 
 /**
- * 
- * @param key The key set by the platform
+ *
+ * @param key The key set on the platform
  * @param params Request parameters
  * @return Generated authentication code
  */
 function AuthEncrypt(key: string, params: { [key: string]: any }): string {
   return MD5(key + sortMapToStr(params)).toString();
 }
-
 
 const sortMapToStr = (map: { [key: string]: any }): string => {
   let mapArr = new Array();
@@ -119,14 +131,14 @@ const sortMapToStr = (map: { [key: string]: any }): string => {
 };
 
 const params: { [key: string]: any } = {
-    c: {
-        cc: 1,
-        cb: 2,
-        ca: 3,
-        cd: 4,
-    },
-    a: 1,
-    b: [4, 1, 2],
+  c: {
+    cc: 1,
+    cb: 2,
+    ca: 3,
+    cd: 4,
+  },
+  a: 1,
+  b: [4, 1, 2],
 };
 
 console.log(AuthEncrypt("123456", params));
@@ -147,8 +159,10 @@ curl --location --request POST 'http://127.0.0.1:9431/api/translate' \
 }'
 ```
 
+## Unsupported Translation Content??? 🤔
 
-## Unsupported Translations??? 🤔
-All supported languages in this program use the national language **identifiers** based on the _Youdao_ translation API identifiers as specified in the [translate.json](./translate.json) file.
+All supported languages in this program are based on the country language identifiers in the [translate.json](./translate.json) file, using _Youdao_ translation API identifiers as the baseline.
 
-Please refer to the identifiers supported by the _Youdao_ translation API documentation as the basis for modifying the `translate.json` file.
+Please refer to the identifiers supported by the _Youdao_ translation API documentation to modify the `translate.json` file.
+
+## Thanks to [Jetbrains](https://www.jetbrains.com/?from=UniTranslate) for providing a free IDE
