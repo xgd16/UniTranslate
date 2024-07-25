@@ -14,6 +14,7 @@ import (
 	"github.com/gogf/gf/v2/net/gtrace"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/xgd16/gf-x-tool/xmonitor"
 )
 
 // Translate 翻译
@@ -41,11 +42,14 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 		Text:     req.Text,
 		TextStr:  textStr,
 	}
+	isCache := true
 	// 判断是否进行缓存
 	if global.CacheMode == "off" {
+		isCache = false
 		data, err = translateHandler(translateReq)
 	} else {
 		dataT, err1 := global.GfCache.GetOrSetFunc(ctx, fmt.Sprintf("Translate:%s", md5), func(ctx context.Context) (value any, err error) {
+			isCache = false
 			return translateHandler(translateReq)
 		}, 0)
 		if err1 != nil {
@@ -55,6 +59,9 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 		if err = dataT.Scan(&data); err != nil {
 			return
 		}
+	}
+	if isCache {
+		xmonitor.MetricHttpRequestTotal.WithLabelValues("cache_translate_count").Inc()
 	}
 	nowTime := gtime.Now().UnixMilli()
 	// 记录翻译
