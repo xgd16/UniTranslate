@@ -2,10 +2,8 @@ package translate
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -42,30 +40,18 @@ func (t *ChatGptConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 	if from == "auto" {
 		from = ""
 	}
-	gptResp, err := SendToChatGpt(t.Key, t.OrgId, fmt.Sprintf("将[%s]数组翻译成%s严格按照格式 [{\"fromLang\":\"源语言\",\"text\":\"翻译结果\"}] 返回给我fromLang有这几种语言直接给我返回对应的key位置%s不需要其他任何回复严格按照我给你的格式翻译不要给我markdown", func() (str string) {
-		for k, v := range req.Text {
-			if k == 0 {
-				str = fmt.Sprintf("\"%s\"", v)
-			} else {
-				str = fmt.Sprintf("%s,\"%s\"", str, v)
-			}
+	for _, item := range req.Text {
+		respStr, err1 := SendToChatGpt(t.Key, t.OrgId, fmt.Sprintf("Translate the following text to %s and output only the translation: %s", to, item), t.Model)
+		if err1 != nil {
+			err = err1
+			return
 		}
-		return
-	}(), to, ChatGPTLangConfig), t.Model)
-	if err != nil {
-		return
-	}
-	httpResp := new(ChatGPTHTTPTranslateResp)
-	if err = json.Unmarshal([]byte(gptResp), httpResp); err != nil {
-		return
-	}
-	resp = make([]*TranslateResp, 0)
-	for _, item := range *httpResp {
 		resp = append(resp, &TranslateResp{
-			Text:     item.Text,
-			FromLang: item.FromLang,
+			Text:     respStr,
+			FromLang: from,
 		})
 	}
+
 	return
 }
 
@@ -84,7 +70,6 @@ func SendToChatGpt(key, orgId, msg, modelStr string) (resp string, err error) {
 	case "gpt-3.5-turbo":
 		model = openai.GPT3Dot5Turbo
 	}
-
 	respData, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
