@@ -6,15 +6,15 @@ toolchain go1.22.1
 
 require (
 	github.com/fatih/color v1.17.0
-	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.7.2
-	github.com/gogf/gf/contrib/drivers/sqlite/v2 v2.7.2
-	github.com/gogf/gf/contrib/nosql/redis/v2 v2.7.2
-	github.com/gogf/gf/v2 v2.7.2
-	github.com/sashabaranov/go-openai v1.22.0
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.907
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.907
-	github.com/volcengine/volc-sdk-golang v1.0.149
-	github.com/xgd16/gf-x-tool v0.5.15
+	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.7.3
+	github.com/gogf/gf/contrib/drivers/sqlite/v2 v2.7.3
+	github.com/gogf/gf/contrib/nosql/redis/v2 v2.7.3
+	github.com/gogf/gf/v2 v2.7.3
+	github.com/sashabaranov/go-openai v1.29.2
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1002
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.1002
+	github.com/volcengine/volc-sdk-golang v1.0.176
+	github.com/xgd16/gf-x-tool v0.5.18
 )
 
 require (
@@ -33,7 +33,7 @@ require (
 	go.opentelemetry.io/otel v1.25.0 // indirect
 	go.opentelemetry.io/otel/metric v1.25.0 // indirect
 	go.opentelemetry.io/otel/trace v1.25.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

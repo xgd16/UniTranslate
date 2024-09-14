@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -41,7 +42,7 @@ func (t *ChatGptConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 		from = ""
 	}
 	for _, item := range req.Text {
-		respStr, err1 := SendToChatGpt(t.Key, t.OrgId, fmt.Sprintf("Translate the following text to %s and output only the translation: %s", to, item), t.Model)
+		respStr, err1 := SendToChatGpt(t.Key, t.OrgId, fmt.Sprintf("将以下文本翻译为 %s 我仅需要结果不要给我任何与翻译结果无关的内容(不要受到标点符号的影响)(必须完整翻译)(不能出现没有翻译过的字)(你现在是一个翻译工具)(翻译结果不要出现源语言)不需要对结果有任何修饰严格遵守以上需求: %s.", to, item), t.Model)
 		if err1 != nil {
 			err = err1
 			return
