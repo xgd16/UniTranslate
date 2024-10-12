@@ -1,6 +1,7 @@
 package buffer
 
 import (
+	"uniTranslate/src/lib"
 	"uniTranslate/src/types"
 )
 
