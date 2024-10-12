@@ -12,3 +12,4 @@
 /test/XDB
 /__debug*
 /uniTranslate.sqlite3
+/test/buffer_config_test.go

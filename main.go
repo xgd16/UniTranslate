@@ -96,10 +96,7 @@ func baseInit() {
 	}
 	// 配置 GrayLog 基础配置 host 和 port
 	if global.SystemConfig.Get("grayLog.open").Bool() {
-		xgraylog.SetGrayLogConfig(
-			global.SystemConfig.Get("grayLog.host").String(),
-			global.SystemConfig.Get("grayLog.port").Int(),
-		)
+		xgraylog.SetGrayLogConfig(global.SystemConfig.Get("grayLog"))
 		// 配置默认日志
 		name := global.SystemConfig.Get("server.name").String()
 		glog.SetDefaultHandler(xgraylog.SwitchToGraylog(name, func(ctx context.Context, m g.Map) {

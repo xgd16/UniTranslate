@@ -2,13 +2,16 @@ package lib
 
 import (
 	"fmt"
+	"math/rand/v2"
+	"reflect"
+	"sort"
+
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
-	"reflect"
-	"sort"
+	"github.com/gogf/gf/v2/util/grand"
 )
 
 func AuthEncrypt(key string, params map[string]any) string {
@@ -45,4 +48,25 @@ func SqliteTableIsExists(db gdb.DB, tableName string) (isExists bool, err error)
 	}
 	isExists = count > 0
 	return
+}
+
+type RandSource struct {
+}
+
+func (t *RandSource) Uint64() uint64 {
+	n := gconv.Uint64(grand.N(1, 9999999))
+	// g.DumpWithType(n)
+	return n
+}
+
+func GetRandSource() *RandSource {
+	return &RandSource{}
+}
+
+func Shuffle[T any](slice []T) {
+	r := rand.New(GetRandSource())
+	r.Shuffle(len(slice), func(i, j int) {
+		// g.DumpWithType(i, j)
+		slice[i], slice[j] = slice[j], slice[i]
+	})
 }
