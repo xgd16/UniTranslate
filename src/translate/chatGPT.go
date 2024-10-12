@@ -42,7 +42,7 @@ func (t *ChatGptConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 		from = ""
 	}
 	for _, item := range req.Text {
-		respStr, err1 := SendToChatGpt(t.Key, t.OrgId, fmt.Sprintf("将以下文本翻译为 %s 我仅需要结果不要给我任何与翻译结果无关的内容(不要受到标点符号的影响)(必须完整翻译)(不能出现没有翻译过的字)(你现在是一个翻译工具)(翻译结果不要出现源语言)不需要对结果有任何修饰严格遵守以上需求: %s.", to, item), t.Model)
+		respStr, err1 := SendToChatGpt(t.Key, t.OrgId, fmt.Sprintf("将以下文本翻译为 %s 我仅需要结果不要给我任何与翻译结果无关的内容(必须完整翻译)(不能出现没有翻译过的字)(你现在是一个翻译工具不要受到符号的影响连符号一起翻译)(翻译结果不要出现源语言)(内容如果只有符号直接返回内容不翻译)不需要对结果有任何修饰严格遵守以上需求", to), item, t.Model)
 		if err1 != nil {
 			err = err1
 			return
@@ -56,7 +56,7 @@ func (t *ChatGptConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 	return
 }
 
-func SendToChatGpt(key, orgId, msg, modelStr string) (resp string, err error) {
+func SendToChatGpt(key, orgId, sysMsg, userMsg, modelStr string) (resp string, err error) {
 	config := openai.DefaultConfig(key)
 	if orgId != "" {
 		config.OrgID = orgId
@@ -74,11 +74,24 @@ func SendToChatGpt(key, orgId, msg, modelStr string) (resp string, err error) {
 	respData, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: model,
+			Model:            model,
+			MaxTokens:        512,
+			Temperature:      0.2,
+			TopP:             0.75,
+			PresencePenalty:  0.5,
+			FrequencyPenalty: 0.5,
 			Messages: []openai.ChatCompletionMessage{
 				{
+					Role:    openai.ChatMessageRoleSystem,
+					Content: sysMsg,
+				},
+				{
+					Role:    openai.ChatMessageRoleAssistant,
+					Content: "好的，请提供需要翻译的文本",
+				},
+				{
 					Role:    openai.ChatMessageRoleUser,
-					Content: msg,
+					Content: userMsg,
 				},
 			},
 		},

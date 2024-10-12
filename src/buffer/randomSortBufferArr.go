@@ -1,7 +1,6 @@
 package buffer
 
 import (
-	"github.com/gogf/gf/v2/container/garray"
 	"uniTranslate/src/types"
 )
 
@@ -22,19 +21,11 @@ func (r *RandomSortBufferArr) Init(data *BufferType, _ string) BufferArrInterfac
 			nowLevelArr[i] = platforms
 			continue
 		}
+		newPlatforms := make([]*types.TranslatePlatform, len(platforms))
+		copy(newPlatforms, platforms)
 		// 打乱组中数据顺序
-		nowLevelArr[i] = func(platforms []*types.TranslatePlatform) []*types.TranslatePlatform {
-			var pArr []*types.TranslatePlatform
-			l := len(platforms)
-			a := garray.NewIntArray()
-			for n := 0; n < l; n++ {
-				a.PushRight(n)
-			}
-			for _, v := range a.Shuffle().Slice() {
-				pArr = append(pArr, platforms[v])
-			}
-			return pArr
-		}(platforms)
+		lib.Shuffle(newPlatforms)
+		nowLevelArr[i] = newPlatforms
 	}
 	r.level = nowLevelArr
 	r.idx = r.buffer.GetIdx()
