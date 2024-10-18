@@ -1,17 +1,19 @@
 package translate
 
 import (
-	"context"
 	"errors"
 	"fmt"
 
-	"github.com/sashabaranov/go-openai"
+	"github.com/gogf/gf/v2/encoding/gjson"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gctx"
 )
 
 var ChatGPTLangConfig string
 
 type ChatGptConfigType struct {
 	Key   string `json:"key"`
+	Url   string `json:"url"`
 	Model string `json:"model"`
 	OrgId string `json:"orgId"`
 }
@@ -42,7 +44,7 @@ func (t *ChatGptConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 		from = ""
 	}
 	for _, item := range req.Text {
-		respStr, err1 := SendToChatGpt(t.Key, t.OrgId, fmt.Sprintf("将以下文本翻译为 %s 我仅需要结果不要给我任何与翻译结果无关的内容(必须完整翻译)(不能出现没有翻译过的字)(你现在是一个翻译工具不要受到符号的影响连符号一起翻译)(翻译结果不要出现源语言)(内容如果只有符号直接返回内容不翻译)不需要对结果有任何修饰严格遵守以上需求", to), item, t.Model)
+		respStr, err1 := t.sendToChatGpt(fmt.Sprintf(`将后面大括号里面的内容翻译成 %s {%s} (注意:返回格式为{"content":"","res":"ok"}直接返回json字符串,一共两个字段,1.content 代表翻译内容 2.res 代表是否翻译成功,ok是成功,bad是失败,内容如果只有符号直接返回内容不翻译,不要将此段提示语错误的当需要翻译的语言使用)`, to, item))
 		if err1 != nil {
 			err = err1
 			return
@@ -56,50 +58,46 @@ func (t *ChatGptConfigType) Translate(req *TranslateReq) (resp []*TranslateResp,
 	return
 }
 
-func SendToChatGpt(key, orgId, sysMsg, userMsg, modelStr string) (resp string, err error) {
-	config := openai.DefaultConfig(key)
-	if orgId != "" {
-		config.OrgID = orgId
+func (t *ChatGptConfigType) sendToChatGpt(sysMsg string) (resp string, err error) {
+	headerMap := g.MapStrStr{
+		"Authorization": fmt.Sprintf("Bearer %s", t.Key),
 	}
-	client := openai.NewClientWithConfig(config)
-	model := openai.GPT3Dot5Turbo0125
-	switch modelStr {
-	case "gpt-3.5-turbo-0125":
-		model = openai.GPT3Dot5Turbo0125
-	case "gpt-4-turbo":
-		model = openai.GPT4Turbo
-	case "gpt-3.5-turbo":
-		model = openai.GPT3Dot5Turbo
+	if t.OrgId != "" {
+		headerMap["OpenAI-Organization"] = t.OrgId
 	}
-	respData, err := client.CreateChatCompletion(
-		context.Background(),
-		openai.ChatCompletionRequest{
-			Model:            model,
-			MaxTokens:        512,
-			Temperature:      0.2,
-			TopP:             0.75,
-			PresencePenalty:  0.5,
-			FrequencyPenalty: 0.5,
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleSystem,
-					Content: sysMsg,
-				},
-				{
-					Role:    openai.ChatMessageRoleAssistant,
-					Content: "好的，请提供需要翻译的文本",
-				},
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: userMsg,
-				},
-			},
+	respData, err := g.Client().ContentJson().SetHeaderMap(headerMap).Post(gctx.New(), fmt.Sprintf("%s/v1/chat/completions", t.Url), g.Map{
+		"model":             t.Model,
+		"max_tokens":        512,
+		"temperature":       0.2,
+		"top_p":             0.75,
+		"presence_penalty":  0.5,
+		"frequency_penalty": 0.5,
+		"messages": g.Array{
+			g.Map{"role": "user", "content": sysMsg},
 		},
-	)
+	})
 	if err != nil {
 		return
 	}
-	resp = respData.Choices[0].Message.Content
+	jsonData, err := gjson.DecodeToJson(respData.ReadAllString())
+	if err != nil {
+		return
+	}
+	gptResp := jsonData.Get("choices.0.message.content")
+	if gptResp.IsEmpty() {
+		err = errors.New("GPT 翻译异常" + jsonData.String())
+		return
+	}
+	jsonResp, err1 := gjson.DecodeToJson(gptResp.String())
+	if err1 != nil {
+		err = err1
+		return
+	}
+	if jsonResp.Get("res").String() != "ok" {
+		err = errors.New("翻译失败")
+		return
+	}
+	resp = jsonResp.Get("content").String()
 	return
 }
 
