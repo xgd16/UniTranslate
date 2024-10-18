@@ -10,7 +10,6 @@ require (
 	github.com/gogf/gf/contrib/drivers/sqlite/v2 v2.7.4
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.7.4
 	github.com/gogf/gf/v2 v2.7.4
-	github.com/sashabaranov/go-openai v1.32.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1018
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.1018
 	github.com/volcengine/volc-sdk-golang v1.0.180

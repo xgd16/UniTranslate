@@ -1,4 +1,4 @@
-FROM golang:1.21.5 as builder
+FROM golang:1.22.8 as builder
 WORKDIR /workspace
 COPY . .
 RUN go mod tidy && CGO_ENABLED=0 go build -o app main.go
