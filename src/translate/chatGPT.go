@@ -3,6 +3,7 @@ package translate
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
@@ -65,7 +66,7 @@ func (t *ChatGptConfigType) sendToChatGpt(sysMsg string) (resp string, err error
 	if t.OrgId != "" {
 		headerMap["OpenAI-Organization"] = t.OrgId
 	}
-	respData, err := g.Client().ContentJson().SetHeaderMap(headerMap).Post(gctx.New(), fmt.Sprintf("%s/v1/chat/completions", t.Url), g.Map{
+	respData, err := g.Client().ContentJson().SetTimeout(5*time.Second).SetHeaderMap(headerMap).Post(gctx.New(), fmt.Sprintf("%s/v1/chat/completions", t.Url), g.Map{
 		"model":             t.Model,
 		"max_tokens":        512,
 		"temperature":       0.2,
