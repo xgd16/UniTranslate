@@ -8,6 +8,7 @@ import (
 
 // TranslateData 翻译数据
 type TranslateData struct {
+	CacheId         string                     `json:"cacheId"`
 	Md5             string                     `json:"-"`
 	Translate       []*translate.TranslateResp `json:"translate"`
 	To              string                     `json:"to" orm:"toLang"`
@@ -56,6 +57,7 @@ type RequestRecordData struct {
 	Ok           bool          `json:"ok"`
 	Platform     string        `json:"platform"`
 	ErrMsg       error         `json:"errMsg"`
+	CacheId      string        `json:"cacheId"`
 	TraceId      string        `json:"traceId" orm:"tId"`
 	TakeTime     int           `json:"takeTime"`
 	PlatformName string        `json:"platformName"`

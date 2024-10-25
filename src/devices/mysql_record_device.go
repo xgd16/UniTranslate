@@ -40,7 +40,7 @@ func (m *MySQLRecordDevice) Init(cache *gcache.Cache, cacheMode string, cachePla
 		},
 		{
 			TableName: "request_record",
-			Table:     "CREATE TABLE request_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, tId varchar(255) NULL COMMENT '请求事件id', clientIp varchar(255) NULL, body text NULL, status tinyint(1) NULL, errMsg text NULL, takeTime int NULL COMMENT '用时', platform varchar(64) NULL COMMENT '平台', createTime datetime(6) NULL, updateTime datetime(6) NULL );",
+			Table:     "CREATE TABLE request_record ( id int UNSIGNED PRIMARY KEY AUTO_INCREMENT, tId varchar(255) NULL COMMENT '请求事件id', clientIp varchar(255) NULL, body text NULL, status tinyint(1) NULL, errMsg text NULL, takeTime int NULL COMMENT '用时', platform varchar(64) NULL COMMENT '平台', cacheId int NULL, createTime datetime(6) NULL, updateTime datetime(6) NULL );",
 			Index: []string{
 				"CREATE INDEX request_record_clientIp_index ON request_record (clientIp);",
 				"CREATE INDEX request_record_createTime_index ON request_record (createTime);",
@@ -48,11 +48,12 @@ func (m *MySQLRecordDevice) Init(cache *gcache.Cache, cacheMode string, cachePla
 				"CREATE INDEX request_record_takeTime_index ON request_record (takeTime);",
 				"CREATE INDEX request_record_platform_index ON request_record (platform);",
 				"CREATE INDEX request_record_tId_index ON request_record (tId);",
+				"CREATE INDEX request_record_cacheId_index ON request_record (cacheId);",
 			},
 		},
 		{
 			TableName: "translate_cache",
-			Table:     "CREATE TABLE translate_cache ( id bigint UNSIGNED AUTO_INCREMENT, translate json NOT NULL COMMENT '翻译后结果', text json NOT NULL, fromLang varchar(16) NULL COMMENT '翻译前语言', toLang varchar(16) NULL COMMENT '翻译后语言', textMd5 char(32) NOT NULL COMMENT '翻译前语言md5值', platform varchar(16) NOT NULL COMMENT '翻译平台 Baidu YouDao Google Deepl', textLen int NULL DEFAULT 0 COMMENT '原文文字长度', translationLen int NULL DEFAULT 0 COMMENT '翻译后文字长度', createTime datetime NOT NULL, updateTime datetime NULL, PRIMARY KEY (id) );",
+			Table:     "CREATE TABLE translate_cache ( id bigint UNSIGNED PRIMARY KEY AUTO_INCREMENT, translate json NOT NULL COMMENT '翻译后结果', text json NOT NULL, textMd5 char(32) NOT NULL, fromLang varchar(16) NULL COMMENT '翻译前语言', toLang varchar(16) NULL COMMENT '翻译后语言', platform varchar(16) NOT NULL COMMENT '翻译平台 Baidu YouDao Google Deepl', textLen int NULL DEFAULT 0 COMMENT '原文文字长度', translationLen int NULL DEFAULT 0 COMMENT '翻译后文字长度', cacheId varchar(255) NULL COMMENT '所使用的缓存Id', createTime datetime NOT NULL, updateTime datetime NULL );",
 			Index: []string{
 				"CREATE INDEX translate_cache_createTime_index ON translate_cache (createTime);",
 				"CREATE INDEX translate_cache_fromLang_index ON translate_cache (fromLang);",
@@ -61,6 +62,7 @@ func (m *MySQLRecordDevice) Init(cache *gcache.Cache, cacheMode string, cachePla
 				"CREATE INDEX translate_cache_toLang_index ON translate_cache (toLang);",
 				"CREATE INDEX translate_cache_translationLen_index ON translate_cache (translationLen);",
 				"CREATE INDEX translate_cache_textMd5_index ON translate_cache (textMd5);",
+				"CREATE INDEX translate_cache_cacheId_index ON translate_cache (cacheId)",
 			},
 		},
 	}
@@ -150,6 +152,7 @@ func (m *MySQLRecordDevice) RequestRecord(data *types.RequestRecordData) error {
 		"takeTime": data.TakeTime,
 		"platform": data.Platform,
 		"tId":      data.TraceId,
+		"cacheId":  data.CacheId,
 	}).Insert()
 	return err
 }

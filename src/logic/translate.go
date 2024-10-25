@@ -27,7 +27,7 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 	} else {
 		keyStr = fmt.Sprintf("to:%s-text:%s", req.To, textStr)
 	}
-	md5 := gmd5.MustEncrypt(keyStr)
+	cacheId := gmd5.MustEncrypt(keyStr)
 	// 记录从翻译到获取到结果的时间
 	startTime := gtime.Now().UnixMilli()
 	// 创建所需要的参数
@@ -46,11 +46,11 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 	// 判断是否进行缓存
 	if global.CacheMode == "off" {
 		isCache = false
-		data, err = translateHandler(translateReq)
+		data, err = translateHandler(cacheId, translateReq)
 	} else {
-		dataT, err1 := global.GfCache.GetOrSetFunc(ctx, fmt.Sprintf("Translate:%s", md5), func(ctx context.Context) (value any, err error) {
+		dataT, err1 := global.GfCache.GetOrSetFunc(ctx, fmt.Sprintf("Translate:%s", cacheId), func(ctx context.Context) (value any, err error) {
 			isCache = false
-			return translateHandler(translateReq)
+			return translateHandler(cacheId, translateReq)
 		}, 0)
 		if err1 != nil {
 			err = err1
@@ -60,6 +60,7 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 			return
 		}
 	}
+	// 统计命中缓存次数
 	if isCache {
 		xmonitor.MetricHttpRequestTotal.WithLabelValues("cache_translate_count").Inc()
 	}
@@ -68,6 +69,7 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 	queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
 		ClientIp: ip,
 		Body:     req,
+		CacheId:  cacheId,
 		Time:     nowTime,
 		Ok:       err == nil,
 		ErrMsg:   err,
@@ -79,9 +81,10 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 }
 
 // translateHandler 翻译处理
-func translateHandler(req *translate.TranslateReq) (data *types.TranslateData, err error) {
+func translateHandler(cacheId string, req *translate.TranslateReq) (data *types.TranslateData, err error) {
 	data, err = buffer.Buffer.Handler(req, handler.Translate)
 	if data != nil {
+		data.CacheId = cacheId
 		// 缓存写入数据库
 		if global.CacheWriteToStorage {
 			queueHandler.SaveQueue.Push(&types.SaveData{
