@@ -37,9 +37,14 @@ func GetRequestRecord(r *ghttp.Request) {
 	page := r.Get("page", 1).Int()
 	size := r.Get("size", 10).Int()
 
-	m := g.Model("request_record")
+	m := g.Model("request_record").As("a")
 
-	data, err := m.Clone().Page(page, size).OrderDesc("id").All()
+	data, err := m.Clone().
+		Fields("a.*,b.translate").
+		LeftJoin("translate_cache as b", "a.cacheId = b.cacheId").
+		Page(page, size).
+		OrderDesc("a.id").
+		All()
 	x.FastResp(r, err).Resp()
 	count, err := m.Clone().Count()
 	x.FastResp(r, err).Resp()
