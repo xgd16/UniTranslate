@@ -69,6 +69,9 @@ type IdeaTranslateVirtualQueryReq struct {
 
 // GoogleSingleVirtual 谷歌翻译虚拟接口
 func GoogleSingleVirtual(r *ghttp.Request) {
+	if r.Get("key").String() != global.ServiceKey {
+		r.Response.WriteStatusExit(404)
+	}
 	queryData := new(IdeaTranslateVirtualQueryReq)
 	x.FastResp(r, r.GetQueryStruct(queryData), false).Resp("请求参数出错")
 	q := r.Get("q").String()
