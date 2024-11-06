@@ -55,6 +55,70 @@ func LibreTranslate(r *ghttp.Request) {
 	})
 }
 
+type IdeaTranslateVirtualQueryReq struct {
+	Client string `json:"client"`
+	Dj     string `json:"dj"`
+	Dt     string `json:"dt"`
+	Hl     string `json:"hl"`
+	Ie     string `json:"ie"`
+	Oe     string `json:"oe"`
+	Sl     string `json:"sl"`
+	Tk     string `json:"tk"`
+	Tl     string `json:"tl"`
+}
+
+// GoogleSingleVirtual 谷歌翻译虚拟接口
+func GoogleSingleVirtual(r *ghttp.Request) {
+	queryData := new(IdeaTranslateVirtualQueryReq)
+	x.FastResp(r, r.GetQueryStruct(queryData), false).Resp("请求参数出错")
+	q := r.Get("q").String()
+	data, err := logic.Translate(r.GetCtx(), r.GetClientIp(), &types.TranslateReq{
+		From: "auto",
+		To:   queryData.Tl,
+		Text: []string{q},
+	})
+	x.FastResp(r, err, false).Resp("翻译失败请重试")
+	x.FastResp(r, len(data.Translate) <= 0, false).Resp("翻译失败")
+	FromLang := data.Translate[0].FromLang
+	r.Response.WriteJsonExit(g.Map{
+		"sentences": g.Array{
+			g.Map{
+				"trans":   data.Translate[0].Text,
+				"orig":    data.OriginalText[0],
+				"backend": 3,
+				"model_specification": g.Array{
+					g.Map{},
+				},
+				"translation_engine_debug_info": g.Array{
+					g.Map{
+						"model_tracking": g.Map{
+							"checkpoint_md5": "af64405095a399ceb1e05c7abb7cda66",
+							"launch_doc":     "zh_en_2023q1.md",
+						},
+					},
+				},
+			},
+			g.Map{
+				"src_translit": "Zhīchí de píngtái 1",
+			},
+		},
+		"src":        FromLang,
+		"confidence": 1.0,
+		"spell":      g.Map{},
+		"ld_result": g.Map{
+			"srclangs": g.Array{
+				FromLang,
+			},
+			"srclangs_confidences": []float64{
+				1.0,
+			},
+			"extended_srclangs": []string{
+				FromLang,
+			},
+		},
+	})
+}
+
 // Translate 翻译
 func Translate(r *ghttp.Request) {
 	req := new(types.TranslateReq)

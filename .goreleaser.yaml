@@ -33,6 +33,7 @@ archives:
     files:
       - config.bak.yaml
       - translate.json
+      - googleElement.js
 checksum:
   name_template: 'checksums.txt'
 snapshot:
