@@ -20,7 +20,7 @@ func (f *FreeGoogle) Translate(request *TranslateReq) (resp []*TranslateResp, er
 	for _, str := range request.Text {
 		response, err1 := f.translatedContent(str, request.From, request.To)
 		if err1 != nil {
-			err = fmt.Errorf("翻译错误: %s", err)
+			err = fmt.Errorf("翻译错误: %s", err1)
 			return
 		}
 		resp = append(resp, response)

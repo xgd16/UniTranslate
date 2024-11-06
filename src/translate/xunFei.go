@@ -154,7 +154,7 @@ func xunFeiBaseTranslate(baseConfig *xunFeiHttpConfigType, mode string, config *
 	// get sign
 	sign := xunFeiGenerateSignature(baseConfig.Host, currentTime, "POST", baseConfig.Uri, "HTTP/1.1", digest, config.Secret)
 	// send request
-	xunFeiResp, err := gclient.New().ContentJson().Header(g.MapStrStr{
+	xunFeiResp, err := gclient.New().ContentJson().SetTimeout(5*time.Second).Header(g.MapStrStr{
 		"Date":          currentTime,
 		"Digest":        digest,
 		"Authorization": fmt.Sprintf(`api_key="%s", algorithm="%s", headers="host date request-line digest", signature="%s"`, config.ApiKey, "hmac-sha256", sign),

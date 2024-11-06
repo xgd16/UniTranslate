@@ -2,14 +2,15 @@ package devices
 
 import (
 	"errors"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gcache"
-	"github.com/gogf/gf/v2/util/gconv"
 	"math"
 	"strings"
 	"uniTranslate/src/global"
 	"uniTranslate/src/lib"
 	"uniTranslate/src/types"
+
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gcache"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type SqlLiteRecordDevice struct{}
@@ -22,7 +23,7 @@ func (t *SqlLiteRecordDevice) Init(cache *gcache.Cache, cacheMode string, cacheP
 	initData := []*types.SQLInitItem{
 		{
 			TableName: "request_record",
-			Table:     "create table request_record( id integer primary key autoincrement, tId varchar(255) null, clientIp varchar(255) null, body text null, status tinyint null, errMsg text null, takeTime int null, platform varchar(64) null, createTime datetime null, updateTime datetime null);",
+			Table:     "create table request_record( id integer primary key autoincrement, tId varchar(255) null, clientIp varchar(255) null, body text null, status tinyint null, errMsg text null, takeTime int null, platform varchar(64) null, cacheId varchar(255), createTime datetime null, updateTime datetime null);",
 			Index: []string{
 				"create index request_record_clientIp_index on request_record (clientIp);",
 				"create index request_record_createTime_index on request_record (createTime);",
@@ -30,6 +31,7 @@ func (t *SqlLiteRecordDevice) Init(cache *gcache.Cache, cacheMode string, cacheP
 				"create index request_record_status_index on request_record (status);",
 				"create index request_record_tId_index on request_record (tId);",
 				"create index request_record_takeTime_index on request_record (takeTime);",
+				"create index request_record_cacheId_index on request_record (cacheId);",
 			},
 		},
 		{
@@ -45,7 +47,7 @@ func (t *SqlLiteRecordDevice) Init(cache *gcache.Cache, cacheMode string, cacheP
 		},
 		{
 			TableName: "translate_cache",
-			Table:     "create table translate_cache( id integer primary key autoincrement, translate text not null, text text not null, textMd5 char(32) not null, fromLang varchar(16) null, toLang varchar(16) null, platform varchar(16) not null, textLen int default 0 null, translationLen int default 0 null, createTime datetime not null, updateTime datetime null);",
+			Table:     "create table translate_cache( id integer primary key autoincrement, translate text not null, text text not null, textMd5 char(32) not null, fromLang varchar(16) null, toLang varchar(16) null, platform varchar(16) not null, textLen int default 0 null, translationLen int default 0 null, cacheId varchar(255), createTime datetime not null, updateTime datetime null);",
 			Index: []string{
 				"create index translate_cache_createTime_index on translate_cache (createTime);",
 				"create index translate_cache_fromLang_index on translate_cache (fromLang);",
@@ -54,6 +56,7 @@ func (t *SqlLiteRecordDevice) Init(cache *gcache.Cache, cacheMode string, cacheP
 				"create index translate_cache_textMd5_index on translate_cache (textMd5);",
 				"create index translate_cache_toLang_index on translate_cache (toLang);",
 				"create index translate_cache_translationLen_index on translate_cache (translationLen);",
+				"create index translate_cache_cacheId_index on translate_cache (cacheId);",
 			},
 		},
 	}
@@ -113,6 +116,7 @@ func (t *SqlLiteRecordDevice) RequestRecord(data *types.RequestRecordData) error
 		"takeTime": data.TakeTime,
 		"platform": data.Platform,
 		"tId":      data.TraceId,
+		"cacheId":  data.CacheId,
 	}).Insert()
 	return err
 }

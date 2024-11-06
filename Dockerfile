@@ -1,9 +1,9 @@
-FROM golang:1.22.8 as builder
+FROM golang:1.23.2 as builder
 WORKDIR /workspace
 COPY . .
 RUN go mod tidy && CGO_ENABLED=0 go build -o app main.go
 
-FROM --platform=amd64 node:18.19.0 as console
+FROM --platform=amd64 node:18.20.4 as console
 WORKDIR /workspace
 ARG CACHEBUST=1
 RUN git clone https://github.com/xgd16/UniTranslate-web-console.git console

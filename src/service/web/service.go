@@ -16,6 +16,10 @@ func Service() {
 	server := g.Server()
 	// 路由注册
 	server.Group("/api", route.Api)
+	server.BindHandler("/translate_a/single", controller.GoogleSingleVirtual)
+	server.BindHandler("/translate_a/element.js", func(r *ghttp.Request) {
+		r.Response.WriteExit(gfile.GetContents("./googleElement.js"))
+	})
 	server.BindHandler("/ip", controller.GetIp)
 	server.BindHandler("/metrics", xmonitor.PrometheusHttp)
 	// 如果存在操作端的话启动静态地址
