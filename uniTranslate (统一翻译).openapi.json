@@ -1,1 +1,1248 @@
-{"openapi":"3.0.1","info":{"title":"uniTranslate (统一翻译)","description":"","version":"1.0.0"},"tags":[],"paths":{"/api/addConfig":{"post":{"summary":"添加配置-PaPaGo","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"platform":{"type":"string"},"status":{"type":"boolean"},"level":{"type":"integer"},"cfg":{"type":"object","properties":{"key":{"type":"string"},"keyId":{"type":"string"},"url":{"type":"string"},"curlTimeOut":{"type":"integer"}},"required":["key","keyId","url","curlTimeOut"]},"type":{"type":"string"}},"required":["platform","status","level","cfg","type"]},"example":{"platform":"PaPaGo1","status":true,"level":1,"cfg":{"key":"","keyId":"","url":"https://naveropenapi.apigw.ntruss.com/nmt/v1/translation","curlTimeOut":1000},"type":"PaPaGo"}}}},"responses":{"200":{"description":"成功","content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer","title":"状态码","description":"1000 成功 其他失败"},"data":{"type":"array","items":{"type":"string"},"description":"返回的数据"},"msg":{"type":"string","description":"系统信息"},"time":{"type":"integer","description":"当前系统时间"}},"required":["code","data","msg","time"]},"examples":{"1":{"summary":"成功示例","value":{"code":1000,"data":[],"msg":"SUCCESS !!!","time":1715393900901}}}}}}},"security":[]}},"/api/cacheSize":{"get":{"summary":"获取翻译缓存大小","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{}}}}},"responses":{"200":{"description":"成功","content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer"},"data":{"type":"object","properties":{"size":{"description":"已缓存条数","type":"integer"}},"required":["size"]},"msg":{"type":"string"},"time":{"type":"integer"}},"required":["code","data","msg","time"]},"examples":{"1":{"summary":"成功示例","value":{"code":1000,"data":{"size":36},"msg":"SUCCESS !!!","time":1715395403615}}}}}}},"security":[]}},"/api/refreshConfigCache":{"get":{"summary":"刷新配置缓存","deprecated":false,"description":"","tags":[],"parameters":[],"responses":{"200":{"description":"成功","content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer"},"data":{"type":"array","items":{"type":"string"}},"msg":{"type":"string"},"time":{"type":"integer"}},"required":["code","data","msg","time"]}}}}},"security":[]}},"/api/translate":{"post":{"summary":"翻译","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"from":{"description":"源语言","type":"string"},"to":{"description":"目标语言","type":"string"},"text":{"type":"array","items":{"type":"string"},"description":"翻译内容"},"platform":{"description":"使用那个平台翻译不传入自动选择","type":"string"}},"required":["from","to","text","platform"]},"example":"{\n    \"from\": \"auto\", // 源语言\n    \"to\": \"zh-CHS\", // 目标语言\n    \"text\": [ // 翻译内容\n        \"Hello\",\n        \"world\"\n    ],\n    \"platform\": \"Google\" // 使用那个平台翻译不传入自动选择\n}"}}},"responses":{"200":{"description":"成功","content":{"application/json":{"schema":{"type":"object","properties":{"originalText":{"type":"array","items":{"type":"string"},"description":"原文"},"originalTextLen":{"description":"原文长度","type":"integer"},"platform":{"description":"平台类型","type":"string"},"to":{"description":"目标语言","type":"string"},"translate":{"type":"array","items":{"type":"object","properties":{"text":{"type":"string"},"fromLang":{"type":"string"}},"required":["text","fromLang"]},"description":"翻译结果"}},"required":["originalText","originalTextLen","platform","to","translate"]},"examples":{"1":{"summary":"成功示例","value":{"originalText":["Hello","world"],"originalTextLen":10,"platform":"Google","to":"zh-CHS","translate":[{"text":"你好","fromLang":"en"},{"text":"世界","fromLang":"en"}]}}}}}}},"security":[]}},"/api/getRequestRecord":{"get":{"summary":"获取请求记录","deprecated":false,"description":"","tags":[],"parameters":[{"name":"page","in":"query","description":"那一页","required":false,"example":"1","schema":{"type":"integer"}},{"name":"size","in":"query","description":"一页多少条","required":false,"schema":{"type":"integer"}}],"responses":{"200":{"description":"成功","content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer"},"data":{"type":"object","properties":{"count":{"type":"integer","title":"总条数"},"list":{"type":"array","items":{"type":"object","properties":{"body":{"type":"string","title":"请求内容"},"clientIp":{"type":"string","title":"客户端IP"},"createTime":{"type":"string","title":"创建时间"},"errMsg":{"type":"string","title":"错误原因"},"id":{"type":"integer","title":"记录表id"},"platform":{"type":"string","title":"平台Code"},"status":{"type":"integer","title":"状态"},"tId":{"type":"string","title":"事件id"},"takeTime":{"type":"integer","title":"翻译时长 毫秒"},"updateTime":{"type":"string"}},"required":["body","clientIp","createTime","errMsg","id","platform","status","tId","takeTime","updateTime"]}}},"required":["count","list"]},"msg":{"type":"string"},"time":{"type":"integer"}},"required":["code","data","msg","time"]}}}}},"security":[]}},"/api/cleanCache":{"get":{"summary":"清除翻译缓存","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer"},"data":{"type":"object","properties":{"size":{"description":"清除条数","type":"integer"}},"required":["size"]},"msg":{"type":"string"},"time":{"type":"integer"}},"required":["code","data","msg","time"]},"example":"{\n    \"code\": 1000,\n    \"data\": {\n        \"size\": 38 // 清除条数\n    },\n    \"msg\": \"SUCCESS !!!\",\n    \"time\": 1715408664727\n}"}}},"responses":{"200":{"description":"成功","content":{"application/json":{"schema":{"type":"object","properties":{}}}}}},"security":[]}},"/api/delConfig":{"post":{"summary":"删除配置","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"serialNumber":{"description":"系统生成的编码","type":"string"}},"required":["serialNumber"]},"example":"{\n    \"serialNumber\": \"aaaaaa\" // 系统生成的编码\n}"}}},"responses":{"200":{"description":"成功","content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer"},"data":{"type":"array","items":{"type":"string"}},"msg":{"type":"string"},"time":{"type":"integer"}},"required":["code","data","msg","time"]},"examples":{"1":{"summary":"成功示例","value":{"code":1000,"data":[],"msg":"SUCCESS !!!","time":1715408750354}}}}}}},"security":[]}},"/api/updateStatus":{"post":{"summary":"修改配置状态","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"serialNumber":{"description":"系统生成的编号","type":"string"},"status":{"description":"修改成什么状态 0 关闭 1 正常","type":"integer"}},"required":["serialNumber","status"]},"example":"{\n    \"serialNumber\": \"3a3131c6ac1a69b14a26590941b599d7\", // 系统生成的编号\n    \"status\": 0 // 修改成什么状态 0 关闭 1 正常\n}"}}},"responses":{"200":{"description":"成功","content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer"},"data":{"type":"array","items":{"type":"string"}},"msg":{"type":"string"},"time":{"type":"integer"}},"required":["code","data","msg","time"]},"examples":{"1":{"summary":"成功示例","value":{"code":1000,"data":[],"msg":"SUCCESS !!!","time":1715408858024}}}}}}},"security":[]}},"/api/getConfigList":{"get":{"summary":"获取配置列表","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{}}}}},"responses":{"200":{"description":"成功","content":{"application/json":{"schema":{"type":"object","properties":{"code":{"type":"integer"},"data":{"type":"array","items":{"type":"object","properties":{"countRecord":{"type":"object","properties":{"serialNumber":{"description":"数据编号","type":"string"},"successCount":{"description":"成功次数","type":"integer"},"errorCount":{"description":"失败次数","type":"integer"},"charCount":{"description":"成功翻译的字数","type":"integer"}},"required":["serialNumber","successCount","errorCount","charCount"]},"id":{"description":"当前配置编号","type":"string"},"level":{"description":"翻译等级","type":"integer"},"platform":{"description":"设置的名称","type":"string"},"status":{"description":"状态","type":"integer"},"type":{"description":"配置类型","type":"string"}}}},"msg":{"type":"string"},"time":{"type":"integer"}},"required":["code","data","msg","time"]},"examples":{"1":{"summary":"成功示例","value":{"code":1000,"data":[{"countRecord":{"serialNumber":"aaaaa","successCount":0,"errorCount":0,"charCount":0},"id":"aaaaa","level":5,"platform":"Google 路线 1","status":1,"type":"Google"}],"msg":"SUCCESS !!!","time":1715408974702}}}}}}},"security":[]}}},"components":{"schemas":{},"securitySchemes":{}},"servers":[]}
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "uniTranslate (统一翻译)",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/api/saveConfig": {
+      "post": {
+        "summary": "添加配置-PaPaGo",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "boolean"
+                  },
+                  "level": {
+                    "type": "integer"
+                  },
+                  "cfg": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "keyId": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "curlTimeOut": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "keyId",
+                      "url",
+                      "curlTimeOut"
+                    ]
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "platform",
+                  "status",
+                  "level",
+                  "cfg",
+                  "type"
+                ]
+              },
+              "example": {
+                "platform": "PaPaGo1",
+                "status": true,
+                "level": 1,
+                "cfg": {
+                  "key": "",
+                  "keyId": "",
+                  "url": "https://naveropenapi.apigw.ntruss.com/nmt/v1/translation",
+                  "curlTimeOut": 1000
+                },
+                "type": "PaPaGo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码",
+                      "description": "1000 成功 其他失败"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "返回的数据"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "description": "系统信息"
+                    },
+                    "time": {
+                      "type": "integer",
+                      "description": "当前系统时间"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 1000,
+                      "data": [],
+                      "msg": "SUCCESS !!!",
+                      "time": 1715393900901
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/refreshConfigCache": {
+      "get": {
+        "summary": "刷新配置缓存",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/delConfig": {
+      "post": {
+        "summary": "删除配置",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "serialNumber": {
+                    "description": "系统生成的编码",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "serialNumber"
+                ]
+              },
+              "example": "{\n    \"serialNumber\": \"aaaaaa\" // 系统生成的编码\n}"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 1000,
+                      "data": [],
+                      "msg": "SUCCESS !!!",
+                      "time": 1715408750354
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/updateStatus": {
+      "post": {
+        "summary": "修改配置状态",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "serialNumber": {
+                    "description": "系统生成的编号",
+                    "type": "string"
+                  },
+                  "status": {
+                    "description": "修改成什么状态 0 关闭 1 正常",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "serialNumber",
+                  "status"
+                ]
+              },
+              "example": "{\n    \"serialNumber\": \"3a3131c6ac1a69b14a26590941b599d7\", // 系统生成的编号\n    \"status\": 0 // 修改成什么状态 0 关闭 1 正常\n}"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 1000,
+                      "data": [],
+                      "msg": "SUCCESS !!!",
+                      "time": 1715408858024
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/getConfigList": {
+      "get": {
+        "summary": "获取配置列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "countRecord": {
+                            "type": "object",
+                            "properties": {
+                              "serialNumber": {
+                                "description": "数据编号",
+                                "type": "string"
+                              },
+                              "successCount": {
+                                "description": "成功次数",
+                                "type": "integer"
+                              },
+                              "errorCount": {
+                                "description": "失败次数",
+                                "type": "integer"
+                              },
+                              "charCount": {
+                                "description": "成功翻译的字数",
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "serialNumber",
+                              "successCount",
+                              "errorCount",
+                              "charCount"
+                            ]
+                          },
+                          "id": {
+                            "description": "当前配置编号",
+                            "type": "string"
+                          },
+                          "level": {
+                            "description": "翻译等级",
+                            "type": "integer"
+                          },
+                          "platform": {
+                            "description": "设置的名称",
+                            "type": "string"
+                          },
+                          "status": {
+                            "description": "状态",
+                            "type": "integer"
+                          },
+                          "type": {
+                            "description": "配置类型",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 1000,
+                      "data": [
+                        {
+                          "countRecord": {
+                            "serialNumber": "aaaaa",
+                            "successCount": 0,
+                            "errorCount": 0,
+                            "charCount": 0
+                          },
+                          "id": "aaaaa",
+                          "level": 5,
+                          "platform": "Google 路线 1",
+                          "status": 1,
+                          "type": "Google"
+                        }
+                      ],
+                      "msg": "SUCCESS !!!",
+                      "time": 1715408974702
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/cacheSize": {
+      "get": {
+        "summary": "获取翻译缓存大小",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "size": {
+                          "description": "已缓存条数",
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "size"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 1000,
+                      "data": {
+                        "size": 36
+                      },
+                      "msg": "SUCCESS !!!",
+                      "time": 1715395403615
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/translate": {
+      "post": {
+        "summary": "翻译",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "6tRiPmeoqYz3yOm15xN259zsTZpn6s6t6EMNtRD1nHrwfmm4ffCcY8slalqyPMwy",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "description": "源语言",
+                    "type": "string"
+                  },
+                  "to": {
+                    "description": "目标语言",
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "翻译内容"
+                  },
+                  "platform": {
+                    "description": "使用那个平台翻译不传入自动选择",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to",
+                  "text",
+                  "platform"
+                ]
+              },
+              "example": "{\n    \"from\": \"auto\", // 源语言\n    \"to\": \"zh-CHS\", // 目标语言\n    \"text\": [ // 翻译内容\n        \"Hello\",\n        \"world\"\n    ],\n    \"platform\": \"Google\" // 使用那个平台翻译不传入自动选择\n}"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "originalText": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "原文"
+                    },
+                    "originalTextLen": {
+                      "description": "原文长度",
+                      "type": "integer"
+                    },
+                    "platform": {
+                      "description": "平台类型",
+                      "type": "string"
+                    },
+                    "to": {
+                      "description": "目标语言",
+                      "type": "string"
+                    },
+                    "translate": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "text": {
+                            "type": "string"
+                          },
+                          "fromLang": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "text",
+                          "fromLang"
+                        ]
+                      },
+                      "description": "翻译结果"
+                    }
+                  },
+                  "required": [
+                    "originalText",
+                    "originalTextLen",
+                    "platform",
+                    "to",
+                    "translate"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "originalText": [
+                        "Hello",
+                        "world"
+                      ],
+                      "originalTextLen": 10,
+                      "platform": "Google",
+                      "to": "zh-CHS",
+                      "translate": [
+                        {
+                          "text": "你好",
+                          "fromLang": "en"
+                        },
+                        {
+                          "text": "世界",
+                          "fromLang": "en"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/libreTranslate": {
+      "post": {
+        "summary": "libre 翻译",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "6tRiPmeoqYz3yOm15xN259zsTZpn6s6t6EMNtRD1nHrwfmm4ffCcY8slalqyPMwy",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "description": "源语言",
+                    "type": "string"
+                  },
+                  "to": {
+                    "description": "目标语言",
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "翻译内容"
+                  },
+                  "platform": {
+                    "description": "使用那个平台翻译不传入自动选择",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to",
+                  "text",
+                  "platform"
+                ]
+              },
+              "example": "{\n    \"from\": \"auto\", // 源语言\n    \"to\": \"zh-CHS\", // 目标语言\n    \"text\": [ // 翻译内容\n        \"Hello\",\n        \"world\"\n    ],\n    \"platform\": \"Google\" // 使用那个平台翻译不传入自动选择\n}"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "originalText": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "原文"
+                    },
+                    "originalTextLen": {
+                      "description": "原文长度",
+                      "type": "integer"
+                    },
+                    "platform": {
+                      "description": "平台类型",
+                      "type": "string"
+                    },
+                    "to": {
+                      "description": "目标语言",
+                      "type": "string"
+                    },
+                    "translate": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "text": {
+                            "type": "string"
+                          },
+                          "fromLang": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "text",
+                          "fromLang"
+                        ]
+                      },
+                      "description": "翻译结果"
+                    }
+                  },
+                  "required": [
+                    "originalText",
+                    "originalTextLen",
+                    "platform",
+                    "to",
+                    "translate"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "originalText": [
+                        "Hello",
+                        "world"
+                      ],
+                      "originalTextLen": 10,
+                      "platform": "Google",
+                      "to": "zh-CHS",
+                      "translate": [
+                        {
+                          "text": "你好",
+                          "fromLang": "en"
+                        },
+                        {
+                          "text": "世界",
+                          "fromLang": "en"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/getRequestRecord": {
+      "get": {
+        "summary": "获取请求记录",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "那一页",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "一页多少条",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer",
+                          "title": "总条数"
+                        },
+                        "list": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "body": {
+                                "type": "string",
+                                "title": "请求内容"
+                              },
+                              "clientIp": {
+                                "type": "string",
+                                "title": "客户端IP"
+                              },
+                              "createTime": {
+                                "type": "string",
+                                "title": "创建时间"
+                              },
+                              "errMsg": {
+                                "type": "string",
+                                "title": "错误原因"
+                              },
+                              "id": {
+                                "type": "integer",
+                                "title": "记录表id"
+                              },
+                              "platform": {
+                                "type": "string",
+                                "title": "平台Code"
+                              },
+                              "status": {
+                                "type": "integer",
+                                "title": "状态"
+                              },
+                              "tId": {
+                                "type": "string",
+                                "title": "事件id"
+                              },
+                              "takeTime": {
+                                "type": "integer",
+                                "title": "翻译时长 毫秒"
+                              },
+                              "updateTime": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "body",
+                              "clientIp",
+                              "createTime",
+                              "errMsg",
+                              "id",
+                              "platform",
+                              "status",
+                              "tId",
+                              "takeTime",
+                              "updateTime"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "count",
+                        "list"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data",
+                    "msg",
+                    "time"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/cleanCache": {
+      "get": {
+        "summary": "清除翻译缓存",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer"
+                  },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "size": {
+                        "description": "清除条数",
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "size"
+                    ]
+                  },
+                  "msg": {
+                    "type": "string"
+                  },
+                  "time": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "code",
+                  "data",
+                  "msg",
+                  "time"
+                ]
+              },
+              "example": "{\n    \"code\": 1000,\n    \"data\": {\n        \"size\": 38 // 清除条数\n    },\n    \"msg\": \"SUCCESS !!!\",\n    \"time\": 1715408664727\n}"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/aggregateTranslate": {
+      "post": {
+        "summary": "聚合翻译",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "description": "源语言",
+                    "type": "string"
+                  },
+                  "to": {
+                    "description": "目标语言",
+                    "type": "string"
+                  },
+                  "text": {
+                    "description": "要翻译的内容",
+                    "type": "string"
+                  },
+                  "platform": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "参与翻译的平台空数组为所有开启的平台"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to",
+                  "text",
+                  "platform"
+                ]
+              },
+              "example": {
+                "from": "auto",
+                "to": "en",
+                "text": "需要翻译的内容",
+                "platform": [
+                  "Baidu",
+                  "YouDao",
+                  "Google"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/translate_a/single": {
+      "post": {
+        "summary": "白嫖谷歌协议",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "sl",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "auto",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tl",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "en",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "client",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "gtx",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dt",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": [
+              "t",
+              "bd",
+              "rm",
+              "qca",
+              "ex"
+            ],
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "dj",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ie",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "UTF-8",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "oe",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "UTF-8",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hl",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "zh-CN",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tk",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "789081.744515",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/getLangList": {
+      "get": {
+        "summary": "获取支持的翻译语种",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {}
+  },
+  "servers": []
+}

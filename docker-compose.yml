@@ -1,14 +1,14 @@
 services:
   uni-translate:
-    image: xgd16/uni-translate
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: xgd16/uni-translate:latest
     restart: on-failure
     volumes:
       - ./config.container.yaml:/workspace/config.yaml
     ports:
       - 9431:9431
+    depends_on:
+      - mysql
+      - redis
   mysql:
     image: mysql:8.4.0
     environment:
