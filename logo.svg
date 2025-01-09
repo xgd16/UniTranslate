@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect x="0" y="0" width="128" height="128" rx="24" fill="#2563EB"/>
+  
+  <!-- 主图形：翻译符号 -->
+  <g transform="translate(64 64)">
+    <!-- 左侧语言块 -->
+    <rect x="-40" y="-25" width="30" height="20" rx="4" fill="#FFFFFF" opacity="0.9"/>
+    <rect x="-35" y="-15" width="20" height="4" rx="2" fill="#FFFFFF" opacity="0.7"/>
+    <rect x="-30" y="-5" width="10" height="4" rx="2" fill="#FFFFFF" opacity="0.5"/>
+    
+    <!-- 右侧语言块 -->
+    <rect x="10" y="5" width="30" height="20" rx="4" fill="#FFFFFF" opacity="0.9"/>
+    <rect x="15" y="15" width="20" height="4" rx="2" fill="#FFFFFF" opacity="0.7"/>
+    <rect x="20" y="25" width="10" height="4" rx="2" fill="#FFFFFF" opacity="0.5"/>
+    
+    <!-- 中间连接箭头 -->
+    <g transform="translate(0 0)">
+      <!-- 左箭头 -->
+      <path d="M-5 0 L5 0 M-2 -3 L-5 0 L-2 3" 
+            stroke="#FFFFFF" 
+            stroke-width="3" 
+            fill="none" 
+            stroke-linecap="round" 
+            stroke-linejoin="round"/>
+      <!-- 右箭头 -->
+      <path d="M5 0 L-5 0 M2 -3 L5 0 L2 3" 
+            stroke="#FFFFFF" 
+            stroke-width="3" 
+            fill="none" 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            transform="translate(0 10)"/>
+    </g>
+  </g>
+
+  <!-- 装饰点 -->
+  <circle cx="30" cy="30" r="4" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="98" cy="98" r="4" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="98" cy="30" r="4" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="30" cy="98" r="4" fill="#FFFFFF" opacity="0.3"/>
+</svg>

@@ -1,6 +1,6 @@
 # uniTranslate
 
-<img src="https://github.com/xgd16/UniTranslate/assets/42709773/3d879e22-fe2c-4238-aabb-39ab478fbd20" alt="UniTranslate" width="300" height="300">
+<img src="./logo.svg" alt="UniTranslate" width="300" height="300">
 
 [中文](./README.md) | [English](./README_EN.md)
 
