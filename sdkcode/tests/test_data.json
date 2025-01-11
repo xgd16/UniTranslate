@@ -1,0 +1,43 @@
+{
+    "key": "testkey123",
+    "testCases": [
+        {
+            "name": "简单参数测试",
+            "params": {
+                "age": 25,
+                "name": "test"
+            },
+            "expectedHash": "d8f6ca2700f502a8ed0fe2e1318dc46aacd03a364cc54dca656c3407e12eb1eb"
+        },
+        {
+            "name": "嵌套对象测试",
+            "params": {
+                "type": "nested",
+                "user": {
+                    "info": {
+                        "age": 25,
+                        "city": "Beijing"
+                    },
+                    "name": "test"
+                }
+            },
+            "expectedHash": "7765210da024aaf71a2aec098e754708ad5cb6c3b85d3dcfb195eac2da5d3a28"
+        },
+        {
+            "name": "数组测试",
+            "params": {
+                "scores": [
+                    1,
+                    2,
+                    3
+                ],
+                "tags": [
+                    "a",
+                    "b",
+                    "c"
+                ]
+            },
+            "expectedHash": "57f5c18ff2bb75b24ed5d875029d0146655e18e3d38447b5e57e7dd607fbe3f5"
+        }
+    ]
+}
