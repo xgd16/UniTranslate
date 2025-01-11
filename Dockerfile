@@ -15,4 +15,5 @@ WORKDIR /workspace
 COPY --from=console /workspace/console/dist ./dist
 COPY --from=builder /workspace/app .
 COPY --from=builder /workspace/translate.json .
+COPY --from=builder /workspace/googleElement.js .
 ENTRYPOINT [ "./app" ]
