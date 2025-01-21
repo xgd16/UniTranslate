@@ -13,69 +13,74 @@ type PlatformSortBufferArr struct {
 
 func (r *PlatformSortBufferArr) Init(data *BufferType, platform string) BufferArrInterface {
 	r.buffer = data
-	level := deepCopy2DArray(r.buffer.GetLevel())
-	// 从等级排列重新按照平台建立新结构
-	nowLevelArr := make([][]*types.TranslatePlatform, 0)
-	platformArr := make([]*types.TranslatePlatform, 0)
+	level := r.buffer.GetLevel()
+
+	// 预计算容量以减少内存重新分配
+	totalPlatforms := 0
 	for _, platforms := range level {
-		arr := make([]*types.TranslatePlatform, 0)
-		for _, translatePlatform := range platforms {
-			if platform == translatePlatform.Type {
-				platformArr = append(platformArr, translatePlatform)
+		totalPlatforms += len(platforms)
+	}
+
+	// 预分配内存
+	platformArr := make([]*types.TranslatePlatform, 0, totalPlatforms)
+	nowLevelArr := make([][]*types.TranslatePlatform, 0, len(level))
+
+	// 一次遍历完成分类
+	for _, platforms := range level {
+		otherPlatforms := make([]*types.TranslatePlatform, 0, len(platforms))
+
+		for _, tp := range platforms {
+			// 创建新的 TranslatePlatform 对象
+			newTP := &types.TranslatePlatform{
+				Md5:      tp.Md5,
+				Platform: tp.Platform,
+				Status:   tp.Status,
+				Level:    tp.Level,
+				Cfg:      tp.Cfg,
+				Type:     tp.Type,
+			}
+
+			if platform == tp.Type {
+				platformArr = append(platformArr, newTP)
 			} else {
-				arr = append(arr, translatePlatform)
+				otherPlatforms = append(otherPlatforms, newTP)
 			}
 		}
-		if len(arr) > 0 {
-			nowLevelArr = append(nowLevelArr, arr)
+
+		if len(otherPlatforms) > 0 {
+			nowLevelArr = append(nowLevelArr, otherPlatforms)
 		}
 	}
-	// 按照翻译优先级从小到大排序
-	sort.Slice(platformArr, func(i, j int) bool {
-		return platformArr[i].Level < platformArr[j].Level
-	})
-	nowLevelArr = append([][]*types.TranslatePlatform{platformArr}, nowLevelArr...)
-	r.level = nowLevelArr
-	r.idx = r.buffer.CreateIdxArr(nowLevelArr)
+
+	// 优化排序：只有当需要排序时才排序
+	if len(platformArr) > 1 {
+		sort.Slice(platformArr, func(i, j int) bool {
+			return platformArr[i].Level < platformArr[j].Level
+		})
+	}
+
+	// 使用预分配的切片来构建最终结果
+	result := make([][]*types.TranslatePlatform, 0, len(nowLevelArr)+1)
+	if len(platformArr) > 0 {
+		result = append(result, platformArr)
+	}
+	result = append(result, nowLevelArr...)
+
+	r.level = result
+	r.idx = r.buffer.CreateIdxArr(result)
 	return r
 }
 
 func (r *PlatformSortBufferArr) GetPlatformConfig(i0, i1 int) *types.TranslatePlatform {
+	if i0 >= len(r.level) || i1 >= len(r.level[i0]) {
+		return nil
+	}
 	return r.level[i0][i1]
 }
 
 func (r *PlatformSortBufferArr) GetIdx(i int) []int {
-	return r.idx[i]
-}
-
-func deepCopy2DArray(input [][]*types.TranslatePlatform) [][]*types.TranslatePlatform {
-	if input == nil {
+	if i >= len(r.idx) {
 		return nil
 	}
-	// 创建一个新的二维切片
-	result := make([][]*types.TranslatePlatform, len(input))
-	// 遍历原始数组的每个元素
-	for i, row := range input {
-		// 创建一个新的 TranslatePlatform 切片
-		newRow := make([]*types.TranslatePlatform, len(row))
-		// 遍历原始数组元素的每个元素，并复制它们
-		for j, element := range row {
-			if element != nil {
-				// 这里复制 TranslatePlatform 的字段值
-				// 例如：newElement.Field1 = element.Field1
-				// ...
-				newRow[j] = &types.TranslatePlatform{
-					Md5:      element.Md5,
-					Platform: element.Platform,
-					Status:   element.Status,
-					Level:    element.Level,
-					Cfg:      element.Cfg,
-					Type:     element.Type,
-				}
-			}
-		}
-		// 将新的行添加到结果中
-		result[i] = newRow
-	}
-	return result
+	return r.idx[i]
 }

@@ -1,6 +1,7 @@
 package buffer
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -41,73 +42,98 @@ func (t *BufferType) GetIdx() [][]int {
 }
 
 func (t *BufferType) Handler(req *translate.TranslateReq, fn func(config *types.TranslatePlatform, req *translate.TranslateReq) (*types.TranslateData, error)) (s *types.TranslateData, e error) {
-	t.m.Lock()
+	// 获取 buffer array 的操作应该在锁外完成
 	var bufferArr BufferArrInterface
 	if req.Platform == "" {
 		bufferArr = new(RandomSortBufferArr)
 	} else {
 		bufferArr = new(PlatformSortBufferArr)
 	}
+
+	t.m.Lock()
 	bufferArr.Init(t, req.Platform)
 	t.m.Unlock()
-	// 创建上下文
+
 	ctx := gctx.New()
-	// 循环处理数据
+
 	for i := 0; i < t.num; i++ {
-		t.m.Lock()
-		// 获取操作对象
-		idx := bufferArr.GetIdx(i)
-		p := bufferArr.GetPlatformConfig(idx[0], idx[1])
-		if p.Status == 0 {
-			t.m.Unlock()
-			continue
-		}
-		// 释放锁
-		t.m.Unlock()
-		// 调用处理
-		translateResp, err := fn(p, req)
-		// 记录翻译
-		if global.RunMode == global.HttpMode {
-			xmonitor.MetricHttpRequestTotal.WithLabelValues(fmt.Sprintf("%s_%s", xlib.IF(err == nil, "success", "error"), p.Platform)).Inc()
-			// 统计翻译字数
-			if err == nil {
-				xmonitor.MetricHttpRequestTotal.WithLabelValues(fmt.Sprintf("fontCount_%s", p.Platform)).Add(gconv.Float64(gstr.LenRune(gstr.Join(translateResp.OriginalText, ""))))
+		var p *types.TranslatePlatform
+		func() {
+			t.m.Lock()
+			defer t.m.Unlock()
+
+			idx := bufferArr.GetIdx(i)
+			p = bufferArr.GetPlatformConfig(idx[0], idx[1])
+			if p.Status == 0 {
+				return
 			}
-		}
-		// 处理错误
-		if err != nil {
-			e = fmt.Errorf("调用翻译失败 %s", err)
-			queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
-				ClientIp: req.HttpReq.ClientIp,
-				Body: &types.TranslateReq{
-					From:     req.From,
-					To:       req.To,
-					Text:     req.Text,
-					Platform: req.Platform,
-				},
-				Time:     gtime.Now().UnixMilli(),
-				Ok:       err == nil,
-				ErrMsg:   err,
-				Platform: fmt.Sprintf("%s [ %s ]", p.Type, p.Platform),
-				TraceId:  gtrace.GetTraceID(req.HttpReq.Context),
-			})
-			// 翻译计数
-			queueHandler.CountRecordQueue.Push(&types.CountRecordData{
-				Data: &types.TranslateData{
-					Md5: p.Md5,
-				},
-				Ok: false,
-			})
-			g.Log().Error(ctx, e)
+		}()
+
+		if p == nil || p.Status == 0 {
 			continue
 		}
+
+		translateResp, err := fn(p, req)
+
+		// 处理监控指标
+		t.handleMetrics(err, p, translateResp, req)
+
+		if err != nil {
+			e = fmt.Errorf("调用翻译失败: %w", err)
+			t.recordError(ctx, req, err, p)
+			continue
+		}
+
 		translateResp.Md5 = p.Md5
 		return translateResp, nil
 	}
+
 	if e == nil {
-		e = errors.New("翻译失败")
+		e = errors.New("所有翻译平台均调用失败")
 	}
 	return
+}
+
+// 新增的辅助方法，用于处理监控指标
+func (t *BufferType) handleMetrics(err error, p *types.TranslatePlatform, resp *types.TranslateData, req *translate.TranslateReq) {
+	if global.RunMode != global.HttpMode {
+		return
+	}
+
+	status := xlib.IF(err == nil, "success", "error")
+	xmonitor.MetricHttpRequestTotal.WithLabelValues(fmt.Sprintf("%s_%s", status, p.Platform)).Inc()
+
+	if err == nil && resp != nil {
+		fontCount := gconv.Float64(gstr.LenRune(gstr.Join(resp.OriginalText, "")))
+		xmonitor.MetricHttpRequestTotal.WithLabelValues(fmt.Sprintf("fontCount_%s", p.Platform)).Add(fontCount)
+	}
+}
+
+// 新增的辅助方法，用于记录错误
+func (t *BufferType) recordError(ctx context.Context, req *translate.TranslateReq, err error, p *types.TranslatePlatform) {
+	queueHandler.RequestRecordQueue.Push(&types.RequestRecordData{
+		ClientIp: req.HttpReq.ClientIp,
+		Body: &types.TranslateReq{
+			From:     req.From,
+			To:       req.To,
+			Text:     req.Text,
+			Platform: req.Platform,
+		},
+		Time:     gtime.Now().UnixMilli(),
+		Ok:       false,
+		ErrMsg:   err,
+		Platform: fmt.Sprintf("%s [ %s ]", p.Type, p.Platform),
+		TraceId:  gtrace.GetTraceID(req.HttpReq.Context),
+	})
+
+	queueHandler.CountRecordQueue.Push(&types.CountRecordData{
+		Data: &types.TranslateData{
+			Md5: p.Md5,
+		},
+		Ok: false,
+	})
+
+	g.Log().Error(ctx, err)
 }
 
 func (t *BufferType) Init(refresh bool) (err error) {

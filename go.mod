@@ -15,6 +15,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tmt v1.0.1018
 	github.com/volcengine/volc-sdk-golang v1.0.180
 	github.com/xgd16/gf-x-tool v0.5.18
+	golang.org/x/sync v0.8.0
 )
 
 require (
