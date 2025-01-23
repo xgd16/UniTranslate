@@ -73,7 +73,9 @@ func initHandler() {
 	runtime.SetMutexProfileFraction(1) // (非必需)开启对锁调用的跟踪
 	runtime.SetBlockProfileRate(1)     // (非必需)开启对阻塞操作的跟踪
 	// 初始化系统配置
-	global.InitSystemConfig()
+	if err := global.InitSystemConfig(); err != nil {
+		panic(err)
+	}
 	// 初始化基础
 	baseInit()
 }
@@ -95,31 +97,29 @@ func baseInit() {
 		panic(err)
 	}
 	// 配置 GrayLog 基础配置 host 和 port
-	if global.SystemConfig.Get("grayLog.open").Bool() {
-		xgraylog.SetGrayLogConfig(global.SystemConfig.Get("grayLog"))
+	if global.SystemConfig.Get("graylog.open").Bool() {
+		xgraylog.SetGrayLogConfig(global.SystemConfig.Get("graylog"))
 		// 配置默认日志
-		name := global.SystemConfig.Get("server.name").String()
-		glog.SetDefaultHandler(xgraylog.SwitchToGraylog(name, func(ctx context.Context, m g.Map) {
+		glog.SetDefaultHandler(xgraylog.SwitchToGraylog(global.ServerConfig.Name, func(ctx context.Context, m g.Map) {
 
 		}))
 	}
 }
 
 func initRecordDevice() {
-	switch global.RecordDeviceMode {
+	switch global.ServerConfig.RecordDeviceMode {
 	case "sqlite":
 		devices.RecordHandler = devices.NewSqlLiteRecordDevice()
 	default:
 		devices.RecordHandler = devices.NewMySQLRecordDevice()
 	}
-	if err := devices.RecordHandler.Init(global.GfCache, global.CacheMode, global.CachePlatform, global.CacheRefreshOnStartup); err != nil {
+	if err := devices.RecordHandler.Init(global.GfCache, global.ServerConfig.CacheMode, global.ServerConfig.CachePlatform, global.ServerConfig.CacheRefreshOnStartup); err != nil {
 		panic(fmt.Errorf("记录配置驱动初始化出错 %s", err))
 	}
-	return
 }
 
 func initConfigDevice() {
-	switch global.ConfigDeviceMode {
+	switch global.ServerConfig.ConfigDeviceMode {
 	case "xdb":
 		devices.ConfigDevice = devices.NewXDbConfigDevice()
 	case "sqlite":
@@ -137,7 +137,7 @@ func initConfigDevice() {
 // 初始化 缓存
 func initCache() *gcache.Cache {
 	c := gcache.New()
-	switch global.CacheMode {
+	switch global.ServerConfig.CacheMode {
 	case "redis":
 		c.SetAdapter(gcache.NewAdapterRedis(g.Redis()))
 	case "mem":

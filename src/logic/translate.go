@@ -22,7 +22,7 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 	textStr := gstr.Join(req.Text, "\n")
 	// 内容转换为md5
 	var keyStr string
-	if global.CachePlatform {
+	if global.ServerConfig.CachePlatform {
 		keyStr = fmt.Sprintf("to:%s-text:%s-platform:%s", req.To, textStr, req.Platform)
 	} else {
 		keyStr = fmt.Sprintf("to:%s-text:%s", req.To, textStr)
@@ -44,7 +44,7 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 	}
 	isCache := true
 	// 判断是否进行缓存
-	if global.CacheMode == "off" {
+	if global.ServerConfig.CacheMode == "off" {
 		isCache = false
 		data, err = translateHandler(cacheId, translateReq)
 	} else {
@@ -86,7 +86,7 @@ func translateHandler(cacheId string, req *translate.TranslateReq) (data *types.
 	if data != nil {
 		data.CacheId = cacheId
 		// 缓存写入数据库
-		if global.CacheWriteToStorage {
+		if global.ServerConfig.CacheWriteToStorage {
 			queueHandler.SaveQueue.Push(&types.SaveData{
 				Data: data,
 			})

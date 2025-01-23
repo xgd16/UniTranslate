@@ -29,7 +29,7 @@ func Service() {
 
 func clearRequestRecord(ctx context.Context) (err error) {
 	// 清理请求记录
-	clearTime := gtime.Now().AddDate(0, 0, -global.RequestRecordKeepDays)
+	clearTime := gtime.Now().AddDate(0, 0, -global.ServerConfig.RequestRecordKeepDays)
 	delT, err := g.Model("request_record").Where("createTime <= ?", clearTime).Delete()
 	delCount, _ := delT.RowsAffected()
 	g.Log().Infof(ctx, "清理请求记录完成, 删除 %d 条记录 <= %s", delCount, clearTime.Format("Y-m-d H:i:s"))

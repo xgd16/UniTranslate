@@ -38,7 +38,7 @@ logger:
   writerColorEnable: true
 
 # GrayLog 支持
-grayLog:
+graylog:
   open: false
   host:
   port:

@@ -1,12 +1,13 @@
 package devices
 
 import (
-	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/frame/gins"
 	"uniTranslate/src/global"
 	"uniTranslate/src/lib"
 	"uniTranslate/src/types"
+
+	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/frame/gins"
 )
 
 type SqlLiteConfigDevice struct {
@@ -16,7 +17,7 @@ type SqlLiteConfigDevice struct {
 
 func NewSqlLiteConfigDevice() *SqlLiteConfigDevice {
 	return &SqlLiteConfigDevice{
-		global.ConfigDeviceDb,
+		global.ServerConfig.ConfigDeviceDb,
 		"translation_platform",
 	}
 }

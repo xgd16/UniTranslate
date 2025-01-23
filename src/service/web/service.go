@@ -20,7 +20,7 @@ func Service() {
 	server.BindHandler("/:key/translate_a/single", controller.GoogleSingleVirtual)
 	server.BindHandler("/:key/translate_a/element.js", func(r *ghttp.Request) {
 		key := r.Get("key").String()
-		if key != global.ServiceKey {
+		if key != global.ServerConfig.Key {
 			r.Response.WriteStatusExit(404)
 		}
 		r.Response.WriteExit(gfile.GetContents("./googleElement.js"))

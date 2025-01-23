@@ -12,13 +12,13 @@ func AuthVerifyMiddleware(r *ghttp.Request) {
 	authKey := r.Header.Get("auth_key")
 	// 根据设置的验证方式验证请求
 	var pass bool
-	if global.KeyMode == 1 {
+	if global.ServerConfig.KeyMode == 1 {
 		if authKey == "" {
 			authKey = r.Get("key").String()
 		}
-		pass = authKey != global.ServiceKey
+		pass = authKey != global.ServerConfig.Key
 	} else {
-		pass = authKey != lib.AuthEncrypt(global.ServiceKey, r.GetMap())
+		pass = authKey != lib.AuthEncrypt(global.ServerConfig.Key, r.GetMap())
 	}
 
 	if pass {

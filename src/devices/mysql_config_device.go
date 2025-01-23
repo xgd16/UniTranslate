@@ -19,7 +19,7 @@ type MySQLConfigDevice struct {
 
 func NewMySQLConfigDevice() *MySQLConfigDevice {
 	return &MySQLConfigDevice{
-		global.ConfigDeviceDb,
+		global.ServerConfig.ConfigDeviceDb,
 		"translation_platform",
 	}
 }

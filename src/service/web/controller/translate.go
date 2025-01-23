@@ -69,7 +69,7 @@ type IdeaTranslateVirtualQueryReq struct {
 
 // GoogleSingleVirtual 谷歌翻译虚拟接口
 func GoogleSingleVirtual(r *ghttp.Request) {
-	if r.Get("key").String() != global.ServiceKey {
+	if r.Get("key").String() != global.ServerConfig.Key {
 		r.Response.WriteStatusExit(404)
 	}
 	queryData := new(IdeaTranslateVirtualQueryReq)
@@ -168,7 +168,7 @@ func GetConfigList(r *ghttp.Request) {
 			"countRecord": countRecord,
 		}
 		// 判断是否开启编辑配置
-		if global.ApiEditConfig {
+		if global.ServerConfig.ApiEditConfig {
 			configItem["cfg"] = v.Cfg
 		}
 
@@ -190,7 +190,7 @@ func SaveConfig(r *ghttp.Request) {
 	if t.Md5 == "" {
 		t.InitMd5()
 	}
-	x.FastResp(r, !global.ApiEditConfig && t.Md5 != "", false).Resp("非法操作")
+	x.FastResp(r, !global.ServerConfig.ApiEditConfig && t.Md5 != "", false).Resp("非法操作")
 	x.FastResp(r, t.Type != "" && !xlib.InArr(t.Type, translate.TranslateModeList), false).Resp("不支持的平台")
 	device, err := devices.GetConfigDevice()
 	x.FastResp(r, err).Resp()

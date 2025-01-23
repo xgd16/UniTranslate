@@ -1,71 +1,66 @@
 package global
 
 import (
+	"context"
+
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcache"
-	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/xgd16/gf-x-tool/xstorage"
 )
+
+// SystemConfigStruct 系统配置结构体
+type ServerConfigStruct struct {
+	Name                  string `json:"name"`
+	Address               string `json:"address"`
+	CacheMode             string `json:"cacheMode"`
+	CachePlatform         bool   `json:"cachePlatform"`
+	ConfigDeviceMode      string `json:"configDeviceMode"`
+	RecordDeviceMode      string `json:"recordDeviceMode"`
+	ConfigDeviceDb        string `json:"configDeviceDb"`
+	CacheRefreshOnStartup bool   `json:"cacheRefreshOnStartup"`
+	Key                   string `json:"key"`
+	KeyMode               int    `json:"keyMode"`
+	CacheWriteToStorage   bool   `json:"cacheWriteToStorage"`
+	RequestRecordKeepDays int    `json:"requestRecordKeepDays"`
+	ApiEditConfig         bool   `json:"apiEditConfig"`
+}
+
+type GraylogConfigStruct struct {
+	Open bool   `json:"open"`
+	Host string `json:"host"`
+	Post string `json:"post"`
+}
 
 // SystemConfig 系统配置信息
 var SystemConfig *gjson.Json
 
-var CacheMode = "mem"
-var CachePlatform = false
+// ServerConfig 系统配置信息
+var ServerConfig *ServerConfigStruct
 
 // InitSystemConfig 初始化系统配置信息
-func InitSystemConfig() {
-	cfg, err := g.Cfg().Data(gctx.New())
+func InitSystemConfig() (err error) {
+	// 创建全局上下文对象
+	cfg, err := g.Cfg().Data(Ctx)
 	if err != nil {
 		panic("初始化系统配置错误: " + err.Error())
 	}
 	SystemConfig = gjson.New(cfg, true)
-	// 初始化配置的缓存模式
-	CacheMode = SystemConfig.Get("server.cacheMode", "mem").String()
-	CachePlatform = SystemConfig.Get("server.cachePlatform", false).Bool()
-	CacheRefreshOnStartup = SystemConfig.Get("server.cacheRefreshOnStartup", false).Bool()
-	ServiceKey = SystemConfig.Get("server.key").String()
-	KeyMode = SystemConfig.Get("server.keyMode", 1).Int()
-	ConfigDeviceMode = SystemConfig.Get("server.configDeviceMode", "xdb").String()
-	RecordDeviceMode = SystemConfig.Get("server.recordDeviceMode", "mysql").String()
-	ConfigDeviceDb = SystemConfig.Get("server.configDeviceDb", "default").String()
-	CacheWriteToStorage = SystemConfig.Get("server.cacheWriteToStorage", false).Bool()
-	RequestRecordKeepDays = SystemConfig.Get("server.requestRecordKeepDays", 7).Int()
-	ApiEditConfig = SystemConfig.Get("server.apiEditConfig", false).Bool()
+
+	if err = SystemConfig.Get("server").Scan(&ServerConfig); err != nil {
+		return
+	}
+
+	// 初始化 GfCache
+	GfCache = gcache.New()
+	return
 }
 
 // XDB 文件式存储
 var XDB = xstorage.CreateXDB()
 
-// ConfigDeviceMode 配置驱动模式
-var ConfigDeviceMode = "xdb"
-
-// RecordDeviceMode 记录驱动模式
-var RecordDeviceMode = "mysql"
-
-// ConfigDeviceDb 配置驱动模式驱动db设置
-var ConfigDeviceDb = "default"
-
-// CacheRefreshOnStartup 启动时是否从数据库刷新缓存 (会先清除缓存里所有的 缓存 在从数据库逐条初始化 数据 慎用!!!)
-var CacheRefreshOnStartup = false
-
-// ServiceKey 服务 key
-var ServiceKey string
-
-// KeyMode 密钥验证模式
-var KeyMode int
-
-// GfCache 全局缓存
+// GfCache 全局缓存对象
 var GfCache *gcache.Cache
 
-// CacheWriteToStorage 是否将缓存写入存储
-var CacheWriteToStorage = false
-
-// RequestRecordKeepDays 保留几天的请求记录
-var RequestRecordKeepDays = 7
-
-// ApiEditConfig 是否可在API中进行编辑
-var ApiEditConfig = false
-
-var Ctx = gctx.New()
+// Ctx 全局上下文对象
+var Ctx context.Context

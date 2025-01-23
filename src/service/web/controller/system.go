@@ -18,8 +18,8 @@ type SystemInitConfigData struct {
 // GetSystemInitConfig 获取系统初始化配置
 func GetSystemInitConfig(r *ghttp.Request) {
 	x.FastResp(r).Resp("", &SystemInitConfigData{
-		AuthMode:   global.KeyMode,
-		EditConfig: global.ApiEditConfig,
+		AuthMode:   global.ServerConfig.KeyMode,
+		EditConfig: global.ServerConfig.ApiEditConfig,
 	})
 }
 
@@ -40,7 +40,7 @@ func CacheSize(r *ghttp.Request) {
 
 // DelConfig 删除配置
 func DelConfig(r *ghttp.Request) {
-	x.FastResp(r, !global.ApiEditConfig, false).Resp("非法操作")
+	x.FastResp(r, !global.ServerConfig.ApiEditConfig, false).Resp("非法操作")
 	serialNumberT := r.Get("serialNumber")
 	x.FastResp(r, serialNumberT.IsEmpty(), false).Resp("参数错误")
 	x.FastResp(r, devices.ConfigDevice.DelConfig(serialNumberT.String())).Resp()
@@ -50,7 +50,7 @@ func DelConfig(r *ghttp.Request) {
 
 // UpdateStatus 修改配置状态
 func UpdateStatus(r *ghttp.Request) {
-	x.FastResp(r, !global.ApiEditConfig, false).Resp("非法操作")
+	x.FastResp(r, !global.ServerConfig.ApiEditConfig, false).Resp("非法操作")
 	serialNumberT := r.Get("serialNumber")
 	statusT := r.Get("status")
 	x.FastResp(r, serialNumberT.IsEmpty() || statusT.IsEmpty(), false).Resp("参数错误")
