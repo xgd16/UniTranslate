@@ -13,6 +13,7 @@ import (
 	"uniTranslate/src/service/queue"
 	"uniTranslate/src/translate"
 
+	"github.com/gogf/gf/v2/encoding/gbase64"
 	"github.com/gogf/gf/v2/encoding/gjson"
 
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
@@ -36,6 +37,7 @@ func main() {
 		Brief:       "开启 HTTP 服务",
 		Description: "开启 HTTP API 服务",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			g.Log().Infof(ctx, "\n\n\n%s\nGitHub: %s\n文档地址: %s\n", gbase64.MustDecodeToString(global.LogoStr), "https://github.com/xgd16/UniTranslate", "https://uni-translate-doc.todream.net/")
 			global.RunMode = global.HttpMode
 			xmonitor.InitPrometheusMetric("uniTranslate", "uniTranslate")
 			initHandler()
