@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/gogf/gf/v2/container/gvar"
-	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/frame/g"
 	"uniTranslate/src/buffer"
 	"uniTranslate/src/global"
@@ -19,6 +18,8 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/xgd16/gf-x-tool/xmonitor"
 )
+
+const cacheExpireIn = 10
 
 // Translate 翻译
 func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *types.TranslateData, err error) {
@@ -98,11 +99,20 @@ func translateHandler(cacheId string, req *translate.TranslateReq) (data *types.
 
 func hotColdDataTranslateHandler(ctx context.Context, cacheId string, req *translate.TranslateReq, isCache *bool) (data *types.TranslateData, err error) {
 	// 获取连接
-	rc, _ := g.Redis().Conn(ctx)
+	rc, err := g.Redis().Conn(ctx)
+	if err != nil {
+		return
+	}
 	// 释放连接
-	defer func(rc gredis.Conn, ctx context.Context) {
-		_ = rc.Close(ctx)
-	}(rc, ctx)
+	defer func() { _ = rc.Close(ctx) }()
+
+	_cache := func(key string, value interface{}) (err error) {
+		_, err = rc.Do(ctx, "SetEX", key, cacheExpireIn, value)
+		if err != nil {
+			return
+		}
+		return
+	}
 
 	var res *gvar.Var
 	// 缓存key
@@ -110,30 +120,32 @@ func hotColdDataTranslateHandler(ctx context.Context, cacheId string, req *trans
 	// 热数据
 	res, err = rc.Do(ctx, "Get", cacheKey)
 	if err != nil {
-		return nil, err
+		return
 	}
 	if !res.IsEmpty() {
 		if err = res.Scan(&data); err != nil {
-			return nil, err
+			return
+		}
+		if err = _cache(cacheKey, data); err != nil {
+			return
 		}
 		return
 	}
 	// 冷数据
 	err = g.Model("translate_cache").Where("cacheId", cacheId).Scan(&data)
 	if err != nil {
-		return nil, err
+		return
 	}
-	if data == nil {
+	if g.IsNil(data) {
 		*isCache = false
 		data, err = translateHandler(cacheId, req)
 		if err != nil {
-			return nil, err
+			return
 		}
 	}
-	_, err = rc.Do(ctx, "Set", cacheKey, interface{}(data))
-	if err != nil {
-		return nil, err
-	}
 
+	if err = _cache(cacheKey, data); err != nil {
+		return
+	}
 	return
 }
