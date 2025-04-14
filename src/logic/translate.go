@@ -3,6 +3,9 @@ package logic
 import (
 	"context"
 	"fmt"
+	"github.com/gogf/gf/v2/container/gvar"
+	"github.com/gogf/gf/v2/database/gredis"
+	"github.com/gogf/gf/v2/frame/g"
 	"uniTranslate/src/buffer"
 	"uniTranslate/src/global"
 	queueHandler "uniTranslate/src/service/queue/handler"
@@ -48,15 +51,8 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 		isCache = false
 		data, err = translateHandler(cacheId, translateReq)
 	} else {
-		dataT, err1 := global.GfCache.GetOrSetFunc(ctx, fmt.Sprintf("Translate:%s", cacheId), func(ctx context.Context) (value any, err error) {
-			isCache = false
-			return translateHandler(cacheId, translateReq)
-		}, 0)
-		if err1 != nil {
-			err = err1
-			return
-		}
-		if err = dataT.Scan(&data); err != nil {
+		data, err = hotColdDataTranslateHandler(ctx, cacheId, translateReq, &isCache)
+		if err != nil {
 			return
 		}
 	}
@@ -97,5 +93,47 @@ func translateHandler(cacheId string, req *translate.TranslateReq) (data *types.
 			Ok:   err == nil,
 		})
 	}
+	return
+}
+
+func hotColdDataTranslateHandler(ctx context.Context, cacheId string, req *translate.TranslateReq, isCache *bool) (data *types.TranslateData, err error) {
+	// 获取连接
+	rc, _ := g.Redis().Conn(ctx)
+	// 释放连接
+	defer func(rc gredis.Conn, ctx context.Context) {
+		_ = rc.Close(ctx)
+	}(rc, ctx)
+
+	var res *gvar.Var
+	// 缓存key
+	cacheKey := "Translate:" + cacheId
+	// 热数据
+	res, err = rc.Do(ctx, "Get", cacheKey)
+	if err != nil {
+		return nil, err
+	}
+	if !res.IsEmpty() {
+		if err = res.Scan(&data); err != nil {
+			return nil, err
+		}
+		return
+	}
+	// 冷数据
+	err = g.Model("translate_cache").Where("cacheId", cacheId).Scan(&data)
+	if err != nil {
+		return nil, err
+	}
+	if data == nil {
+		*isCache = false
+		data, err = translateHandler(cacheId, req)
+		if err != nil {
+			return nil, err
+		}
+	}
+	_, err = rc.Do(ctx, "Set", cacheKey, interface{}(data))
+	if err != nil {
+		return nil, err
+	}
+
 	return
 }
