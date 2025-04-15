@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"fmt"
+	"github.com/gogf/gf/v2/container/gvar"
+	"github.com/gogf/gf/v2/frame/g"
 	"uniTranslate/src/buffer"
 	"uniTranslate/src/global"
 	queueHandler "uniTranslate/src/service/queue/handler"
@@ -16,6 +18,8 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/xgd16/gf-x-tool/xmonitor"
 )
+
+const cacheExpireIn = 10
 
 // Translate 翻译
 func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *types.TranslateData, err error) {
@@ -48,15 +52,8 @@ func Translate(ctx context.Context, ip string, req *types.TranslateReq) (data *t
 		isCache = false
 		data, err = translateHandler(cacheId, translateReq)
 	} else {
-		dataT, err1 := global.GfCache.GetOrSetFunc(ctx, fmt.Sprintf("Translate:%s", cacheId), func(ctx context.Context) (value any, err error) {
-			isCache = false
-			return translateHandler(cacheId, translateReq)
-		}, 0)
-		if err1 != nil {
-			err = err1
-			return
-		}
-		if err = dataT.Scan(&data); err != nil {
+		data, err = hotColdDataTranslateHandler(ctx, cacheId, translateReq, &isCache)
+		if err != nil {
 			return
 		}
 	}
@@ -96,6 +93,59 @@ func translateHandler(cacheId string, req *translate.TranslateReq) (data *types.
 			Data: data,
 			Ok:   err == nil,
 		})
+	}
+	return
+}
+
+func hotColdDataTranslateHandler(ctx context.Context, cacheId string, req *translate.TranslateReq, isCache *bool) (data *types.TranslateData, err error) {
+	// 获取连接
+	rc, err := g.Redis().Conn(ctx)
+	if err != nil {
+		return
+	}
+	// 释放连接
+	defer func() { _ = rc.Close(ctx) }()
+
+	_cache := func(key string, value interface{}) (err error) {
+		_, err = rc.Do(ctx, "SetEX", key, cacheExpireIn, value)
+		if err != nil {
+			return
+		}
+		return
+	}
+
+	var res *gvar.Var
+	// 缓存key
+	cacheKey := "Translate:" + cacheId
+	// 热数据
+	res, err = rc.Do(ctx, "Get", cacheKey)
+	if err != nil {
+		return
+	}
+	if !res.IsEmpty() {
+		if err = res.Scan(&data); err != nil {
+			return
+		}
+		if err = _cache(cacheKey, data); err != nil {
+			return
+		}
+		return
+	}
+	// 冷数据
+	err = g.Model("translate_cache").Where("cacheId", cacheId).Scan(&data)
+	if err != nil {
+		return
+	}
+	if g.IsNil(data) {
+		*isCache = false
+		data, err = translateHandler(cacheId, req)
+		if err != nil {
+			return
+		}
+	}
+
+	if err = _cache(cacheKey, data); err != nil {
+		return
 	}
 	return
 }
